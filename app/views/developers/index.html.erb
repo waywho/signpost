@@ -1,4 +1,14 @@
-<div>
-  <h1 class="font-bold text-4xl">Developers#index</h1>
-  <p>Find me in app/views/developers/index.html.erb</p>
+<% content_for(:title, "Team — Tech Lead OS") %>
+<% content_for(:body_class, "sidebar-layout") %>
+
+<div id="sidebar">
+  <%= render "sidebar", developers: @developers, current_dev: nil %>
+</div>
+
+<div id="main">
+  <div class="flex flex-col items-center justify-center gap" style="block-size: 100%; color: var(--color-text-subtle)">
+    <i class="ph ph-users" style="font-size: var(--text-4xl)"></i>
+    <p class="text-sm">Select a developer from the sidebar</p>
+    <%= link_to "Add Developer", new_developer_path, class: "button" %>
+  </div>
 </div>

@@ -1,0 +1,75 @@
+<%= form_with model: developer, class: "flex flex-col gap" do |f| %>
+  <% if developer.errors.any? %>
+    <div class="alert alert--negative">
+      <p class="font-bold"><%= pluralize(developer.errors.count, "error") %> prevented saving:</p>
+      <ul class="text-sm" style="padding-inline-start: var(--size-4)">
+        <% developer.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_field :name, class: "input", required: true %>
+  </div>
+
+  <div class="flex gap">
+    <div style="flex: 1">
+      <%= f.label :role, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.text_field :role, class: "input" %>
+    </div>
+    <div style="flex: 1">
+      <%= f.label :level, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.select :level, [["", ""], "Junior", "Mid", "Senior", "Staff"], {}, class: "input" %>
+    </div>
+  </div>
+
+  <div class="flex gap">
+    <div style="flex: 1">
+      <%= f.label :github_handle, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.text_field :github_handle, class: "input", placeholder: "@handle" %>
+    </div>
+    <div style="flex: 1">
+      <%= f.label :slack_handle, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.text_field :slack_handle, class: "input", placeholder: "@handle" %>
+    </div>
+  </div>
+
+  <div class="flex gap">
+    <div style="flex: 0 0 6rem">
+      <%= f.label :color, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.color_field :color, class: "input" %>
+    </div>
+    <div style="flex: 1">
+      <%= f.label :joined_team, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.date_field :joined_team, class: "input" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :strengths, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_area :strengths, class: "input", rows: 3 %>
+  </div>
+
+  <div>
+    <%= f.label :growth_areas, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_area :growth_areas, class: "input", rows: 3 %>
+  </div>
+
+  <div>
+    <%= f.label :career_goals, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_area :career_goals, class: "input", rows: 3 %>
+  </div>
+
+  <div>
+    <%= f.label :private_notes, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_area :private_notes, class: "input", rows: 3, placeholder: "Private notes (not shared)" %>
+  </div>
+
+  <div class="flex items-center gap" style="margin-block-start: var(--size-2)">
+    <%= f.submit developer.persisted? ? "Update Developer" : "Save Developer", class: "button" %>
+    <%= link_to "Cancel", developer.persisted? ? developer_path(developer) : developers_path, class: "button button--ghost" %>
+  </div>
+<% end %>

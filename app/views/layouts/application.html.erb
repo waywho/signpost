@@ -25,7 +25,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="header-layout">
+  <body class="<%= content_for(:body_class).presence || 'header-layout' %>">
     <header id="header">
       <div class="container flex items-center justify-between">
         <%= link_to root_path, class: "flex items-center gap-half font-bold text-lg" do %>
@@ -39,15 +39,20 @@
       </div>
     </header>
 
-    <main id="main">
-      <% if notice.present? %>
+    <% if notice.present? %>
       <div popover="manual" class="flash" style="--flash-position: 5rem" data-controller="flash" data-action="animationend->flash#hide" role="alert">
-          <div class="flash__content"><%= notice %></div>
-        </div>
-      <% end %>
-      <div class="container">
-        <%= yield %>
+        <div class="flash__content"><%= notice %></div>
       </div>
-    </main>
+    <% end %>
+
+    <% if content_for?(:body_class) && content_for(:body_class).include?("sidebar-layout") %>
+      <%= yield %>
+    <% else %>
+      <main id="main">
+        <div class="container">
+          <%= yield %>
+        </div>
+      </main>
+    <% end %>
   </body>
 </html>
