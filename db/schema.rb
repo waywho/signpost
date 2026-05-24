@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_24_214231) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_24_220513) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -352,6 +352,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_214231) do
     t.text "channel_name", null: false
     t.boolean "enabled", default: true, null: false
     t.check_constraint "capture_mode = ANY (ARRAY['full_stream'::text, 'involvement_only'::text, 'ignored'::text])", name: "watched_channels_capture_mode_check"
+  end
+
+  create_table "watched_repos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "enabled"
+    t.text "full_name"
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "delegations", "developers", on_delete: :nullify
