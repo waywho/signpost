@@ -4,7 +4,11 @@ Rails.application.routes.draw do
     resources :oneone_sessions, only: [:index, :show, :new, :create]
   end
 
-  resources :delegations
+  resources :delegations do
+    member do
+      post :create_issue
+    end
+  end
   resources :commitments, except: [:show, :edit, :update] do
     member do
       patch :done
