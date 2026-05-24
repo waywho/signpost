@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Techos Rails" %></title>
+    <title><%= content_for(:title) || "Tech Lead OS" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,6 +17,7 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2/src/regular/style.css">
     <%= stylesheet_link_tag "css-zero/reset", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "css-zero/variables", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -26,8 +27,14 @@
 
   <body class="header-layout">
     <header id="header">
-      <div class="container">
-        <h1 class="font-bold text-2xl">Techos Rails</h1>
+      <div class="container flex items-center justify-between">
+        <%= link_to root_path, class: "flex items-center gap-half font-bold text-lg" do %>
+          <i class="ph ph-brain" style="color: var(--color-primary)"></i>
+          Tech Lead OS
+        <% end %>
+        <nav class="flex items-center gap">
+          <%= link_to "Status", status_path, class: "text-sm" %>
+        </nav>
       </div>
     </header>
 
