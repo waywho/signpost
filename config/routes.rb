@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :daily_logs, only: [:create, :update]
+
   resource :status, only: :show, controller: "status"
   resource :dashboard, only: :show, controller: "dashboard"
 
