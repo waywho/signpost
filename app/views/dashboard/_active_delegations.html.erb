@@ -1,0 +1,26 @@
+<div class="card">
+  <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+    <i class="ph ph-arrows-split" style="color: var(--color-primary)"></i> Delegations
+    <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= delegations.size %> active)</span>
+  </h2>
+  <% if delegations.any? %>
+    <ul class="flex flex-col gap-half">
+      <% delegations.each do |d| %>
+        <li style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-bold"><%= d.summary.truncate(50) %></span>
+            <% if d.urgency.in?(%w[Critical High]) %>
+              <span class="text-xs font-bold" style="color: <%= d.urgency == 'Critical' ? 'var(--color-negative)' : '#f97316' %>"><%= d.urgency %></span>
+            <% end %>
+          </div>
+          <div class="text-xs" style="color: var(--color-text-subtle)">
+            <%= d.developer&.name || d.developer_name || "Unassigned" %> · <%= d.status.tr("_", " ") %>
+            <% if d.status == "blocked" %><i class="ph ph-warning" style="color: var(--color-negative)"></i><% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-sm text-center" style="color: var(--color-text-subtle)">No active delegations.</p>
+  <% end %>
+</div>

@@ -9,6 +9,22 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-4);
+}
+
+.dashboard-grid > .dashboard-log {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .developer-avatar {
   align-items: center;
   border-radius: var(--rounded-full);

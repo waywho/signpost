@@ -1,0 +1,18 @@
+<div class="card">
+  <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+    <i class="ph ph-users-three" style="color: var(--color-primary)"></i> Team
+    <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= developers.size %>)</span>
+  </h2>
+  <% if developers.any? %>
+    <ul class="flex flex-col gap-half">
+      <% developers.each do |dev| %>
+        <li class="flex items-center justify-between text-sm">
+          <span class="font-bold"><%= dev.name %></span>
+          <span style="color: var(--color-text-subtle)"><%= [dev.level, dev.role].compact.join(" · ") %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-sm text-center" style="color: var(--color-text-subtle)">No developers yet.</p>
+  <% end %>
+</div>

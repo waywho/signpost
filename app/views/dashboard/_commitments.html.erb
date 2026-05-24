@@ -1,0 +1,30 @@
+<div class="card">
+  <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+    <i class="ph ph-handshake" style="color: var(--color-primary)"></i> Commitments
+  </h2>
+  <% if overdue.any? %>
+    <p class="text-xs font-bold" style="color: var(--color-negative); margin-block-end: var(--size-2)"><i class="ph ph-warning-circle"></i> Overdue</p>
+    <ul class="flex flex-col gap-half" style="margin-block-end: var(--size-3)">
+      <% overdue.each do |c| %>
+        <li class="flex items-center justify-between text-sm" style="color: var(--color-negative)">
+          <span><%= c.text.truncate(50) %></span>
+          <span class="text-xs"><%= c.due_date&.strftime("%-m/%-d") %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if due.any? %>
+    <p class="text-xs font-bold" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Due soon</p>
+    <ul class="flex flex-col gap-half">
+      <% due.each do |c| %>
+        <li class="flex items-center justify-between text-sm">
+          <span><%= c.text.truncate(50) %></span>
+          <span class="text-xs" style="color: var(--color-text-subtle)"><%= c.due_date&.strftime("%-m/%-d") %><%= " · #{c.stakeholder}" if c.stakeholder.present? %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% if overdue.empty? && due.empty? %>
+    <p class="text-sm text-center" style="color: var(--color-text-subtle)">No commitments due soon.</p>
+  <% end %>
+</div>
