@@ -5,6 +5,7 @@ one:
   title: Architecture discussion
   category: architecture
   summary: Discussed new service boundaries
+  status: new
 
 two:
   slack_channel_id: C789012
@@ -13,3 +14,4 @@ two:
   title: Production incident
   category: incident
   summary: Database connection pool exhaustion
+  status: new
