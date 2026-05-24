@@ -1,0 +1,7 @@
+<%= turbo_stream.replace dom_id(@commitment) do %>
+  <div class="card flex items-center gap" style="opacity: 0.5">
+    <i class="ph ph-check-circle" style="color: var(--color-positive)"></i>
+    <span class="text-sm" style="text-decoration: line-through; color: var(--color-text-subtle); flex: 1"><%= @commitment.text %></span>
+    <span class="text-xs" style="color: var(--color-text-subtle)">Done</span>
+  </div>
+<% end %>
