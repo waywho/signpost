@@ -1,0 +1,32 @@
+<% if pr_queue.nil? %>
+  <div class="card" style="margin-block-end: var(--size-6); color: var(--color-text-subtle)">
+    <p class="text-sm"><i class="ph ph-info"></i> Set <code>github_pat</code> in encrypted settings to see your PR queue.</p>
+  </div>
+<% elsif pr_queue.any? %>
+  <div class="card" style="margin-block-end: var(--size-6)">
+    <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+      <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
+      Awaiting Your Review
+      <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= pr_queue.size %>)</span>
+    </h2>
+    <div class="flex flex-col gap-half">
+      <% pr_queue.each do |pr| %>
+        <div class="flex items-center gap" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
+          <div class="flex flex-col flex-1" style="min-inline-size: 0">
+            <span class="font-bold text-sm">
+              <%= link_to "##{pr[:number]} #{pr[:title]}", pr[:url], target: "_blank", style: "text-decoration: none" %>
+            </span>
+            <span class="text-xs" style="color: var(--color-text-subtle)">
+              <%= pr[:repo] %> · <%= pr[:author] %> · <%= time_ago_in_words(pr[:created_at]) %> ago
+              <% if pr[:draft] %> · draft<% end %>
+            </span>
+          </div>
+          <%= link_to new_pr_review_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
+                class: "text-sm", style: "color: var(--color-primary); flex-shrink: 0" do %>
+            <i class="ph ph-pencil-line"></i> Review
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -1,5 +1,13 @@
 class PrReviewsController < ApplicationController
   def index
+    @pr_queue = begin
+      service = GitHubService.new
+      service.configured? ? service.pr_queue : nil
+    rescue => e
+      Rails.logger.error("PR queue fetch failed: #{e.message}")
+      nil
+    end
+
     @pr_reviews = PrReview.recent
     @pr_reviews = @pr_reviews.where(repo: params[:repo]) if params[:repo].present?
     @pr_reviews = @pr_reviews.where(recommendation: params[:recommendation]) if params[:recommendation].present?
@@ -11,7 +19,13 @@ class PrReviewsController < ApplicationController
   end
 
   def new
-    @pr_review = PrReview.new(reviewed_at: Time.current)
+    @pr_review = PrReview.new(
+      repo: params[:repo],
+      pr_number: params[:pr_number],
+      pr_title: params[:pr_title],
+      pr_author: params[:pr_author],
+      reviewed_at: Time.current
+    )
   end
 
   def create

@@ -5,6 +5,8 @@
   <%= link_to new_pr_review_path, class: "button" do %><i class="ph ph-plus"></i> Log Review<% end %>
 </div>
 
+<%= render "queue", pr_queue: @pr_queue %>
+
 <%= form_with url: pr_reviews_path, method: :get, class: "flex items-center gap", style: "margin-block-end: var(--size-4)",
       data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |f| %>
   <%= f.text_field :repo, value: params[:repo], placeholder: "Filter by repo…", class: "input", style: "max-inline-size: 16rem" %>
