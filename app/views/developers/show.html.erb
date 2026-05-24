@@ -54,6 +54,8 @@
       </div>
     <% end %>
 
+    <%= render "github_activity", developer: @developer, activities: @github_activities %>
+
     <%# Notes section %>
     <div class="card" style="margin-block-end: var(--size-4)">
       <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">

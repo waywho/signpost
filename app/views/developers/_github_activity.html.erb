@@ -1,0 +1,44 @@
+<% if developer.github_handle.present? %>
+  <div class="card" style="margin-block-end: var(--size-4)">
+    <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+      <i class="ph ph-github-logo"></i> GitHub Activity (30 days)
+    </h2>
+
+    <% if activities.any? %>
+      <% grouped = activities.group_by { |a| a[:type] } %>
+      <div class="flex items-center gap text-sm" style="margin-block-end: var(--size-4)">
+        <% if grouped["commit"] %><span><i class="ph ph-git-commit"></i> <%= grouped["commit"].size %> commits</span><% end %>
+        <% if grouped["pr_opened"] %><span><i class="ph ph-git-pull-request"></i> <%= grouped["pr_opened"].size %> PRs</span><% end %>
+        <% if grouped["pr_merged"] %><span><i class="ph ph-git-merge"></i> <%= grouped["pr_merged"].size %> merged</span><% end %>
+        <% if grouped["pr_review"] %><span><i class="ph ph-code"></i> <%= grouped["pr_review"].size %> reviews</span><% end %>
+      </div>
+
+      <ul class="flex flex-col gap-half">
+        <% activities.first(10).each do |activity| %>
+          <li class="flex items-center gap text-sm" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-1)">
+            <%
+              icon = case activity[:type]
+                     when "commit" then "ph-git-commit"
+                     when "pr_opened" then "ph-git-pull-request"
+                     when "pr_merged" then "ph-git-merge"
+                     when "pr_review" then "ph-code"
+                     else "ph-dot"
+                     end
+            %>
+            <i class="ph <%= icon %>" style="color: var(--color-text-subtle); flex-shrink: 0"></i>
+            <div class="flex flex-col flex-1" style="min-inline-size: 0">
+              <% if activity[:url] %>
+                <%= link_to activity[:title]&.truncate(60) || activity[:type].humanize, activity[:url], target: "_blank", class: "text-sm", style: "text-decoration: none" %>
+              <% else %>
+                <span><%= activity[:title]&.truncate(60) || activity[:type].humanize %></span>
+              <% end %>
+              <span class="text-xs" style="color: var(--color-text-subtle)"><%= activity[:repo] %> · <%= time_ago_in_words(activity[:occurred_at]) %> ago</span>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-sm text-center" style="color: var(--color-text-subtle)">No recent GitHub activity.</p>
+    <% end %>
+  </div>
+<% end %>

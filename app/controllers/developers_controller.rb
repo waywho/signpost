@@ -9,6 +9,16 @@ class DevelopersController < ApplicationController
     @developer_note = DeveloperNote.new
     @notes = @developer.developer_notes.recent
     @oneone_sessions = @developer.oneone_sessions.recent
+    @github_activities = if @developer.github_handle.present? && GitHubService.new.configured?
+      begin
+        GitHubService.new.developer_activity(@developer.github_handle)
+      rescue => e
+        Rails.logger.error("GitHub activity fetch failed: #{e.message}")
+        []
+      end
+    else
+      []
+    end
   end
 
   def new
