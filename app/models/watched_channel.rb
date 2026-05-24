@@ -1,0 +1,2 @@
+class WatchedChannel < ApplicationRecord
+end

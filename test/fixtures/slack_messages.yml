@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  slack_thread: one
+  message_ts: "1716000000.000100"
+  user_id: U001
+  user_name: alice
+  content: Hello world
+
+two:
+  slack_thread: two
+  message_ts: "1716000001.000200"
+  user_id: U002
+  user_name: bob
+  content: Hi there

@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  slack_thread: one
+  title: Deploy issue
+  summary: Discussion about deployment problems
+  category: infrastructure
+  urgency: high
+  action_recommendation: Investigate CI pipeline
+  status: open
+
+two:
+  slack_thread: two
+  title: Code review
+  summary: PR review discussion
+  category: engineering
+  urgency: low
+  action_recommendation: Review when available
+  status: open

@@ -1,0 +1,2 @@
+class NoiseFilter < ApplicationRecord
+end

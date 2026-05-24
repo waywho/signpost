@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  scope: global
+  key: openai_model
+  value: <%= { "model" => "text-embedding-3-small" }.to_json %>
+
+two:
+  scope: global
+  key: analysis_model
+  value: <%= { "model" => "claude-sonnet-4-20250514" }.to_json %>
