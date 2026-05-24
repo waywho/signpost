@@ -21,6 +21,10 @@ slack_catch_up:
   class: SlackCatchUpJob
   schedule: every hour
 
+thread_compression:
+  class: ThreadCompressionJob
+  schedule: at 3am every day
+
 production:
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
