@@ -1,0 +1,50 @@
+<%= form_with model: delegation, class: "flex flex-col gap" do |f| %>
+  <% if delegation.errors.any? %>
+    <div class="alert alert--negative">
+      <ul class="text-sm"><% delegation.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :summary, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_field :summary, class: "input", required: true %>
+  </div>
+
+  <div class="flex gap">
+    <div style="flex: 1">
+      <%= f.label :developer_id, "Developer", class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.collection_select :developer_id, developers, :id, :name, { include_blank: "— select —" }, class: "input" %>
+    </div>
+    <div style="flex: 1">
+      <%= f.label :urgency, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.select :urgency, [["", ""], "Critical", "High", "Medium", "Low"], {}, class: "input" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :issue_type, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_field :issue_type, class: "input", placeholder: "bug, feature, question..." %>
+  </div>
+
+  <div>
+    <%= f.label :handoff_message, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.text_area :handoff_message, class: "input", rows: 4 %>
+  </div>
+
+  <div>
+    <%= f.label :github_issue_url, "GitHub Issue URL", class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+    <%= f.url_field :github_issue_url, class: "input" %>
+  </div>
+
+  <% if delegation.persisted? %>
+    <div>
+      <%= f.label :status, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+      <%= f.select :status, %w[delegated in_progress done blocked], {}, class: "input" %>
+    </div>
+  <% end %>
+
+  <div class="flex items-center gap">
+    <%= f.submit delegation.persisted? ? "Save Changes" : "Create Delegation", class: "button" %>
+    <%= link_to "Cancel", delegation.persisted? ? delegation_path(delegation) : delegations_path, class: "button button--ghost" %>
+  </div>
+<% end %>

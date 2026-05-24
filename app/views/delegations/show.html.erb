@@ -1,4 +1,58 @@
-<div>
-  <h1 class="font-bold text-4xl">Delegations#show</h1>
-  <p>Find me in app/views/delegations/show.html.erb</p>
+<% content_for(:title, "#{@delegation.summary.truncate(30)} — Delegations — Tech Lead OS") %>
+
+<div style="margin-block-end: var(--size-4)">
+  <%= link_to delegations_path, class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)" do %>
+    <i class="ph ph-caret-left"></i> Delegations
+  <% end %>
+</div>
+
+<div class="flex items-center justify-between" style="margin-block-end: var(--size-6)">
+  <h1 class="font-bold text-2xl"><%= @delegation.summary %></h1>
+  <div class="flex items-center gap-half">
+    <%= link_to edit_delegation_path(@delegation), class: "text-sm" do %><i class="ph ph-pencil"></i> Edit<% end %>
+    <%= button_to delegation_path(@delegation), method: :delete, class: "text-sm", style: "color: var(--color-negative)", data: { turbo_confirm: "Delete this delegation?" } do %>
+      <i class="ph ph-trash"></i> Delete
+    <% end %>
+  </div>
+</div>
+
+<div class="card" style="margin-block-end: var(--size-4)">
+  <dl class="flex flex-col gap-half">
+    <% { "Developer" => @delegation.developer&.name || @delegation.developer_name, "Urgency" => @delegation.urgency, "Status" => @delegation.status&.tr("_", " "), "Issue Type" => @delegation.issue_type, "Delegated" => @delegation.delegated_at&.strftime("%B %-d, %Y"), "Resolved" => @delegation.resolved_at&.strftime("%B %-d, %Y") }.each do |label, value| %>
+      <% next unless value.present? %>
+      <div class="flex items-center gap">
+        <dt class="text-sm font-bold" style="min-inline-size: 6rem"><%= label %></dt>
+        <dd class="text-sm"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+</div>
+
+<% if @delegation.handoff_message.present? %>
+  <div class="card" style="margin-block-end: var(--size-4)">
+    <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Handoff Message</h2>
+    <p class="text-sm" style="white-space: pre-wrap"><%= @delegation.handoff_message %></p>
+  </div>
+<% end %>
+
+<% if @delegation.github_issue_url.present? %>
+  <p class="text-sm" style="margin-block-end: var(--size-4)">
+    <i class="ph ph-github-logo"></i>
+    <%= link_to @delegation.github_issue_url, @delegation.github_issue_url, target: "_blank" %>
+  </p>
+<% end %>
+
+<div class="card">
+  <span class="text-sm font-bold" style="margin-block-end: var(--size-2); display: block">Update Status</span>
+  <div class="flex items-center gap-half">
+    <% %w[delegated in_progress done blocked].each do |s| %>
+      <% if s == @delegation.status %>
+        <span class="button font-bold"><%= s.tr("_", " ") %></span>
+      <% else %>
+        <%= button_to delegation_path(@delegation), method: :patch, params: { delegation: { status: s } }, class: "button button--ghost text-sm" do %>
+          <%= s.tr("_", " ") %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
 </div>
