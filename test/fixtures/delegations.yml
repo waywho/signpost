@@ -1,0 +1,13 @@
+one:
+  developer: one
+  developer_name: Alice
+  summary: Fix login bug
+  urgency: High
+  status: delegated
+
+two:
+  developer: two
+  developer_name: Bob
+  summary: Update tests
+  urgency: Medium
+  status: in_progress

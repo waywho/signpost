@@ -1,0 +1,13 @@
+one:
+  text: Ship dashboard feature
+  stakeholder: Product team
+  due_date: 2026-05-24
+  done: false
+  source: manual
+
+two:
+  text: Update API docs
+  stakeholder: Engineering
+  due_date: 2026-05-25
+  done: false
+  source: slack

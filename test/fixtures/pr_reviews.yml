@@ -1,0 +1,17 @@
+one:
+  pr_number: 1
+  repo: myorg/myapp
+  pr_title: Add user authentication
+  pr_author: alice
+  recommendation: APPROVE
+  risk_level: LOW
+  summary: Clean implementation
+
+two:
+  pr_number: 2
+  repo: myorg/myapp
+  pr_title: Refactor database layer
+  pr_author: bob
+  recommendation: REQUEST_CHANGES
+  risk_level: MEDIUM
+  summary: Needs more tests

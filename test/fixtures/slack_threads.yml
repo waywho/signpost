@@ -1,0 +1,15 @@
+one:
+  slack_channel_id: C123456
+  slack_channel_name: engineering
+  slack_thread_ts: "1716566400.000001"
+  title: Architecture discussion
+  category: architecture
+  summary: Discussed new service boundaries
+
+two:
+  slack_channel_id: C789012
+  slack_channel_name: incidents
+  slack_thread_ts: "1716566400.000002"
+  title: Production incident
+  category: incident
+  summary: Database connection pool exhaustion
