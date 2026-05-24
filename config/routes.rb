@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   resources :pr_reviews, only: %i[index show new create]
   resources :slack_threads, only: %i[index show new create]
 
+  post "/search", to: "search#create"
+
   resource :status, only: :show, controller: "status"
   resource :dashboard, only: :show, controller: "dashboard"
 
