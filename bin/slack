@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require_relative "../config/environment"
+
+puts "Starting Slack Socket Mode listener..."
+puts "Capture mode: #{Setting.get('global', 'slack_capture_mode', default: 'both')}"
+puts "Brain emoji: #{Setting.get('global', 'slack_brain_emoji', default: 'brain')}"
+puts "Watched channels: #{WatchedChannel.enabled.pluck(:channel_name).join(', ').presence || 'none'}"
+
+SlackSocketListener.start
