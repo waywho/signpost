@@ -13,6 +13,8 @@ Rails.application.routes.draw do
 
   resources :daily_logs, only: [:create, :update]
 
+  resources :pr_reviews, only: %i[index show new create]
+
   resource :status, only: :show, controller: "status"
   resource :dashboard, only: :show, controller: "dashboard"
 

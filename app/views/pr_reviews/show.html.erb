@@ -1,0 +1,60 @@
+<% content_for(:title, "##{@pr_review.pr_number} — PR Reviews — Tech Lead OS") %>
+
+<div style="margin-block-end: var(--size-4)">
+  <%= link_to pr_reviews_path, class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)" do %>
+    <i class="ph ph-caret-left"></i> PR Reviews
+  <% end %>
+</div>
+
+<div class="card" style="margin-block-end: var(--size-4)">
+  <div class="flex items-center gap" style="margin-block-end: var(--size-2)">
+    <% if @pr_review.recommendation.present? %>
+      <span class="text-sm font-bold" style="color: <%= recommendation_color(@pr_review.recommendation) %>"><%= @pr_review.recommendation.tr("_", " ") %></span>
+    <% end %>
+    <% if @pr_review.risk_level.present? %>
+      <span class="text-sm" style="color: <%= risk_color(@pr_review.risk_level) %>"><i class="ph ph-shield-warning"></i> <%= @pr_review.risk_level %></span>
+    <% end %>
+  </div>
+  <h1 class="font-bold text-xl" style="margin-block-end: var(--size-2)">
+    <span style="color: var(--color-text-subtle)">#<%= @pr_review.pr_number %></span>
+    <%= @pr_review.pr_title.presence || "(no title)" %>
+  </h1>
+  <div class="flex items-center gap text-sm" style="color: var(--color-text-subtle)">
+    <span><i class="ph ph-git-branch"></i> <%= @pr_review.repo %></span>
+    <% if @pr_review.pr_author.present? %><span><i class="ph ph-user"></i> <%= @pr_review.pr_author %></span><% end %>
+    <% if @pr_review.reviewed_at %><span><%= @pr_review.reviewed_at.strftime("%b %-d, %Y") %></span><% end %>
+  </div>
+  <% if @pr_review.files_changed || @pr_review.additions || @pr_review.deletions %>
+    <div class="flex items-center gap text-sm" style="margin-block-start: var(--size-2)">
+      <% if @pr_review.files_changed %><span style="color: var(--color-text-subtle)"><i class="ph ph-files"></i> <%= @pr_review.files_changed %> files</span><% end %>
+      <% if @pr_review.additions %><span style="color: var(--color-positive)">+<%= @pr_review.additions %></span><% end %>
+      <% if @pr_review.deletions %><span style="color: var(--color-negative)">-<%= @pr_review.deletions %></span><% end %>
+    </div>
+  <% end %>
+</div>
+
+<% if @pr_review.summary.present? %>
+  <div class="card" style="margin-block-end: var(--size-4)">
+    <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Summary</h2>
+    <p class="text-sm"><%= @pr_review.summary %></p>
+  </div>
+<% end %>
+
+<% { "Critical Flags" => @pr_review.critical_flags, "Risk Areas" => @pr_review.risk_areas, "Missing Tests" => @pr_review.missing_tests, "DDD Issues" => @pr_review.ddd_issues, "OOP Issues" => @pr_review.oop_issues }.each do |title, items| %>
+  <% next unless items.present? %>
+  <div class="card" style="margin-block-end: var(--size-4)">
+    <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><%= title %></h2>
+    <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
+      <% items.each do |item| %>
+        <li class="text-sm">• <%= item.is_a?(Hash) ? (item["description"] || item.to_json) : item %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% if @pr_review.draft_comment.present? %>
+  <div class="card" style="margin-block-end: var(--size-4)">
+    <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><i class="ph ph-chat-text"></i> Draft Comment</h2>
+    <pre class="text-sm" style="white-space: pre-wrap; font-family: inherit"><%= @pr_review.draft_comment %></pre>
+  </div>
+<% end %>

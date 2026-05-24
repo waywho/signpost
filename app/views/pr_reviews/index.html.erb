@@ -1,0 +1,40 @@
+<% content_for(:title, "PR Reviews — Tech Lead OS") %>
+
+<div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">
+  <h1 class="font-bold text-2xl">PR Reviews</h1>
+  <%= link_to new_pr_review_path, class: "button" do %><i class="ph ph-plus"></i> Log Review<% end %>
+</div>
+
+<%= form_with url: pr_reviews_path, method: :get, class: "flex items-center gap", style: "margin-block-end: var(--size-4)",
+      data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |f| %>
+  <%= f.text_field :repo, value: params[:repo], placeholder: "Filter by repo…", class: "input", style: "max-inline-size: 16rem" %>
+  <%= f.select :recommendation, [["All recommendations", ""], ["Approve", "APPROVE"], ["Request Changes", "REQUEST_CHANGES"], ["Needs Discussion", "NEEDS_DISCUSSION"]], { selected: params[:recommendation] }, class: "input" %>
+  <%= f.select :risk_level, [["All risk levels", ""], ["Low", "LOW"], ["Medium", "MEDIUM"], ["High", "HIGH"], ["Critical", "CRITICAL"]], { selected: params[:risk_level] }, class: "input" %>
+  <% if params[:repo].present? || params[:recommendation].present? || params[:risk_level].present? %>
+    <%= link_to "Clear", pr_reviews_path, class: "text-sm", style: "color: var(--color-text-subtle)" %>
+  <% end %>
+<% end %>
+
+<% if @pr_reviews.any? %>
+  <div class="flex flex-col gap">
+    <% @pr_reviews.each do |pr| %>
+      <%= link_to pr_review_path(pr), class: "card flex items-center gap", style: "text-decoration: none" do %>
+        <div class="flex flex-col flex-1" style="min-inline-size: 0">
+          <span class="font-bold text-sm">#<%= pr.pr_number %> <%= pr.pr_title %></span>
+          <span class="text-xs" style="color: var(--color-text-subtle)"><%= pr.repo %> · <%= pr.pr_author %> · <%= pr.reviewed_at&.strftime("%b %-d") %></span>
+        </div>
+        <% if pr.recommendation.present? %>
+          <span class="text-xs font-bold" style="color: <%= recommendation_color(pr.recommendation) %>"><%= pr.recommendation.tr("_", " ") %></span>
+        <% end %>
+        <% if pr.risk_level.present? %>
+          <span class="text-xs" style="color: <%= risk_color(pr.risk_level) %>"><%= pr.risk_level %></span>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="card text-center" style="color: var(--color-text-subtle)">
+    <i class="ph ph-git-pull-request" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4)"></i>
+    <p>No reviews found.</p>
+  </div>
+<% end %>
