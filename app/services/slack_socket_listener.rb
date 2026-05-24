@@ -6,9 +6,9 @@ class SlackSocketListener
       return
     end
 
-    bot_token = Rails.application.credentials.dig(:slack, :bot_token)
+    bot_token = EncryptedSetting.get("credentials", "slack_bot_token")
     unless bot_token
-      puts "Missing slack bot_token in credentials. Exiting."
+      puts "Missing slack_bot_token in encrypted settings. Exiting."
       return
     end
 

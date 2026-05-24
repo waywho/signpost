@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_24_205213) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_24_214231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -88,6 +88,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_205213) do
     t.text "strengths"
     t.datetime "updated_at", null: false
     t.check_constraint "level = ANY (ARRAY['Junior'::text, 'Mid'::text, 'Senior'::text, 'Staff'::text])", name: "developers_level_check"
+  end
+
+  create_table "encrypted_settings", primary_key: ["scope", "key"], force: :cascade do |t|
+    t.text "key", null: false
+    t.text "scope", null: false
+    t.timestamptz "updated_at", default: -> { "now()" }
+    t.text "value", null: false
   end
 
   create_table "noise_filters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

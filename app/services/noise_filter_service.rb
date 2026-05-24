@@ -1,6 +1,6 @@
 class NoiseFilterService
   def initialize(client: nil)
-    @client = client || Anthropic::Client.new(api_key: Rails.application.credentials.dig(:anthropic, :api_key))
+    @client = client || Anthropic::Client.new(api_key: EncryptedSetting.get("credentials", "anthropic_api_key"))
   end
 
   def noise?(message_content)
