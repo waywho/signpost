@@ -1,0 +1,44 @@
+<% content_for(:title, "1:1 #{@oneone_session.session_date.strftime('%B %-d')} — #{@developer.name} — Tech Lead OS") %>
+
+<div class="container" style="max-inline-size: 40rem; margin-block-start: var(--size-6)">
+  <div style="margin-block-end: var(--size-4)">
+    <%= link_to developer_path(@developer), class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)" do %>
+      <i class="ph ph-caret-left"></i> <%= @developer.name %>
+    <% end %>
+  </div>
+
+  <h1 class="font-bold text-2xl" style="margin-block-end: var(--size-6)">
+    1:1 — <%= @oneone_session.session_date.strftime("%B %-d, %Y") %>
+  </h1>
+
+  <% %w[discussed wins challenges growth action_items].each do |field| %>
+    <% value = @oneone_session.send(field) %>
+    <% next unless value.present? %>
+    <div class="card" style="margin-block-end: var(--size-4)">
+      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><%= field.humanize %></h2>
+      <p class="text-sm" style="white-space: pre-wrap"><%= value %></p>
+    </div>
+  <% end %>
+
+  <% if @oneone_session.private_notes.present? %>
+    <div class="card" style="margin-block-end: var(--size-4); border-color: var(--color-border-dark)">
+      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">
+        <i class="ph ph-lock"></i> Private Notes
+      </h2>
+      <p class="text-sm" style="white-space: pre-wrap"><%= @oneone_session.private_notes %></p>
+    </div>
+  <% end %>
+
+  <% if @oneone_session.summary.present? %>
+    <div class="card" style="margin-block-end: var(--size-4)">
+      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Summary</h2>
+      <p class="text-sm"><%= @oneone_session.summary %></p>
+    </div>
+  <% end %>
+
+  <div class="flex items-center gap">
+    <%= link_to developer_path(@developer), class: "text-sm", style: "color: var(--color-text-subtle)" do %>
+      <i class="ph ph-arrow-left"></i> Back to <%= @developer.name %>
+    <% end %>
+  </div>
+</div>
