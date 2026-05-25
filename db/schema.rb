@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_120020) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_133858) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -176,13 +176,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120020) do
 
   create_table "pr_reviews", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "additions"
+    t.jsonb "analysis_data"
     t.jsonb "business_logic_risk", default: {}
+    t.text "cc_command"
     t.datetime "created_at", null: false
     t.jsonb "critical_flags", default: []
     t.jsonb "ddd_issues", default: []
     t.integer "deletions"
+    t.uuid "developer_id"
     t.text "draft_comment"
     t.integer "files_changed"
+    t.text "head_sha"
     t.jsonb "missing_tests", default: []
     t.jsonb "oop_issues", default: []
     t.text "pr_author"
@@ -195,6 +199,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120020) do
     t.text "risk_level"
     t.text "summary"
     t.datetime "updated_at", null: false
+    t.index ["developer_id"], name: "index_pr_reviews_on_developer_id"
     t.index ["repo"], name: "index_pr_reviews_on_repo"
     t.index ["reviewed_at"], name: "index_pr_reviews_on_reviewed_at"
     t.check_constraint "(recommendation = ANY (ARRAY['APPROVE'::text, 'REQUEST_CHANGES'::text, 'NEEDS_DISCUSSION'::text])) OR recommendation IS NULL", name: "pr_reviews_recommendation_check"
@@ -434,6 +439,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120020) do
   add_foreign_key "delegations", "developers", on_delete: :nullify
   add_foreign_key "developer_notes", "developers", on_delete: :cascade
   add_foreign_key "oneone_sessions", "developers", on_delete: :cascade
+  add_foreign_key "pr_reviews", "developers"
   add_foreign_key "slack_messages", "slack_threads", on_delete: :cascade
   add_foreign_key "slack_topic_messages", "slack_messages", on_delete: :cascade
   add_foreign_key "slack_topic_messages", "slack_topics", on_delete: :cascade

@@ -25,6 +25,7 @@ class PrAnalysisService
     result = parse_response(response)
 
     Rails.cache.write(cache_key, result, expires_in: 7.days)
+    save_to_pr_review(repo, pr_number, pr, head_sha, result)
     result
   end
 
@@ -124,5 +125,49 @@ class PrAnalysisService
     JSON.parse(json_text).deep_symbolize_keys
   rescue JSON::ParserError
     { summary: response.to_s.truncate(500), parse_error: true }
+  end
+
+  def save_to_pr_review(repo, pr_number, pr, head_sha, result)
+    return if result[:parse_error]
+
+    developer = Developer.find_by("LOWER(github_handle) = ?", pr[:author]&.downcase)
+    issues = result[:issues] || {}
+    issue_counts = {
+      critical: (issues[:critical] || []).size,
+      important: (issues[:important] || []).size,
+      minor: (issues[:minor] || []).size
+    }
+
+    # One-line competence summary for developer tracking
+    competence_summary = build_competence_summary(result, issue_counts)
+
+    PrReview.create!(
+      repo: repo,
+      pr_number: pr_number,
+      pr_title: pr[:title],
+      pr_author: pr[:author],
+      recommendation: result[:recommendation],
+      risk_level: result.dig(:risk_areas, 0, :severity)&.upcase,
+      summary: competence_summary,
+      head_sha: head_sha,
+      developer: developer,
+      reviewed_at: Time.current,
+      additions: pr[:additions],
+      deletions: pr[:deletions],
+      files_changed: pr[:changed_files]
+    )
+  rescue => e
+    Rails.logger.error("PrAnalysisService save_to_pr_review error: #{e.message}")
+  end
+
+  def build_competence_summary(result, counts)
+    parts = []
+    parts << result[:recommendation]&.downcase&.tr("_", " ")
+    parts << "#{counts[:critical]}🔴 #{counts[:important]}🟡 #{counts[:minor]}🔵"
+    strengths = result[:strengths]
+    parts << "Strengths: #{strengths.first}" if strengths&.any?
+    top_issue = (result.dig(:issues, :critical) || result.dig(:issues, :important))&.first
+    parts << "Top issue: #{top_issue[:issue]}" if top_issue
+    parts.compact.join(". ")
   end
 end

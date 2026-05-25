@@ -18,6 +18,7 @@ class OneOnePrepService
       last_oneone: developer.oneone_sessions.recent.first,
       delegations: developer.delegations.active.map { |d| { summary: d.summary, status: d.status, urgency: d.urgency } },
       github_activity: fetch_activity(developer),
+      pr_reviews: fetch_pr_reviews(developer),
       profile: { strengths: developer.strengths, growth_areas: developer.growth_areas, career_goals: developer.career_goals }
     }
   end
@@ -28,6 +29,18 @@ class OneOnePrepService
   rescue => e
     Rails.logger.error("OneOnePrepService GitHub activity error: #{e.message}")
     []
+  end
+
+  def fetch_pr_reviews(developer)
+    PrReview.for_developer(developer).where("reviewed_at > ?", 3.months.ago).recent.limit(10).map do |pr|
+      {
+        repo: pr.repo,
+        pr_number: pr.pr_number,
+        title: pr.pr_title,
+        summary: pr.summary,
+        date: pr.reviewed_at&.strftime("%b %-d")
+      }
+    end
   end
 
   def build_prompt(developer, context)
@@ -47,6 +60,10 @@ class OneOnePrepService
     activity_text = context[:github_activity].any? ?
       context[:github_activity].first(10).map { |a| "- #{a[:type]}: #{a[:title]} (#{a[:repo]})" }.join("\n") :
       "No recent GitHub activity"
+
+    pr_review_text = context[:pr_reviews].any? ?
+      context[:pr_reviews].map { |pr| "- [#{pr[:date]}] ##{pr[:pr_number]} #{pr[:title]} (#{pr[:repo]}): #{pr[:summary]}" }.join("\n") :
+      "No PR reviews on record"
 
     <<~PROMPT
       You are helping a tech lead prepare for a 1:1 meeting with #{developer.name} (#{developer.role}, #{developer.level}).
@@ -68,10 +85,13 @@ class OneOnePrepService
       GitHub activity (last 30 days):
       #{activity_text}
 
+      PR reviews (last 3 months — these are PRs this developer authored that were analyzed):
+      #{pr_review_text}
+
       Generate a 1:1 prep briefing with these sections:
 
       ## Suggested Talking Points
-      Based on recent notes and activity, what should you discuss?
+      Based on recent notes, activity, and PR review patterns, what should you discuss?
 
       ## Follow-ups from Last 1:1
       Any open action items or topics that need revisiting?
@@ -79,8 +99,12 @@ class OneOnePrepService
       ## Concerns to Address
       Issues flagged in "concern" notes that need attention.
 
+      ## Code Quality Patterns
+      Based on PR reviews: recurring issue types, areas to improve, what they're doing well.
+      If no PR reviews on record, skip this section.
+
       ## Growth Opportunities
-      Based on "growth" notes and career goals, what to encourage or suggest.
+      Based on "growth" notes, career goals, and PR review patterns, what to encourage or suggest.
 
       ## Wins to Acknowledge
       Recent achievements from "good" notes and GitHub activity worth recognizing.
