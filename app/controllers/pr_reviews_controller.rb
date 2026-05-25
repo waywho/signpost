@@ -47,24 +47,25 @@ class PrReviewsController < ApplicationController
   end
 
   def analyze_pr
+    @repo = params[:repo]
+    @pr_number = params[:pr_number].to_i
+    @pr_title = params[:pr_title]
+    @pr_author = params[:pr_author]
+  end
+
+  def run_analysis
     repo = params[:repo]
     pr_number = params[:pr_number].to_i
     service = PrAnalysisService.new
     @analysis = service.analyze(repo: repo, pr_number: pr_number)
-    @repo = repo
-    @pr_number = pr_number
-    @pr_title = params[:pr_title]
-    @pr_author = params[:pr_author]
     @cc_command = service.claude_code_command(
-      OpenStruct.new(pr_number: pr_number, pr_title: @pr_title, repo: repo),
+      OpenStruct.new(pr_number: pr_number, pr_title: params[:pr_title], repo: repo),
       (@analysis[:risk_areas] || []).map { |r| r[:file] }.compact
     )
-    render :analyze_pr
+    render :run_analysis, layout: false
   rescue => e
     @error = e.message
-    @repo = repo
-    @pr_number = pr_number
-    render :analyze_pr
+    render :run_analysis, layout: false
   end
 
   def analyze

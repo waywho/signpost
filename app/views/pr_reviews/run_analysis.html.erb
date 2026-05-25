@@ -1,0 +1,9 @@
+<%= turbo_frame_tag "pr_analysis_result" do %>
+  <% if @error %>
+    <div class="alert alert--negative mbe-4">
+      <p class="text-sm"><i class="ph ph-warning"></i> Analysis failed: <%= @error %></p>
+    </div>
+  <% elsif @analysis %>
+    <%= render "analysis", analysis: @analysis, cc_command: @cc_command %>
+  <% end %>
+<% end %>

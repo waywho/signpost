@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     collection do
       post :ignore
       get :analyze_pr
+      get :run_analysis
     end
   end
   resources :slack_threads, only: %i[index show new create] do
