@@ -7,6 +7,8 @@ class EncryptedSetting < ApplicationRecord
 
   def self.get(scope, key)
     find_by(scope: scope, key: key)&.value
+  rescue ActiveRecord::Encryption::Errors::Decryption
+    nil
   end
 
   def self.set(scope, key, value)

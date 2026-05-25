@@ -1,3 +1,186 @@
 <% content_for(:title, "Settings — Tech Lead OS") %>
-<h1 class="font-bold text-2xl">Settings</h1>
-<p class="text-sm" style="color: var(--color-text-subtle)">Full settings page coming next.</p>
+
+<h1 class="font-bold text-2xl" style="margin-block-end: var(--size-6)">Settings</h1>
+
+<%# API Keys %>
+<div class="card" style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-key"></i> API Keys
+  </h2>
+  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+    <%= hidden_field_tag :section, "api_keys" %>
+    <% %w[openai_api_key anthropic_api_key github_pat slack_bot_token slack_app_token].each do |key| %>
+      <div>
+        <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)"><%= key.tr("_", " ").titleize %></label>
+        <% has_value = EncryptedSetting.get("credentials", key).present? %>
+        <input type="password" name="<%= key %>" value="<%= has_value ? '••••••••' : '' %>"
+               class="input" style="inline-size: 100%" placeholder="<%= has_value ? 'Configured' : 'Not set' %>">
+      </div>
+    <% end %>
+    <%= f.submit "Save API Keys", class: "button", style: "align-self: flex-start" %>
+  <% end %>
+</div>
+
+<%# GitHub %>
+<div class="card" style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-github-logo"></i> GitHub
+  </h2>
+  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+    <%= hidden_field_tag :section, "github" %>
+    <div>
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Username</label>
+      <input type="text" name="github_username" value="<%= Setting.get('global', 'github_username') %>" class="input" placeholder="your-github-handle">
+    </div>
+    <div>
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(comma-separated, for issue creation)</span></label>
+      <input type="text" name="github_repos" value="<%= (Setting.get('global', 'github_repos', default: []) || []).join(', ') %>" class="input" style="inline-size: 100%" placeholder="org/repo1, org/repo2">
+    </div>
+    <%= f.submit "Save GitHub Settings", class: "button", style: "align-self: flex-start" %>
+  <% end %>
+</div>
+
+<%# Slack %>
+<div class="card" style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-chat-teardrop-dots"></i> Slack Capture
+  </h2>
+  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+    <%= hidden_field_tag :section, "slack" %>
+    <div class="flex gap">
+      <div style="flex: 1">
+        <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Capture Mode</label>
+        <select name="slack_capture_mode" class="input">
+          <% %w[socket poll both].each do |mode| %>
+            <option value="<%= mode %>" <%= 'selected' if Setting.get('global', 'slack_capture_mode', default: 'both') == mode %>><%= mode %></option>
+          <% end %>
+        </select>
+      </div>
+      <div style="flex: 1">
+        <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Brain Emoji</label>
+        <input type="text" name="slack_brain_emoji" value="<%= Setting.get('global', 'slack_brain_emoji', default: 'brain') %>" class="input">
+      </div>
+      <div style="flex: 1">
+        <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Poll Interval (min)</label>
+        <input type="number" name="poll_interval_minutes" value="<%= Setting.get('global', 'poll_interval_minutes', default: 15) %>" class="input">
+      </div>
+    </div>
+    <%= f.submit "Save Slack Settings", class: "button", style: "align-self: flex-start" %>
+  <% end %>
+</div>
+
+<%# Watched Channels %>
+<div class="card" style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-hash"></i> Watched Channels
+  </h2>
+  <% if @watched_channels.any? %>
+    <div class="flex flex-col gap-half" style="margin-block-end: var(--size-4)">
+      <% @watched_channels.each do |ch| %>
+        <div class="flex items-center justify-between" style="padding-block: var(--size-1); border-block-end: 1px solid var(--color-border)">
+          <div>
+            <span class="font-bold text-sm"><%= ch.channel_name %></span>
+            <span class="text-xs" style="color: var(--color-text-subtle)"><%= ch.channel_id %> · <%= ch.capture_mode %></span>
+          </div>
+          <%= button_to settings_path, method: :patch, params: { section: "watched_channel_remove", channel_id: ch.channel_id }, class: "text-sm", style: "color: var(--color-negative)" do %>
+            <i class="ph ph-trash"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
+    <%= hidden_field_tag :section, "watched_channel_add" %>
+    <div style="flex: 1">
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Channel ID</label>
+      <input type="text" name="channel_id" class="input" placeholder="C04XXXXXXX" required>
+    </div>
+    <div style="flex: 1">
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Channel Name</label>
+      <input type="text" name="channel_name" class="input" placeholder="engineering" required>
+    </div>
+    <div style="flex: 1">
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Capture Mode</label>
+      <select name="capture_mode" class="input">
+        <option value="full_stream">Full Stream</option>
+        <option value="involvement_only">Involvement Only</option>
+        <option value="ignored">Ignored</option>
+      </select>
+    </div>
+    <%= f.submit "Add Channel", class: "button" %>
+  <% end %>
+</div>
+
+<%# Noise Filters %>
+<div class="card" style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-funnel"></i> Noise Filters
+  </h2>
+  <% if @noise_filters.any? %>
+    <div class="flex flex-col gap-half" style="margin-block-end: var(--size-4)">
+      <% @noise_filters.each do |nf| %>
+        <div class="flex items-center justify-between" style="padding-block: var(--size-1); border-block-end: 1px solid var(--color-border)">
+          <div>
+            <span class="font-bold text-sm"><%= nf.category %></span>
+            <span class="text-xs" style="color: var(--color-text-subtle)"><%= nf.description %></span>
+          </div>
+          <%= button_to settings_path, method: :patch, params: { section: "noise_filter_remove", filter_id: nf.id }, class: "text-sm", style: "color: var(--color-negative)" do %>
+            <i class="ph ph-trash"></i>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
+    <%= hidden_field_tag :section, "noise_filter_add" %>
+    <div style="flex: 1">
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Category</label>
+      <input type="text" name="filter_category" class="input" placeholder="deploy_notification" required>
+    </div>
+    <div style="flex: 2">
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Description</label>
+      <input type="text" name="filter_description" class="input" placeholder="Automated deploy notifications" required>
+    </div>
+    <%= f.submit "Add Filter", class: "button" %>
+  <% end %>
+</div>
+
+<%# Search %>
+<div class="card" style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-magnifying-glass"></i> Search
+  </h2>
+  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
+    <%= hidden_field_tag :section, "search" %>
+    <div style="flex: 1">
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Default Similarity Threshold</label>
+      <input type="number" name="search_default_threshold" value="<%= Setting.get('global', 'search_default_threshold', default: 0.75) %>" step="0.05" min="0" max="1" class="input">
+    </div>
+    <%= f.submit "Save", class: "button" %>
+  <% end %>
+</div>
+
+<%# Compression %>
+<div class="card">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-archive"></i> Compression & Reanalysis
+  </h2>
+  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+    <%= hidden_field_tag :section, "compression" %>
+    <div class="flex gap">
+      <div style="flex: 1">
+        <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Compress after (months)</label>
+        <input type="number" name="compression_after_months" value="<%= Setting.get('global', 'compression_after_months', default: 6) %>" class="input">
+      </div>
+      <div style="flex: 1">
+        <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Reanalysis threshold (messages)</label>
+        <input type="number" name="reanalysis_message_threshold" value="<%= Setting.get('global', 'reanalysis_message_threshold', default: 3) %>" class="input">
+      </div>
+      <div style="flex: 1">
+        <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Reanalysis quiet period (min)</label>
+        <input type="number" name="reanalysis_quiet_minutes" value="<%= Setting.get('global', 'reanalysis_quiet_minutes', default: 30) %>" class="input">
+      </div>
+    </div>
+    <%= f.submit "Save Compression Settings", class: "button", style: "align-self: flex-start" %>
+  <% end %>
+</div>
