@@ -1,5 +1,12 @@
 # Tech Lead OS — Project Conventions
 
+## Views & Controllers
+
+- **No DB queries in views.** All data comes from controller instance variables or locals. No `Setting.get`, `EncryptedSetting.get`, `ClaudeService.new`, `GitHubService.new`, `Model.find_by`, or `Model.where` in ERB templates.
+- **No N+1 queries.** Use `includes` for associations accessed in loops. Preload lookup data (e.g., `pluck` + `Set`) before rendering collections.
+- **Use `Current` for per-request caching.** `Setting.get` and `EncryptedSetting.get` cache per-request via `Current.setting_cache`. Don't bypass this by calling `find_by` directly.
+- **Service checks in controllers, not views.** `configured?` calls go in the controller, passed as `@claude_configured`, `@github_configured`, etc.
+
 ## Styling
 
 Use **css-zero** — no Tailwind, no build step. All styles served via Propshaft.
