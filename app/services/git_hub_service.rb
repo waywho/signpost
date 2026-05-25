@@ -53,6 +53,39 @@ class GitHubService
     { number: issue.number, url: issue.html_url, title: issue.title }
   end
 
+  def pr_diff(repo, number)
+    @client.get("repos/#{repo}/pulls/#{number}", accept: "application/vnd.github.v3.diff").to_s
+  rescue Octokit::Error => e
+    Rails.logger.error("GitHubService pr_diff error: #{e.message}")
+    ""
+  end
+
+  def pr_comments(repo, number)
+    review_comments = @client.pull_request_comments(repo, number).map do |c|
+      { user: c.user.login, body: c.body, path: c.path, line: c.line }
+    end
+    issue_comments = @client.issue_comments(repo, number).map do |c|
+      { user: c.user.login, body: c.body }
+    end
+    (review_comments + issue_comments).first(10)
+  rescue Octokit::Error => e
+    Rails.logger.error("GitHubService pr_comments error: #{e.message}")
+    []
+  end
+
+  def linked_issue(repo, number)
+    pr = @client.pull_request(repo, number)
+    body = pr.body.to_s
+    issue_match = body.match(/#(\d+)/)
+    return nil unless issue_match
+
+    issue_number = issue_match[1].to_i
+    issue = @client.issue(repo, issue_number)
+    { number: issue.number, title: issue.title, body: issue.body }
+  rescue Octokit::Error
+    nil
+  end
+
   private
 
   def parse_event(event)

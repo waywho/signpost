@@ -54,4 +54,34 @@ class GitHubServiceTest < ActiveSupport::TestCase
     assert_equal 1, result.size
     assert_equal "commit", result.first[:type]
   end
+
+  test "pr_comments returns formatted comments" do
+    review_comment = OpenStruct.new(user: OpenStruct.new(login: "alice"), body: "Fix this", path: "app.rb", line: 10)
+    issue_comment = OpenStruct.new(user: OpenStruct.new(login: "bob"), body: "Looks good")
+
+    @mock_client.define_singleton_method(:pull_request_comments) { |repo, number| [review_comment] }
+    @mock_client.define_singleton_method(:issue_comments) { |repo, number| [issue_comment] }
+
+    result = @service.pr_comments("org/repo", 42)
+    assert_equal 2, result.size
+    assert_equal "alice", result.first[:user]
+  end
+
+  test "linked_issue returns issue data" do
+    pr = OpenStruct.new(body: "Fixes #123")
+    issue = OpenStruct.new(number: 123, title: "Bug report", body: "Details")
+
+    @mock_client.define_singleton_method(:pull_request) { |repo, number| pr }
+    @mock_client.define_singleton_method(:issue) { |repo, number| issue }
+
+    result = @service.linked_issue("org/repo", 42)
+    assert_equal 123, result[:number]
+  end
+
+  test "linked_issue returns nil when no issue referenced" do
+    pr = OpenStruct.new(body: "Just a change")
+    @mock_client.define_singleton_method(:pull_request) { |repo, number| pr }
+
+    assert_nil @service.linked_issue("org/repo", 42)
+  end
 end
