@@ -63,6 +63,12 @@
 </div>
 
 <%# GitHub %>
+<%
+  github_service = GitHubService.new
+  github_configured = github_service.configured?
+  available_repos = github_configured ? (github_service.list_repos rescue []) : []
+  selected_repos = Setting.get("global", "github_repos", default: []) || []
+%>
 <div class="card mbe-6">
   <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
     <i class="ph ph-github-logo"></i> GitHub
@@ -74,8 +80,25 @@
       <input type="text" name="github_username" value="<%= Setting.get('global', 'github_username') %>" class="input" placeholder="your-github-handle">
     </div>
     <div>
-      <label class="text-sm font-bold mbe-1" style="display: block">Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(comma-separated, for issue creation)</span></label>
-      <input type="text" name="github_repos" value="<%= (Setting.get('global', 'github_repos', default: []) || []).join(', ') %>" class="input" style="inline-size: 100%" placeholder="org/repo1, org/repo2">
+      <label class="text-sm font-bold mbe-2" style="display: block">Watched Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(for issue creation)</span></label>
+      <% if available_repos.any? %>
+        <div class="flex flex-col gap-half" style="max-block-size: 20rem; overflow-y: auto">
+          <% available_repos.each do |repo| %>
+            <label class="flex items-center gap-half text-sm">
+              <input type="checkbox" name="github_repos[]" value="<%= repo[:full_name] %>" class="input"
+                     <%= 'checked' if selected_repos.include?(repo[:full_name]) %>>
+              <%= repo[:full_name] %>
+              <% if repo[:private] %>
+                <i class="ph ph-lock" style="color: var(--color-text-subtle)"></i>
+              <% end %>
+            </label>
+          <% end %>
+        </div>
+      <% elsif github_configured %>
+        <p class="text-sm" style="color: var(--color-text-subtle)">Could not fetch repos. Check your GitHub PAT.</p>
+      <% else %>
+        <p class="text-sm" style="color: var(--color-text-subtle)">Configure GitHub PAT above to see your repos.</p>
+      <% end %>
     </div>
     <%= f.submit "Save GitHub Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
   <% end %>

@@ -62,8 +62,7 @@ class SettingsController < ApplicationController
   end
 
   def save_github_repos
-    return unless params[:github_repos].present?
-    repos = params[:github_repos].split(",").map(&:strip).reject(&:blank?)
+    repos = Array(params[:github_repos]).reject(&:blank?)
     Setting.set("global", "github_repos", repos)
   end
 
