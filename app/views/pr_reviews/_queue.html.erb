@@ -5,19 +5,11 @@
 <% elsif pr_queue.any? %>
   <% repos = pr_queue.map { |pr| pr[:repo] }.uniq.sort %>
   <div class="card mbe-6" data-controller="bulk-select pr-filter">
-    <div class="flex items-center justify-between mbe-4">
-      <h2 class="font-bold flex items-center gap-half">
-        <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
-        Awaiting Your Review
-        <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= pr_queue.size %>)</span>
-      </h2>
-      <div class="flex items-center gap-half">
-        <label class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
-          <input type="checkbox" class="input" data-bulk-select-target="selectAll" data-action="bulk-select#toggleAll">
-          Select all
-        </label>
-      </div>
-    </div>
+    <h2 class="font-bold flex items-center gap-half mbe-4">
+      <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
+      Awaiting Your Review
+      <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= pr_queue.size %>)</span>
+    </h2>
 
     <%# Repo tabs + search %>
     <div class="flex items-center gap mbe-4" style="flex-wrap: wrap">
@@ -35,6 +27,12 @@
       <div class="flex items-center gap-half mbe-2" data-bulk-select-target="actions" hidden>
         <span class="text-xs" style="color: var(--color-text-subtle)" data-count></span>
         <%= f.submit "Ignore Selected", class: "btn btn--borderless text-xs" %>
+      </div>
+      <div class="flex items-center gap-half mbe-2" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
+        <label class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
+          <input type="checkbox" class="input" data-bulk-select-target="selectAll" data-action="bulk-select#toggleAll">
+          Select all
+        </label>
       </div>
       <div class="flex flex-col gap-half">
         <% pr_queue.each do |pr| %>
