@@ -182,8 +182,9 @@
         </h2>
 
         <%# Tokens %>
+        <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Tokens</h3>
         <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap mbe-6" do |f| %>
-          <%= hidden_field_tag :section, "slack" %>
+          <%= hidden_field_tag :section, "slack_tokens" %>
           <% slack_keys.each do |key, meta| %>
             <div data-controller="password-reveal">
               <div class="flex items-center gap-half mbe-1">
@@ -201,9 +202,14 @@
               <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
             </div>
           <% end %>
+          <%= f.submit "Save Tokens", class: "btn btn--primary", style: "align-self: flex-start" %>
+        <% end %>
 
-          <div class="separator mbe-2 mbs-2"></div>
-          <h3 class="font-bold text-xs" style="color: var(--color-text-subtle)">Capture Settings</h3>
+        <%# Capture Settings %>
+        <div class="separator mbe-4"></div>
+        <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Capture Settings</h3>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap mbe-6" do |f| %>
+          <%= hidden_field_tag :section, "slack" %>
           <div class="flex gap">
             <div style="flex: 1">
               <label class="text-sm font-bold mbe-1" style="display: block">Capture Mode</label>
@@ -222,7 +228,7 @@
               <input type="number" name="poll_interval_minutes" value="<%= Setting.get('global', 'poll_interval_minutes', default: 15) %>" class="input">
             </div>
           </div>
-          <%= f.submit "Save Slack Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
+          <%= f.submit "Save Capture Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
         <% end %>
 
         <%# Watched Channels %>

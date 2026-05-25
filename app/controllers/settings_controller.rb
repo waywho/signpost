@@ -24,6 +24,8 @@ class SettingsController < ApplicationController
       save_encrypted(:anthropic_api_key)
     when "api_keys"
       API_KEYS.each { |key| save_encrypted(key) }
+    when "slack_tokens"
+      SLACK_TOKENS.each { |key| save_encrypted(key) }
     when "github", "slack", "search", "compression"
       save_settings(params[:section])
     when "watched_channel_add"
@@ -56,8 +58,6 @@ class SettingsController < ApplicationController
     if section == "github"
       save_encrypted(:github_pat)
       save_github_repos
-    elsif section == "slack"
-      SLACK_TOKENS.each { |key| save_encrypted(key) }
     end
   end
 
