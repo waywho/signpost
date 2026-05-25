@@ -3,17 +3,17 @@
     <span class="text-sm font-bold" style="flex: 1">
       <i class="ph ph-tray"></i> Triage
     </span>
-    <%= button_to acknowledge_slack_thread_path(thread), method: :post, class: "button" do %>
+    <%= button_to acknowledge_slack_thread_path(thread), method: :post, class: "btn" do %>
       <i class="ph ph-check"></i> Acknowledge
     <% end %>
-    <%= button_to delegate_slack_thread_path(thread), method: :post, class: "button" do %>
+    <%= button_to delegate_slack_thread_path(thread), method: :post, class: "btn" do %>
       <i class="ph ph-arrow-bend-up-right"></i> Delegate
     <% end %>
-    <%= button_to dismiss_slack_thread_path(thread), method: :post, class: "button button--ghost" do %>
+    <%= button_to dismiss_slack_thread_path(thread), method: :post, class: "btn btn--borderless" do %>
       <i class="ph ph-x"></i> Dismiss
     <% end %>
     <% if thread.slack_url.present? %>
-      <%= link_to thread.slack_url, target: "_blank", class: "button button--ghost" do %>
+      <%= link_to thread.slack_url, target: "_blank", class: "btn btn--borderless" do %>
         <i class="ph ph-arrow-square-out"></i> Open in Slack
       <% end %>
     <% end %>

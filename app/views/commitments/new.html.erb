@@ -27,8 +27,8 @@
         <%= f.select :source, [["", ""], ["Manual", "manual"], ["Slack", "slack"], ["Meeting", "meeting"]], {}, class: "input" %>
       </div>
       <div class="flex items-center gap">
-        <%= f.submit "Add Commitment", class: "button" %>
-        <%= link_to "Cancel", commitments_path, class: "button button--ghost" %>
+        <%= f.submit "Add Commitment", class: "btn" %>
+        <%= link_to "Cancel", commitments_path, class: "btn btn--borderless" %>
       </div>
     <% end %>
   </div>

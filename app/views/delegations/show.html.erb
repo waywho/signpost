@@ -51,7 +51,7 @@
     <%= form_with url: create_issue_delegation_path(@delegation), method: :post, class: "flex items-center gap" do |f| %>
       <%= f.select :repo, github_repos.map { |r| [r, r] },
             { include_blank: "— select repo —" }, class: "input" %>
-      <%= f.submit "Create Issue", class: "button" %>
+      <%= f.submit "Create Issue", class: "btn" %>
     <% end %>
   </div>
 <% end %>
@@ -61,9 +61,9 @@
   <div class="flex items-center gap-half">
     <% %w[delegated in_progress done blocked].each do |s| %>
       <% if s == @delegation.status %>
-        <span class="button font-bold"><%= s.tr("_", " ") %></span>
+        <span class="btn font-bold"><%= s.tr("_", " ") %></span>
       <% else %>
-        <%= button_to delegation_path(@delegation), method: :patch, params: { delegation: { status: s } }, class: "button button--ghost text-sm" do %>
+        <%= button_to delegation_path(@delegation), method: :patch, params: { delegation: { status: s } }, class: "btn btn--borderless text-sm" do %>
           <%= s.tr("_", " ") %>
         <% end %>
       <% end %>

@@ -59,7 +59,7 @@
         <input type="text" name="participants_raw" class="input" placeholder="@alice, @bob" value="<%= @slack_thread.participants&.join(', ') %>">
       </div>
 
-      <div class="flex items-center gap"><%= f.submit "Log Thread", class: "button" %><%= link_to "Cancel", slack_threads_path, class: "button button--ghost" %></div>
+      <div class="flex items-center gap"><%= f.submit "Log Thread", class: "btn" %><%= link_to "Cancel", slack_threads_path, class: "btn btn--borderless" %></div>
     <% end %>
   </div>
 </div>

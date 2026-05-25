@@ -86,7 +86,7 @@
         <%= form_with model: [@developer, @developer_note], class: "flex items-center gap", style: "margin-block-end: var(--size-4)" do |f| %>
           <%= f.select :note_type, [["Good", "good"], ["Growth", "growth"], ["Concern", "concern"], ["Context", "context"]], {}, class: "input", style: "max-inline-size: 8rem" %>
           <%= f.text_field :content, placeholder: "Add observation...", class: "input flex-1" %>
-          <%= f.submit "Add", class: "button" %>
+          <%= f.submit "Add", class: "btn" %>
         <% end %>
       <% end %>
 
@@ -101,7 +101,7 @@
     <turbo-frame id="oneone_prep">
       <% if ClaudeService.new.configured? %>
         <div class="card" style="margin-block-end: var(--size-4)">
-          <%= button_to prep_developer_path(@developer), method: :post, class: "button", data: { turbo_frame: "oneone_prep" } do %>
+          <%= button_to prep_developer_path(@developer), method: :post, class: "btn", data: { turbo_frame: "oneone_prep" } do %>
             <i class="ph ph-brain"></i> Prep 1:1
           <% end %>
           <p class="text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-2)">

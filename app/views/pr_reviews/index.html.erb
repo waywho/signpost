@@ -2,7 +2,7 @@
 
 <div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">
   <h1 class="font-bold text-2xl">PR Reviews</h1>
-  <%= link_to new_pr_review_path, class: "button" do %><i class="ph ph-plus"></i> Log Review<% end %>
+  <%= link_to new_pr_review_path, class: "btn" do %><i class="ph ph-plus"></i> Log Review<% end %>
 </div>
 
 <%= render "queue", pr_queue: @pr_queue %>
