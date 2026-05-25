@@ -48,11 +48,12 @@ class ClaudeService
   def analyze_via_cli(prompt, max_tokens:, model:)
     require "open3"
 
-    stdout, status = Open3.capture2("claude", "-p", prompt, "--output-format", "text", "--max-turns", "1")
+    stdout, stderr, status = Open3.capture3("claude", "-p", "-", "--output-format", "text", "--max-turns", "1", stdin_data: prompt)
 
     unless status.success?
-      Rails.logger.error("Claude CLI failed: #{stdout}")
-      raise "Claude CLI failed: #{stdout.truncate(200)}"
+      error = stderr.presence || stdout
+      Rails.logger.error("Claude CLI failed: #{error}")
+      raise "Claude CLI failed: #{error.truncate(200)}"
     end
 
     stdout.strip
