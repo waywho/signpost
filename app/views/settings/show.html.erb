@@ -82,9 +82,19 @@
     <div>
       <label class="text-sm font-bold mbe-2" style="display: block">Watched Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(for issue creation)</span></label>
       <% if available_repos.any? %>
-        <div class="flex flex-col gap-half" style="max-block-size: 20rem; overflow-y: auto">
+        <% orgs = available_repos.map { |r| r[:full_name].split("/").first }.uniq.sort %>
+        <% if orgs.size > 1 %>
+          <div class="flex items-center gap-half mbe-2" data-controller="repo-filter">
+            <span class="text-xs" style="color: var(--color-text-subtle)">Filter:</span>
+            <button type="button" class="badge" data-action="repo-filter#filter" data-repo-filter-org-param="">All</button>
+            <% orgs.each do |org| %>
+              <button type="button" class="badge" data-action="repo-filter#filter" data-repo-filter-org-param="<%= org %>"><%= org %></button>
+            <% end %>
+          </div>
+        <% end %>
+        <div class="flex flex-col gap-half" style="max-block-size: 20rem; overflow-y: auto" data-repo-filter-target="list">
           <% available_repos.each do |repo| %>
-            <label class="flex items-center gap-half text-sm">
+            <label class="flex items-center gap-half text-sm" data-org="<%= repo[:full_name].split('/').first %>">
               <input type="checkbox" name="github_repos[]" value="<%= repo[:full_name] %>" class="input"
                      <%= 'checked' if selected_repos.include?(repo[:full_name]) %>>
               <%= repo[:full_name] %>
