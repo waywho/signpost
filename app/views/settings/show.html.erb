@@ -243,16 +243,29 @@
             <% end %>
           </div>
         <% end %>
+        <%
+          slack_service = SlackService.new
+          available_channels = slack_service.configured? ? slack_service.list_channels : []
+          watched_ids = @watched_channels.map(&:channel_id)
+          unwatched_channels = available_channels.reject { |ch| watched_ids.include?(ch[:id]) }
+        %>
         <%= form_with url: settings_path, method: :patch, class: "flex items-end gap mbe-6" do |f| %>
           <%= hidden_field_tag :section, "watched_channel_add" %>
-          <div style="flex: 1">
-            <label class="text-sm font-bold mbe-1" style="display: block">Channel ID</label>
-            <input type="text" name="channel_id" class="input" placeholder="C04XXXXXXX" required>
-          </div>
-          <div style="flex: 1">
-            <label class="text-sm font-bold mbe-1" style="display: block">Channel Name</label>
-            <input type="text" name="channel_name" class="input" placeholder="engineering" required>
-          </div>
+          <% if unwatched_channels.any? %>
+            <div style="flex: 2">
+              <label class="text-sm font-bold mbe-1" style="display: block">Channel</label>
+              <select name="channel_select" class="input">
+                <option value="">— select a channel —</option>
+                <% unwatched_channels.each do |ch| %>
+                  <option value="<%= ch[:id] %>|<%= ch[:name] %>"><%= ch[:name] %></option>
+                <% end %>
+              </select>
+            </div>
+          <% elsif slack_service.configured? %>
+            <p class="text-sm" style="color: var(--color-text-subtle)">All your channels are already watched.</p>
+          <% else %>
+            <p class="text-sm" style="color: var(--color-text-subtle)">Configure Slack tokens above to see your channels.</p>
+          <% end %>
           <div style="flex: 1">
             <label class="text-sm font-bold mbe-1" style="display: block">Capture Mode</label>
             <select name="capture_mode" class="input">
@@ -261,7 +274,9 @@
               <option value="ignored">Ignored</option>
             </select>
           </div>
-          <%= f.submit "Add Channel", class: "btn btn--primary" %>
+          <% if unwatched_channels.any? %>
+            <%= f.submit "Add Channel", class: "btn btn--primary" %>
+          <% end %>
         <% end %>
 
         <%# Noise Filters %>

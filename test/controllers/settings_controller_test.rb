@@ -24,7 +24,7 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
 
   test "should add watched channel" do
     assert_difference("WatchedChannel.count") do
-      patch settings_path, params: { section: "watched_channel_add", channel_id: "CNEW", channel_name: "new-channel", capture_mode: "full_stream" }
+      patch settings_path, params: { section: "watched_channel_add", channel_select: "CNEW|new-channel", capture_mode: "full_stream" }
     end
     assert_redirected_to settings_path
   end

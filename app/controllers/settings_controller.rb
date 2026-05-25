@@ -27,7 +27,8 @@ class SettingsController < ApplicationController
     when "github", "slack", "search", "compression"
       save_settings(params[:section])
     when "watched_channel_add"
-      WatchedChannel.create!(channel_id: params[:channel_id], channel_name: params[:channel_name], capture_mode: params[:capture_mode])
+      channel_id, channel_name = params[:channel_select].to_s.split("|", 2)
+      WatchedChannel.create!(channel_id: channel_id, channel_name: channel_name, capture_mode: params[:capture_mode])
     when "watched_channel_remove"
       WatchedChannel.find_by(channel_id: params[:channel_id])&.destroy
     when "noise_filter_add"

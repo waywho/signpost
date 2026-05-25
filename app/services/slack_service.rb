@@ -12,6 +12,16 @@ class SlackService
     user_client.reactions_add(channel: channel, timestamp: timestamp, name: emoji)
   end
 
+  def list_channels
+    channels = bot_client.conversations_list(types: "public_channel,private_channel", exclude_archived: true, limit: 1000)
+    channels.channels.map do |ch|
+      { id: ch.id, name: ch.name, is_member: ch.is_member }
+    end.select { |ch| ch[:is_member] }.sort_by { |ch| ch[:name] }
+  rescue => e
+    Rails.logger.error("SlackService list_channels error: #{e.message}")
+    []
+  end
+
   private
 
   # Bot token — for reading channels, events
