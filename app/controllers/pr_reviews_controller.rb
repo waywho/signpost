@@ -51,21 +51,24 @@ class PrReviewsController < ApplicationController
     @pr_title = params[:pr_title]
     @pr_author = params[:pr_author]
 
-    # Check cache — try PrReview head_sha first (no API call), then GitHub
+    # Check cache using current head_sha from GitHub
     begin
-      review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
-      head_sha = review&.head_sha
-      head_sha ||= GitHubService.new.pr_detail(@repo, @pr_number)[:head_sha] if GitHubService.new.configured?
-
-      if head_sha
-        cache_key = "pr_analysis/#{@repo}/#{@pr_number}/#{head_sha}"
+      if GitHubService.new.configured?
+        pr = GitHubService.new.pr_detail(@repo, @pr_number)
+        current_sha = pr[:head_sha]
+        cache_key = "pr_analysis/#{@repo}/#{@pr_number}/#{current_sha}"
         cached = Rails.cache.read(cache_key)
+
         if cached
           @analysis = cached
           @cc_command = PrAnalysisService.new.claude_code_command(
             OpenStruct.new(pr_number: @pr_number, pr_title: @pr_title, repo: @repo),
             (cached[:risk_areas] || []).map { |r| r[:file] }.compact
           )
+        else
+          # Check if we have a stale analysis from old commits
+          review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
+          @has_stale_analysis = review.present? && review.head_sha != current_sha
         end
       end
     rescue => e
