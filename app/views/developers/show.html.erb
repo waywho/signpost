@@ -54,6 +54,26 @@
       </div>
     <% end %>
 
+    <% if @developer.skills.present? && @developer.skills.any? %>
+      <div class="card" style="margin-block-end: var(--size-4)">
+        <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Skills</h2>
+        <div class="flex flex-col gap-half">
+          <% @developer.skills.each do |skill| %>
+            <% skill = skill.is_a?(Hash) ? skill : {} %>
+            <div class="flex items-center gap">
+              <span class="text-sm flex-1"><%= skill["name"] || skill[:name] %></span>
+              <div class="flex gap-half">
+                <% rating = (skill["rating"] || skill[:rating] || 0).to_i %>
+                <% 5.times do |i| %>
+                  <i class="ph <%= i < rating ? 'ph-star-fill' : 'ph-star' %>" style="color: <%= i < rating ? 'var(--color-primary)' : 'var(--color-border)' %>"></i>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <%= render "github_activity", developer: @developer, activities: @github_activities %>
 
     <%# Notes section %>

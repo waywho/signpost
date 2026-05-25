@@ -68,6 +68,20 @@
     <%= f.text_area :private_notes, class: "input", rows: 3, placeholder: "Private notes (not shared)" %>
   </div>
 
+  <%# Skills %>
+  <div data-controller="skills">
+    <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-2)">Skills</label>
+    <input type="hidden" name="developer[skills]" value="<%= (developer.skills || []).to_json %>" data-skills-target="hiddenField">
+    <div data-skills-target="list" style="margin-block-end: var(--size-2)"></div>
+    <div class="flex items-center gap-half">
+      <input type="text" placeholder="Add skill…" class="input flex-1 text-sm" data-skills-target="nameInput"
+             data-action="keydown.enter->skills#add" style="max-inline-size: 16rem">
+      <button type="button" class="button" data-action="skills#add">
+        <i class="ph ph-plus"></i> Add
+      </button>
+    </div>
+  </div>
+
   <div class="flex items-center gap" style="margin-block-start: var(--size-2)">
     <%= f.submit developer.persisted? ? "Update Developer" : "Save Developer", class: "button" %>
     <%= link_to "Cancel", developer.persisted? ? developer_path(developer) : developers_path, class: "button button--ghost" %>

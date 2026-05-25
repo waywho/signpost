@@ -7,4 +7,16 @@ class Developer < ApplicationRecord
   validates :level, inclusion: { in: %w[Junior Mid Senior Staff], allow_nil: true }
 
   scope :by_name, -> { order(:name) }
+
+  before_validation :parse_skills_json
+
+  private
+
+  def parse_skills_json
+    if skills.is_a?(String)
+      self.skills = JSON.parse(skills)
+    end
+  rescue JSON::ParserError
+    self.skills = []
+  end
 end
