@@ -6,6 +6,8 @@ class SettingsController < ApplicationController
 
   def update
     case params[:section]
+    when "ai_backend"
+      Setting.set("global", "ai_backend", params[:ai_backend]) if params[:ai_backend].in?(ClaudeService::BACKENDS)
     when "api_keys"
       update_api_keys
     when "github"

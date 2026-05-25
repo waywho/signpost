@@ -2,6 +2,29 @@
 
 <h1 class="font-bold text-2xl mbe-6">Settings</h1>
 
+<%# AI Backend %>
+<div class="card mbe-6">
+  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+    <i class="ph ph-brain"></i> AI Backend
+  </h2>
+  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+    <%= hidden_field_tag :section, "ai_backend" %>
+    <div>
+      <label class="text-sm font-bold mbe-1" style="display: block">Backend</label>
+      <select name="ai_backend" class="input">
+        <% %w[cli api].each do |mode| %>
+          <option value="<%= mode %>" <%= 'selected' if Setting.get('global', 'ai_backend', default: 'cli') == mode %>><%= mode == "cli" ? "Claude Code CLI (uses your subscription)" : "Anthropic API (requires API key)" %></option>
+        <% end %>
+      </select>
+      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
+        <strong>CLI:</strong> Uses your installed <code>claude</code> command. No API key needed.<br>
+        <strong>API:</strong> Direct HTTP calls to Anthropic. Requires an API key below.
+      </p>
+    </div>
+    <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
+  <% end %>
+</div>
+
 <%# API Keys %>
 <div class="card mbe-6">
   <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
