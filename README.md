@@ -77,7 +77,20 @@ Setting.set("global", "github_username", "your-handle")
 Setting.set("global", "github_repos", ["org/repo1", "org/repo2"])       # For issue creation
 ```
 
-### 7. Start Slack Socket Mode listener (optional)
+### 7. Connect Google Calendar (optional)
+
+1. Open [Google Calendar Settings](https://calendar.google.com/calendar/r/settings)
+2. Click your calendar under "Settings for my calendars"
+3. Scroll to "Secret address in iCal format" and copy the URL
+4. Add it via the settings page at `https://techos.test/settings` (Calendar section), or via console:
+
+```ruby
+EncryptedSetting.set("credentials", "google_ical_url", "https://calendar.google.com/calendar/ical/your-email/private-token/basic.ics")
+```
+
+The dashboard will show today's schedule, auto-detect 1:1 meetings, match attendees to developer profiles, and alert you before upcoming 1:1s.
+
+### 8. Start Slack Socket Mode listener (optional)
 
 ```bash
 bin/slack
