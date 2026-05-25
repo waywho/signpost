@@ -61,4 +61,44 @@ class InsightsServiceTest < ActiveSupport::TestCase
     Setting.set("global", "daily_insights", [{ "message" => "test pattern" }])
     assert_equal [{ "message" => "test pattern" }], InsightsService.new.patterns
   end
+
+  test "find_topic_clusters groups similar topics" do
+    embedding = Array.new(1536, 0.1)
+    thread = create(:slack_thread)
+    create(:slack_topic, slack_thread: thread, title: "API timeout", embedding: embedding)
+    create(:slack_topic, slack_thread: thread, title: "Request hanging", embedding: embedding)
+
+    service = InsightsService.new
+    data = service.send(:gather_pattern_data)
+    assert data[:clusters].any?
+    assert_equal 2, data[:clusters].first[:size]
+  end
+
+  test "find_topic_clusters skips dissimilar topics" do
+    thread = create(:slack_thread)
+    create(:slack_topic, slack_thread: thread, title: "A", embedding: Array.new(1536, 0.1))
+    create(:slack_topic, slack_thread: thread, title: "B", embedding: Array.new(1536, -0.1))
+
+    service = InsightsService.new
+    data = service.send(:gather_pattern_data)
+    assert_empty data[:clusters]
+  end
+
+  test "delegation_velocity flags declining developer" do
+    dev = create(:developer)
+    3.times do
+      d = create(:delegation, developer: dev, status: "done")
+      d.update_column(:resolved_at, 45.days.ago)
+    end
+    create(:delegation, developer: dev, status: "done")
+
+    service = InsightsService.new
+    velocity = service.send(:delegation_velocity)
+    assert velocity.any? { |v| v[:name] == dev.name && v[:trend] == "declining" }
+  end
+
+  test "refresh_patterns runs without error" do
+    service = InsightsService.new
+    assert_nothing_raised { service.refresh_patterns }
+  end
 end

@@ -13,6 +13,19 @@ class InsightsService
     Setting.get("global", "daily_insights", default: []) || []
   end
 
+  def refresh_patterns
+    data = gather_pattern_data
+    prompt = build_pattern_prompt(data)
+    return [] if prompt.blank?
+
+    response = ClaudeService.new.analyze(prompt, max_tokens: 1000, model: "claude-haiku-4-5-20251001")
+    parsed = JSON.parse(response.to_s.gsub(/```json|```/, "").strip)
+    Setting.set("global", "daily_insights", parsed)
+    parsed
+  rescue JSON::ParserError
+    []
+  end
+
   private
 
   def stale_oneones
@@ -64,5 +77,125 @@ class InsightsService
         { type: "warning", icon: "ph-flag", message: "#{dev.name} has #{recent_concerns.count} concern note#{'s' if recent_concerns.count > 1} with no follow-up 1:1" }
       end
     end
+  end
+
+  def gather_pattern_data
+    topics = SlackTopic.where("created_at > ?", 30.days.ago).where.not(embedding: nil).includes(:slack_thread)
+    {
+      clusters: find_topic_clusters(topics.to_a),
+      recurring: find_recurring_issues(topics),
+      velocity: delegation_velocity
+    }
+  end
+
+  def find_topic_clusters(topics)
+    return [] if topics.size < 2
+
+    clustered = []
+    used = Set.new
+
+    topics.each do |topic|
+      next if used.include?(topic.id)
+
+      similar = topics.reject { |t| t.id == topic.id || used.include?(t.id) }.select do |other|
+        cosine_sim(topic.embedding, other.embedding) > 0.85
+      end
+
+      if similar.any?
+        cluster = [topic] + similar
+        cluster.each { |t| used.add(t.id) }
+        clustered << {
+          topics: cluster.map { |t| { id: t.id, title: t.title, channel: t.slack_thread&.slack_channel_name, urgency: t.urgency, date: t.created_at.to_date.to_s } },
+          size: cluster.size
+        }
+      end
+    end
+
+    clustered.sort_by { |c| -c[:size] }
+  end
+
+  def find_recurring_issues(recent_topics)
+    recent_topics.filter_map do |topic|
+      next unless topic.embedding.present?
+
+      older_matches = SlackTopic.where("created_at < ?", 30.days.ago)
+                                .where(status: "actioned")
+                                .where.not(embedding: nil)
+                                .nearest_neighbors(:embedding, topic.embedding, distance: "cosine")
+                                .first(3)
+                                .select { |t| (1.0 - t.neighbor_distance) > 0.85 }
+
+      next if older_matches.empty?
+
+      {
+        current: { id: topic.id, title: topic.title },
+        matches: older_matches.map { |m| { title: m.title, date: m.created_at.to_date.to_s, similarity: (1.0 - m.neighbor_distance).round(2) } }
+      }
+    end
+  end
+
+  def delegation_velocity
+    Developer.by_name.filter_map do |dev|
+      done_last_30 = dev.delegations.where(status: "done").where("resolved_at > ?", 30.days.ago).count
+      done_prev_30 = dev.delegations.where(status: "done").where(resolved_at: 60.days.ago..30.days.ago).count
+      active = dev.delegations.active.count
+
+      if done_prev_30 > 0 && done_last_30 < (done_prev_30 * 0.5)
+        { name: dev.name, done_last_30: done_last_30, done_prev_30: done_prev_30, active: active, trend: "declining" }
+      elsif done_last_30 > 0 && done_last_30 > (done_prev_30 * 1.5) && done_prev_30 > 0
+        { name: dev.name, done_last_30: done_last_30, done_prev_30: done_prev_30, active: active, trend: "accelerating" }
+      end
+    end
+  end
+
+  def cosine_sim(a, b)
+    return 0.0 unless a.present? && b.present?
+    dot = a.zip(b).sum { |x, y| x * y }
+    mag_a = Math.sqrt(a.sum { |x| x**2 })
+    mag_b = Math.sqrt(b.sum { |x| x**2 })
+    return 0.0 if mag_a.zero? || mag_b.zero?
+    dot / (mag_a * mag_b)
+  end
+
+  def build_pattern_prompt(data)
+    parts = []
+
+    if data[:clusters].any?
+      parts << "Topic clusters found (similar issues grouped by vector similarity):"
+      data[:clusters].each do |c|
+        titles = c[:topics].map { |t| "#{t[:title]} (#{t[:channel]}, #{t[:date]})" }.join("; ")
+        parts << "- Cluster of #{c[:size]}: #{titles}"
+      end
+    end
+
+    if data[:recurring].any?
+      parts << "\nRecurring issues (new topics matching old resolved ones):"
+      data[:recurring].each do |r|
+        matches = r[:matches].map { |m| "#{m[:title]} (#{m[:date]}, #{(m[:similarity] * 100).round}% match)" }.join("; ")
+        parts << "- '#{r[:current][:title]}' similar to: #{matches}"
+      end
+    end
+
+    if data[:velocity].any?
+      parts << "\nDelegation velocity changes:"
+      data[:velocity].each do |v|
+        parts << "- #{v[:name]}: #{v[:done_last_30]} completed (was #{v[:done_prev_30]}), #{v[:active]} active — #{v[:trend]}"
+      end
+    end
+
+    return nil if parts.empty?
+
+    <<~PROMPT
+      You are analyzing a tech lead's team patterns for the past 30 days. The data below was detected using vector similarity (semantic matching) and delegation tracking.
+
+      #{parts.join("\n")}
+
+      Summarize each pattern as a clear, actionable one-sentence insight for the tech lead.
+
+      Return a JSON array:
+      [{"message": "insight text", "type": "cluster|recurring|velocity", "severity": "info|warning|danger"}]
+
+      Only include genuinely notable patterns. Be specific — reference names, channels, and numbers. If nothing stands out, return [].
+    PROMPT
   end
 end
