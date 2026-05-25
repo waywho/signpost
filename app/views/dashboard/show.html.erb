@@ -7,6 +7,8 @@
 
 <%= render "action_queue", items: @action_items, developers: @developers_for_select %>
 
+<%= render "insights", alerts: @alerts, patterns: @patterns %>
+
 <div class="dashboard-grid">
   <%= render "team_overview", developers: @developers %>
   <%= render "active_delegations", delegations: @active_delegations %>

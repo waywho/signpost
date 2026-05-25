@@ -1,0 +1,53 @@
+<% if alerts.any? || patterns.any? %>
+  <div style="margin-block-end: var(--size-6)">
+    <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+      <i class="ph ph-lightbulb" style="color: var(--color-primary)"></i> Insights
+    </h2>
+
+    <% if alerts.any? %>
+      <div class="flex flex-col gap-half" style="margin-block-end: var(--size-4)">
+        <% alerts.each do |alert| %>
+          <%
+            bg = alert[:type] == "danger" ? "light-dark(var(--red-100), var(--red-950))" : "light-dark(var(--amber-100), var(--amber-950))"
+            color = alert[:type] == "danger" ? "var(--color-negative)" : "#f97316"
+          %>
+          <div class="flex items-center gap" style="padding: var(--size-2) var(--size-3); border-radius: var(--rounded-lg); background: <%= bg %>">
+            <i class="ph <%= alert[:icon] %>" style="color: <%= color %>; flex-shrink: 0"></i>
+            <span class="text-sm" style="color: <%= color %>"><%= alert[:message] %></span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if patterns.any? %>
+      <div class="card">
+        <h3 class="font-bold text-xs" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">
+          <i class="ph ph-chart-line-up"></i> Patterns This Week
+        </h3>
+        <div class="flex flex-col gap-half">
+          <% patterns.each do |pattern| %>
+            <%
+              p = pattern.is_a?(Hash) ? pattern : {}
+              sev = p["severity"] || "info"
+              color = case sev
+                      when "danger" then "var(--color-negative)"
+                      when "warning" then "#f97316"
+                      else "var(--color-text-subtle)"
+                      end
+              icon = case p["type"]
+                     when "cluster" then "ph-circles-three-plus"
+                     when "recurring" then "ph-arrow-counter-clockwise"
+                     when "velocity" then "ph-trend-up"
+                     else "ph-info"
+                     end
+            %>
+            <div class="flex items-center gap text-sm">
+              <i class="ph <%= icon %>" style="color: <%= color %>; flex-shrink: 0"></i>
+              <span><%= p["message"] %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
