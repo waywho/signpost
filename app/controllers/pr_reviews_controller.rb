@@ -51,17 +51,22 @@ class PrReviewsController < ApplicationController
     @pr_title = params[:pr_title]
     @pr_author = params[:pr_author]
 
-    # Check cache — render instantly if available
+    # Check cache — try PrReview head_sha first (no API call), then GitHub
     begin
-      pr = GitHubService.new.pr_detail(@repo, @pr_number)
-      cache_key = "pr_analysis/#{@repo}/#{@pr_number}/#{pr[:head_sha]}"
-      cached = Rails.cache.read(cache_key)
-      if cached
-        @analysis = cached
-        @cc_command = PrAnalysisService.new.claude_code_command(
-          OpenStruct.new(pr_number: @pr_number, pr_title: @pr_title, repo: @repo),
-          (cached[:risk_areas] || []).map { |r| r[:file] }.compact
-        )
+      review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
+      head_sha = review&.head_sha
+      head_sha ||= GitHubService.new.pr_detail(@repo, @pr_number)[:head_sha] if GitHubService.new.configured?
+
+      if head_sha
+        cache_key = "pr_analysis/#{@repo}/#{@pr_number}/#{head_sha}"
+        cached = Rails.cache.read(cache_key)
+        if cached
+          @analysis = cached
+          @cc_command = PrAnalysisService.new.claude_code_command(
+            OpenStruct.new(pr_number: @pr_number, pr_title: @pr_title, repo: @repo),
+            (cached[:risk_areas] || []).map { |r| r[:file] }.compact
+          )
+        end
       end
     rescue => e
       Rails.logger.error("analyze_pr cache check: #{e.message}")
