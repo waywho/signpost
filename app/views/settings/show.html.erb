@@ -9,7 +9,7 @@
   </h2>
   <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
     <%= hidden_field_tag :section, "api_keys" %>
-    <% %w[openai_api_key anthropic_api_key github_pat slack_bot_token slack_app_token].each do |key| %>
+    <% %w[openai_api_key anthropic_api_key github_pat slack_bot_token slack_user_token slack_app_token].each do |key| %>
       <div>
         <label class="text-sm font-bold mbe-1" style="display: block"><%= key.tr("_", " ").titleize %></label>
         <% has_value = EncryptedSetting.get("credentials", key).present? %>

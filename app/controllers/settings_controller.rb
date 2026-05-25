@@ -34,7 +34,7 @@ class SettingsController < ApplicationController
   private
 
   def update_api_keys
-    %w[openai_api_key anthropic_api_key github_pat slack_bot_token slack_app_token].each do |key|
+    %w[openai_api_key anthropic_api_key github_pat slack_bot_token slack_user_token slack_app_token].each do |key|
       value = params[key]
       EncryptedSetting.set("credentials", key, value) if value.present? && value != "••••••••"
     end
