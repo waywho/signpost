@@ -31,25 +31,6 @@ class PrReviewsController < ApplicationController
     @github_configured = GitHubService.new.configured?
   end
 
-  def new
-    @pr_review = PrReview.new(
-      repo: params[:repo],
-      pr_number: params[:pr_number],
-      pr_title: params[:pr_title],
-      pr_author: params[:pr_author],
-      reviewed_at: Time.current
-    )
-  end
-
-  def create
-    @pr_review = PrReview.new(pr_review_params)
-    if @pr_review.save
-      redirect_to @pr_review, notice: "Review logged."
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
   def ignore
     urls = Array(params[:urls].presence || params[:url])
     ignored = Setting.get("global", "ignored_prs", default: []) || []
@@ -70,35 +51,32 @@ class PrReviewsController < ApplicationController
     repo = params[:repo]
     pr_number = params[:pr_number].to_i
     pr_title = params[:pr_title]
-    pr_author = params[:pr_author]
 
     response.headers["Content-Type"] = "text/event-stream"
     response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Accel-Buffering"] = "no"
 
     github = GitHubService.new
-    sse = ActionController::Live::SSE.new(response.stream)
+    stream = response.stream
 
     begin
-      # Check cache first
       pr = github.pr_detail(repo, pr_number)
       head_sha = pr[:head_sha]
       cache_key = "pr_analysis/#{repo}/#{pr_number}/#{head_sha}"
       cached = Rails.cache.read(cache_key)
 
       if cached
-        sse.write({ type: "status", text: "Using cached analysis..." }.to_json)
-        sse.write({ type: "complete", html: render_analysis_html(cached, repo, pr_number, pr_title) }.to_json)
+        send_sse(stream, type: "status", text: "Using cached analysis...")
+        send_sse(stream, type: "complete", html: render_analysis_html(cached, repo, pr_number, pr_title))
       else
-        sse.write({ type: "status", text: "Fetching PR diff from GitHub..." }.to_json)
+        send_sse(stream, type: "status", text: "Fetching PR diff from GitHub...")
 
         diff = github.pr_diff(repo, pr_number)
         comments = github.pr_comments(repo, pr_number)
         linked_issue = github.linked_issue(repo, pr_number)
 
-        sse.write({ type: "status", text: "Running Claude analysis..." }.to_json)
+        send_sse(stream, type: "status", text: "Running Claude analysis...")
 
-        # Stream Claude output line by line
         truncated_diff = diff.lines.first(4000).join
         service = PrAnalysisService.new(github_service: github)
         prompt = service.send(:build_prompt, pr, truncated_diff, comments, linked_issue)
@@ -114,15 +92,15 @@ class PrReviewsController < ApplicationController
 
             stdout.each_line do |line|
               raw_output << line
-              sse.write({ type: "chunk", text: line }.to_json)
+              send_sse(stream, type: "chunk", text: line)
             end
           end
         else
           raw_output = ClaudeService.new.analyze(prompt, max_tokens: 4000)
-          sse.write({ type: "chunk", text: raw_output }.to_json)
+          send_sse(stream, type: "chunk", text: raw_output)
         end
 
-        sse.write({ type: "status", text: "Parsing results..." }.to_json)
+        send_sse(stream, type: "status", text: "Parsing results...")
 
         result = service.send(:parse_response, raw_output)
         Rails.cache.write(cache_key, result, expires_in: 7.days)
@@ -133,12 +111,12 @@ class PrReviewsController < ApplicationController
           (result[:risk_areas] || []).map { |r| r[:file] }.compact
         )
 
-        sse.write({ type: "complete", html: render_analysis_html(result, repo, pr_number, pr_title, cc_command) }.to_json)
+        send_sse(stream, type: "complete", html: render_analysis_html(result, repo, pr_number, pr_title, cc_command))
       end
     rescue => e
-      sse.write({ type: "error", text: e.message }.to_json)
+      send_sse(stream, type: "error", text: e.message)
     ensure
-      sse.close
+      stream.close
     end
   end
 
@@ -164,12 +142,8 @@ class PrReviewsController < ApplicationController
 
   private
 
-  def pr_review_params
-    params.require(:pr_review).permit(
-      :pr_number, :repo, :pr_title, :pr_author,
-      :recommendation, :risk_level, :summary, :draft_comment,
-      :files_changed, :additions, :deletions, :reviewed_at
-    )
+  def send_sse(stream, **data)
+    stream.write("data: #{data.to_json}\n\n")
   end
 
   def render_analysis_html(analysis, repo, pr_number, pr_title, cc_command = nil)
