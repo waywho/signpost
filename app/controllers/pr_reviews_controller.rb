@@ -38,11 +38,12 @@ class PrReviewsController < ApplicationController
   end
 
   def ignore
-    url = params[:url]
+    urls = Array(params[:urls].presence || params[:url])
     ignored = Setting.get("global", "ignored_prs", default: []) || []
-    ignored << url unless ignored.include?(url)
+    urls.each { |url| ignored << url unless ignored.include?(url) }
     Setting.set("global", "ignored_prs", ignored)
-    redirect_back fallback_location: pr_reviews_path, notice: "PR ignored."
+    count = urls.size
+    redirect_back fallback_location: pr_reviews_path, notice: "#{count} PR#{'s' if count > 1} ignored."
   end
 
   def analyze

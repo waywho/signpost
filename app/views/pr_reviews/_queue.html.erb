@@ -3,35 +3,50 @@
     <p class="text-sm"><i class="ph ph-info"></i> Set <code>github_pat</code> in encrypted settings to see your PR queue.</p>
   </div>
 <% elsif pr_queue.any? %>
-  <div class="card mbe-6">
-    <h2 class="font-bold flex items-center gap-half mbe-4">
-      <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
-      Awaiting Your Review
-      <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= pr_queue.size %>)</span>
-    </h2>
-    <div class="flex flex-col gap-half">
-      <% pr_queue.each do |pr| %>
-        <div class="flex items-center gap" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
-          <div class="flex flex-col flex-1" style="min-inline-size: 0">
-            <span class="font-bold text-sm">
-              <%= link_to "##{pr[:number]} #{pr[:title]}", pr[:url], target: "_blank", style: "text-decoration: none" %>
-            </span>
-            <span class="text-xs" style="color: var(--color-text-subtle)">
-              <%= pr[:repo] %> · <%= pr[:author] %> · <%= time_ago_in_words(pr[:created_at]) %> ago
-              <% if pr[:draft] %> · draft<% end %>
-            </span>
-          </div>
-          <div class="flex items-center gap-half" style="flex-shrink: 0">
-            <%= link_to new_pr_review_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
-                  class: "text-sm", style: "color: var(--color-primary)" do %>
-              <i class="ph ph-pencil-line"></i> Review
-            <% end %>
-            <%= button_to ignore_pr_reviews_path(url: pr[:url]), method: :post, class: "btn btn--icon btn--borderless", title: "Ignore this PR" do %>
-              <i class="ph ph-x"></i>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
+  <div class="card mbe-6" data-controller="bulk-select">
+    <div class="flex items-center justify-between mbe-4">
+      <h2 class="font-bold flex items-center gap-half">
+        <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
+        Awaiting Your Review
+        <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= pr_queue.size %>)</span>
+      </h2>
+      <div class="flex items-center gap-half">
+        <label class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
+          <input type="checkbox" class="input" data-bulk-select-target="selectAll" data-action="bulk-select#toggleAll">
+          Select all
+        </label>
+      </div>
     </div>
+
+    <%= form_with url: ignore_pr_reviews_path, method: :post do |f| %>
+      <div class="flex flex-col gap-half">
+        <% pr_queue.each do |pr| %>
+          <div class="flex items-center gap" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
+            <input type="checkbox" name="urls[]" value="<%= pr[:url] %>" class="input"
+                   data-bulk-select-target="checkbox" data-action="bulk-select#toggle" style="flex-shrink: 0">
+            <div class="flex flex-col flex-1" style="min-inline-size: 0">
+              <span class="font-bold text-sm">
+                <%= link_to "##{pr[:number]} #{pr[:title]}", pr[:url], target: "_blank", style: "text-decoration: none" %>
+              </span>
+              <span class="text-xs" style="color: var(--color-text-subtle)">
+                <%= pr[:repo] %> · <%= pr[:author] %> · <%= time_ago_in_words(pr[:created_at]) %> ago
+                <% if pr[:draft] %> · draft<% end %>
+              </span>
+            </div>
+            <div class="flex items-center gap-half" style="flex-shrink: 0">
+              <%= link_to new_pr_review_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
+                    class: "text-sm", style: "color: var(--color-primary)" do %>
+                <i class="ph ph-pencil-line"></i> Review
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="flex items-center gap-half mbs-4" data-bulk-select-target="actions" hidden>
+        <span class="text-xs" style="color: var(--color-text-subtle)" data-count></span>
+        <%= f.submit "Ignore Selected", class: "btn btn--borderless text-xs" %>
+      </div>
+    <% end %>
   </div>
 <% end %>
