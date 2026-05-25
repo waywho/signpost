@@ -25,20 +25,22 @@ class GitHubService
     return [] unless username
 
     results = @client.search_issues("is:pr is:open review-requested:#{username}")
-    results.items.map do |pr|
-      repo = pr.repository_url.sub("https://api.github.com/repos/", "")
-      {
-        repo: repo,
-        number: pr.number,
-        title: pr.title,
-        author: pr.user.login,
-        created_at: pr.created_at,
-        updated_at: pr.updated_at,
-        draft: pr.draft,
-        url: pr.html_url,
-        labels: pr.labels.map(&:name)
-      }
-    end.sort_by { |pr| pr[:created_at] }
+    results.items
+      .reject { |pr| pr.user.login.match?(/\[bot\]$|^dependabot|^renovate|^github-actions/i) }
+      .map do |pr|
+        repo = pr.repository_url.sub("https://api.github.com/repos/", "")
+        {
+          repo: repo,
+          number: pr.number,
+          title: pr.title,
+          author: pr.user.login,
+          created_at: pr.created_at,
+          updated_at: pr.updated_at,
+          draft: pr.draft,
+          url: pr.html_url,
+          labels: pr.labels.map(&:name)
+        }
+      end.sort_by { |pr| pr[:created_at] }
   rescue Octokit::Error => e
     Rails.logger.error("GitHubService pr_queue error: #{e.message}")
     []
