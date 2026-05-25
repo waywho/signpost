@@ -94,9 +94,17 @@ class PrAnalysisService
         "draft_comment": "ready-to-post review comment — constructive, specific, references actual code"
       }
 
+      WRITING STYLE — be terse like a senior reviewer:
+      - Every string value: one sentence max. No filler, no hedging, no "I noticed that..."
+      - Issues: "file:line: problem. fix." — not paragraphs
+      - Strengths: "Clean error handling in auth_controller.rb:45-60" — not "The error handling is well done"
+      - Tips: "Check N+1 on user.posts" — not "You might want to consider checking for N+1 queries"
+      - Draft comment: direct, actionable, references specific lines. No "Overall looks good but..."
+      - Use 🔴 🟡 🔵 prefixes in issue descriptions for visual scanning
+
       Categorize issues by actual severity. Not everything is Critical.
       Acknowledge what was done well before listing issues.
-      Be specific with file:line references. Explain WHY each issue matters.
+      Be specific with file:line references.
     PROMPT
   end
 
