@@ -20,11 +20,29 @@ module SlackThreadsHelper
     end
   end
 
+  def urgency_badge_variant(urgency)
+    case urgency&.downcase
+    when "critical" then "badge--negative"
+    when "high" then "badge--secondary"
+    when "medium" then "badge--primary"
+    else ""
+    end
+  end
+
   def status_color(status)
     case status
     when "new" then "var(--color-primary)"
     when "actioned" then "var(--color-positive)"
     else "var(--color-text-subtle)"
+    end
+  end
+
+  def status_badge_variant(status)
+    case status
+    when "new" then "badge--primary"
+    when "actioned" then "badge--positive"
+    when "archived" then ""
+    else ""
     end
   end
 

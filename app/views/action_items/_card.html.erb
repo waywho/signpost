@@ -1,15 +1,7 @@
-<%
-  urg = item.slack_topic.urgency
-  urg_color = case urg
-              when "critical" then "var(--color-negative)"
-              when "high" then "#f97316"
-              when "medium" then "var(--color-primary)"
-              else "var(--color-text-subtle)"
-              end
-%>
+<% urg = item.slack_topic.urgency %>
 <div class="card mbe-3">
   <div class="flex items-center gap-half mbe-2">
-    <span class="text-xs font-bold" style="color: <%= urg_color %>"><%= urg || "—" %></span>
+    <span class="badge <%= urgency_badge_variant(urg) %>"><%= urg || "—" %></span>
     <span class="font-bold text-sm flex-1"><%= item.slack_topic.title %></span>
     <% if item.slack_thread.slack_url.present? %>
       <%= link_to item.slack_thread.slack_url, target: "_blank", class: "text-xs", style: "color: var(--color-text-subtle)" do %>
@@ -34,7 +26,7 @@
 
   <% if item.related_items.present? && item.related_items.any? %>
     <div class="mbe-3">
-      <span class="text-xs font-bold" style="color: var(--color-text-subtle)">Related:</span>
+      <span class="badge">Related:</span>
       <% item.related_items.each do |related| %>
         <div class="text-xs mbs-1" style="color: var(--color-text-subtle)">
           <% if related["thread_id"] %>

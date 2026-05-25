@@ -1,13 +1,13 @@
 <%
-  badge_color = case note.note_type
-                when "good" then "var(--color-positive)"
-                when "concern" then "var(--color-negative)"
-                when "growth" then "var(--color-primary)"
-                else "var(--color-text-subtle)"
-                end
+  note_badge = case note.note_type
+               when "good" then "badge--positive"
+               when "concern" then "badge--negative"
+               when "growth" then "badge--primary"
+               else ""
+               end
 %>
 <div class="flex gap items-start" style="padding-block: var(--size-2); border-block-end: 1px solid var(--color-border)">
-  <span class="text-xs font-bold" style="color: <%= badge_color %>; min-inline-size: 4rem"><%= note.note_type&.capitalize %></span>
+  <span class="badge <%= note_badge %>" style="min-inline-size: 4rem"><%= note.note_type&.capitalize %></span>
   <p class="text-sm flex-1"><%= note.content %></p>
   <time class="text-xs" style="color: var(--color-text-subtle)"><%= note.created_at.strftime("%b %-d") %></time>
 </div>

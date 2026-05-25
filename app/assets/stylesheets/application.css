@@ -48,17 +48,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-.developer-avatar {
-  align-items: center;
-  border-radius: var(--rounded-full);
-  color: white;
-  display: flex;
-  font-size: var(--text-xs);
-  font-weight: var(--font-bold);
-  block-size: var(--size-8);
-  inline-size: var(--size-8);
-  justify-content: center;
-  text-shadow: 0 1px 2px rgb(0 0 0 / .3);
-  flex-shrink: 0;
-}

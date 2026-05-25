@@ -2,20 +2,20 @@
   <div class="flex items-center gap-half mbe-2">
     <span class="font-bold text-sm flex-1"><%= topic.title %></span>
     <% if topic.urgency.present? %>
-      <span class="text-xs font-bold" style="color: <%= urgency_color(topic.urgency) %>"><%= topic.urgency %></span>
+      <span class="badge <%= urgency_badge_variant(topic.urgency) %>"><%= topic.urgency %></span>
     <% end %>
     <% if topic.category.present? %>
-      <span class="text-xs" style="color: var(--color-text-subtle)"><%= topic.category %></span>
+      <span class="badge"><%= topic.category %></span>
     <% end %>
   </div>
   <p class="text-sm mbe-2"><%= topic.summary %></p>
   <% if topic.action_recommendation.present? %>
-    <span class="text-xs" style="color: var(--color-text-subtle)">
-      <i class="ph ph-arrow-right"></i> Recommended: <strong><%= topic.action_recommendation.tr("_", " ") %></strong>
+    <span class="badge">
+      <i class="ph ph-arrow-right"></i> <%= topic.action_recommendation.tr("_", " ") %>
     </span>
   <% end %>
   <% if topic.status != "open" %>
-    <span class="text-xs mis-2" style="color: var(--color-positive)">
+    <span class="badge badge--positive mis-2">
       <i class="ph ph-check-circle"></i> <%= topic.status %>
     </span>
   <% end %>

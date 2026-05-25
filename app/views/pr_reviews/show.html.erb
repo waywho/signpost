@@ -9,10 +9,10 @@
 <div class="card mbe-4">
   <div class="flex items-center gap mbe-2">
     <% if @pr_review.recommendation.present? %>
-      <span class="text-sm font-bold" style="color: <%= recommendation_color(@pr_review.recommendation) %>"><%= @pr_review.recommendation.tr("_", " ") %></span>
+      <span class="badge <%= recommendation_badge_variant(@pr_review.recommendation) %>"><%= @pr_review.recommendation.tr("_", " ") %></span>
     <% end %>
     <% if @pr_review.risk_level.present? %>
-      <span class="text-sm" style="color: <%= risk_color(@pr_review.risk_level) %>"><i class="ph ph-shield-warning"></i> <%= @pr_review.risk_level %></span>
+      <span class="badge <%= risk_badge_variant(@pr_review.risk_level) %>"><i class="ph ph-shield-warning"></i> <%= @pr_review.risk_level %></span>
     <% end %>
   </div>
   <h1 class="font-bold text-xl mbe-2">

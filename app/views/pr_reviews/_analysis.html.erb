@@ -10,14 +10,7 @@
   <%# Recommendation %>
   <div class="card mbe-4">
     <div class="flex items-center gap mbe-2">
-      <%
-        rec_color = case analysis[:recommendation]
-                    when "APPROVE" then "var(--color-positive)"
-                    when "REQUEST_CHANGES" then "var(--color-negative)"
-                    else "#f97316"
-                    end
-      %>
-      <span class="font-bold" style="color: <%= rec_color %>"><%= analysis[:recommendation]&.tr("_", " ") %></span>
+      <span class="badge <%= recommendation_badge_variant(analysis[:recommendation]) %>"><%= analysis[:recommendation]&.tr("_", " ") %></span>
     </div>
     <p class="text-sm"><%= analysis[:recommendation_reason] %></p>
     <% if analysis[:summary].present? %>
@@ -33,7 +26,7 @@
           <div class="flex items-center gap-half">
             <i class="ph ph-warning-circle" style="color: var(--color-negative)"></i>
             <span class="font-bold text-sm" style="color: var(--color-negative)"><%= flag[:title] %></span>
-            <span class="text-xs" style="color: var(--color-text-subtle)"><%= flag[:severity] %></span>
+            <span class="badge badge--negative"><%= flag[:severity] %></span>
           </div>
           <p class="text-sm mbs-1"><%= flag[:detail] %></p>
         </div>

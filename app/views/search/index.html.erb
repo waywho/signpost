@@ -43,6 +43,11 @@
                           when "message" then "ph-chat-text"
                           else "ph-magnifying-glass"
                           end
+              type_badge = case result[:type]
+                           when "thread" then "badge--primary"
+                           when "topic" then "badge--secondary"
+                           else ""
+                           end
               type_color = case result[:type]
                            when "thread" then "var(--color-primary)"
                            when "topic" then "#f97316"
@@ -51,7 +56,7 @@
                            end
             %>
             <i class="ph <%= type_icon %>" style="color: <%= type_color %>"></i>
-            <span class="text-xs font-bold" style="color: <%= type_color %>"><%= result[:type].capitalize %></span>
+            <span class="badge <%= type_badge %>"><%= result[:type].capitalize %></span>
             <span class="text-xs" style="color: var(--color-text-subtle)">
               similarity: <%= (result[:similarity] * 100).round(1) %>%
             </span>
@@ -78,14 +83,7 @@
             <p class="text-sm mbs-1"><%= topic[:summary] %></p>
             <div class="flex items-center gap-half text-xs mbs-1" style="color: var(--color-text-subtle)">
               <% if topic[:urgency] %>
-                <%
-                  urg_color = case topic[:urgency]
-                              when "critical" then "var(--color-negative)"
-                              when "high" then "#f97316"
-                              else "var(--color-text-subtle)"
-                              end
-                %>
-                <span style="color: <%= urg_color %>; font-weight: bold"><%= topic[:urgency] %></span>
+                <span class="badge <%= urgency_badge_variant(topic[:urgency]) %>"><%= topic[:urgency] %></span>
               <% end %>
               <% if topic[:category] %><span><%= topic[:category] %></span><% end %>
               <% if thread %>

@@ -3,7 +3,7 @@
     <i class="ph ph-handshake" style="color: var(--color-primary)"></i> Commitments
   </h2>
   <% if overdue.any? %>
-    <p class="text-xs font-bold mbe-2" style="color: var(--color-negative)"><i class="ph ph-warning-circle"></i> Overdue</p>
+    <p class="badge badge--negative mbe-2"><i class="ph ph-warning-circle"></i> Overdue</p>
     <ul class="flex flex-col gap-half mbe-3">
       <% overdue.each do |c| %>
         <li class="flex items-center justify-between text-sm" style="color: var(--color-negative)">
@@ -14,7 +14,7 @@
     </ul>
   <% end %>
   <% if due.any? %>
-    <p class="text-xs font-bold mbe-2" style="color: var(--color-text-subtle)">Due soon</p>
+    <p class="badge mbe-2">Due soon</p>
     <ul class="flex flex-col gap-half">
       <% due.each do |c| %>
         <li class="flex items-center justify-between text-sm">

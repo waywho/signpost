@@ -19,29 +19,21 @@
     <% @delegations.each do |d| %>
       <%= link_to delegation_path(d), class: "card flex items-center gap", style: "text-decoration: none" do %>
         <% if d.urgency.present? %>
-          <%
-            urg_color = case d.urgency
-                        when "Critical" then "var(--color-negative)"
-                        when "High" then "#f97316"
-                        when "Medium" then "var(--color-primary)"
-                        else "var(--color-text-subtle)"
-                        end
-          %>
-          <span class="text-xs font-bold" style="color: <%= urg_color %>; min-inline-size: 4rem"><%= d.urgency %></span>
+          <span class="badge <%= urgency_badge_variant(d.urgency) %>" style="min-inline-size: 4rem"><%= d.urgency %></span>
         <% end %>
         <div class="flex flex-col flex-1" style="min-inline-size: 0">
           <span class="font-bold text-sm"><%= d.summary.truncate(60) %></span>
           <span class="text-xs" style="color: var(--color-text-subtle)"><%= d.developer&.name || d.developer_name || "Unassigned" %></span>
         </div>
         <%
-          status_color = case d.status
-                         when "blocked" then "var(--color-negative)"
-                         when "done" then "var(--color-positive)"
-                         when "in_progress" then "var(--color-primary)"
-                         else "var(--color-text-subtle)"
-                         end
+          delegation_badge = case d.status
+                             when "blocked" then "badge--negative"
+                             when "done" then "badge--positive"
+                             when "in_progress" then "badge--primary"
+                             else ""
+                             end
         %>
-        <span class="text-xs font-bold" style="color: <%= status_color %>"><%= d.status.tr("_", " ") %></span>
+        <span class="badge <%= delegation_badge %>"><%= d.status.tr("_", " ") %></span>
       <% end %>
     <% end %>
   </div>

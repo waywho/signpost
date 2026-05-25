@@ -14,9 +14,9 @@
   <div class="flex items-center gap-half mbe-2">
     <i class="ph <%= category_icon(@slack_thread.category) %>" style="font-size: var(--text-xl); color: var(--color-primary)"></i>
     <h1 class="font-bold text-2xl" style="flex: 1"><%= @slack_thread.title.presence || "Untitled" %></h1>
-    <span class="text-xs font-bold" style="color: <%= status_color(@slack_thread.status) %>"><%= @slack_thread.status %></span>
+    <span class="badge <%= status_badge_variant(@slack_thread.status) %>"><%= @slack_thread.status %></span>
     <% if @slack_thread.category.present? %>
-      <span class="text-xs" style="color: var(--color-text-subtle)"><%= @slack_thread.category %></span>
+      <span class="badge"><%= @slack_thread.category %></span>
     <% end %>
   </div>
   <div class="flex items-center gap text-sm" style="color: var(--color-text-subtle)">

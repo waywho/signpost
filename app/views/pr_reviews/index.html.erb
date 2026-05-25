@@ -26,10 +26,10 @@
           <span class="text-xs" style="color: var(--color-text-subtle)"><%= pr.repo %> · <%= pr.pr_author %> · <%= pr.reviewed_at&.strftime("%b %-d") %></span>
         </div>
         <% if pr.recommendation.present? %>
-          <span class="text-xs font-bold" style="color: <%= recommendation_color(pr.recommendation) %>"><%= pr.recommendation.tr("_", " ") %></span>
+          <span class="badge <%= recommendation_badge_variant(pr.recommendation) %>"><%= pr.recommendation.tr("_", " ") %></span>
         <% end %>
         <% if pr.risk_level.present? %>
-          <span class="text-xs" style="color: <%= risk_color(pr.risk_level) %>"><%= pr.risk_level %></span>
+          <span class="badge <%= risk_badge_variant(pr.risk_level) %>"><%= pr.risk_level %></span>
         <% end %>
       <% end %>
     <% end %>
