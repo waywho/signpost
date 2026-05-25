@@ -1,0 +1,19 @@
+<div style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+    <i class="ph ph-tray" style="color: var(--color-primary)"></i> Action Queue
+    <% if items.any? %>
+      <span class="text-sm font-normal" style="color: var(--color-negative)">(<%= items.size %> pending)</span>
+    <% end %>
+  </h2>
+
+  <% if items.any? %>
+    <% items.each do |item| %>
+      <%= render "action_items/card", item: item, developers: developers %>
+    <% end %>
+  <% else %>
+    <div class="card text-center" style="color: var(--color-text-subtle)">
+      <i class="ph ph-check-circle" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4); color: var(--color-positive)"></i>
+      <p class="text-sm">All caught up. No pending actions.</p>
+    </div>
+  <% end %>
+</div>

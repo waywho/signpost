@@ -5,6 +5,8 @@
   <span class="text-sm" style="color: var(--color-text-subtle)"><%= Date.current.strftime("%A, %B %-d") %></span>
 </div>
 
+<%= render "action_queue", items: @action_items, developers: @developers_for_select %>
+
 <div class="dashboard-grid">
   <%= render "team_overview", developers: @developers %>
   <%= render "active_delegations", delegations: @active_delegations %>

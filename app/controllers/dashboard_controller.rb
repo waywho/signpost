@@ -1,5 +1,7 @@
 class DashboardController < ApplicationController
   def show
+    @action_items = ActionItem.pending.by_priority.includes(:slack_topic, :slack_thread, :suggested_developer)
+    @developers_for_select = Developer.by_name
     @developers         = Developer.by_name
     @active_delegations = Delegation.active.by_urgency.includes(:developer)
     @due_commitments    = Commitment.due_soon.where("due_date >= ?", Date.current)
