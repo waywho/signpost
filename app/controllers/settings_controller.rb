@@ -9,7 +9,7 @@ class SettingsController < ApplicationController
   INTEGER_SETTINGS = %w[poll_interval_minutes compression_after_months reanalysis_message_threshold reanalysis_quiet_minutes].freeze
   FLOAT_SETTINGS = %w[search_default_threshold].freeze
 
-  ENCRYPTED_KEYS = %w[openai_api_key slack_bot_token slack_user_token slack_app_token].freeze
+  API_KEYS = %w[openai_api_key slack_bot_token slack_user_token slack_app_token].freeze
 
   def show
     @watched_channels = WatchedChannel.order(:channel_name)
@@ -22,7 +22,7 @@ class SettingsController < ApplicationController
       Setting.set("global", "ai_backend", params[:ai_backend]) if params[:ai_backend].in?(ClaudeService::BACKENDS)
       save_encrypted(:anthropic_api_key)
     when "api_keys"
-      ENCRYPTED_KEYS.each { |key| save_encrypted(key) }
+      API_KEYS.each { |key| save_encrypted(key) }
     when "github", "slack", "search", "compression"
       save_settings(params[:section])
     when "watched_channel_add"
