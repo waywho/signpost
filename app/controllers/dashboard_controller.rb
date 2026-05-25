@@ -7,6 +7,9 @@ class DashboardController < ApplicationController
     @alerts = insights.alerts
     @patterns = insights.patterns
 
+    calendar = CalendarService.new
+    @today_events = calendar.configured? ? calendar.today_events : nil
+
     @developers         = Developer.by_name
     @active_delegations = Delegation.active.by_urgency.includes(:developer)
     @due_commitments    = Commitment.due_soon.where("due_date >= ?", Date.current)

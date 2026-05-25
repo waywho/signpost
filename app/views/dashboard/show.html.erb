@@ -10,6 +10,7 @@
 <%= render "insights", alerts: @alerts, patterns: @patterns %>
 
 <div class="dashboard-grid">
+  <%= render "calendar", events: @today_events %>
   <%= render "team_overview", developers: @developers %>
   <%= render "active_delegations", delegations: @active_delegations %>
   <%= render "commitments", due: @due_commitments, overdue: @overdue_commitments %>
