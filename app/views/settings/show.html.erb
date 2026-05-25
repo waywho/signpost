@@ -13,7 +13,7 @@
         { icon: "ph-chat-teardrop-dots", label: "Slack" },
         { icon: "ph-calendar", label: "Calendar" },
         { icon: "ph-magnifying-glass", label: "Search" },
-        { icon: "ph-archive", label: "Compression" }
+        { icon: "ph-archive", label: "Archive" }
       ]
     %>
     <% sections.each do |section| %>
@@ -344,11 +344,11 @@
       </div>
     </div>
 
-    <%# Compression %>
+    <%# Archive %>
     <div data-settings-nav-target="panel" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-          <i class="ph ph-archive"></i> Compression & Reanalysis
+          <i class="ph ph-archive"></i> Archive & Reanalysis
         </h2>
         <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
           <%= hidden_field_tag :section, "compression" %>
@@ -366,7 +366,7 @@
               <input type="number" name="reanalysis_quiet_minutes" value="<%= Setting.get('global', 'reanalysis_quiet_minutes', default: 30) %>" class="input">
             </div>
           </div>
-          <%= f.submit "Save Compression Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
+          <%= f.submit "Save Archive Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
         <% end %>
       </div>
     </div>
