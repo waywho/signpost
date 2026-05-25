@@ -74,19 +74,18 @@ All API keys are entered via the settings page at `https://techos.test/settings`
 5. Set your GitHub username and repos in the GitHub section of settings
 
 **Slack tokens** — for thread capture and triage reactions:
+
 1. Create a Slack App at [api.slack.com/apps](https://api.slack.com/apps)
-2. Enable **Socket Mode** (Settings → Socket Mode → Enable). Copy the App-Level Token (`xapp-...`)
-3. Under **OAuth & Permissions**, scroll to **Bot Token Scopes** and add:
-   - `channels:history` — read messages in public channels
-   - `channels:read` — list channels
-   - `reactions:read` — detect 🧠 emoji reactions
-   - `users:read` — resolve user display names
-4. Under **User Token Scopes** add (so reactions/replies show as you, not the bot):
-   - `reactions:write` — react as yourself
-   - `chat:write` — reply as yourself
-5. Install the app to your workspace. Copy the **Bot User OAuth Token** (`xoxb-...`) and the **User OAuth Token** (`xoxp-...`)
-6. Under **Event Subscriptions**, enable events. Under **Subscribe to bot events** (not "on behalf of users"), add: `reaction_added`, `message.channels`, `app_mention`
-7. Paste all three tokens into settings: **Slack Bot Token**, **Slack User Token**, **Slack App Token**
+2. **Socket Mode:** Settings → Socket Mode → Enable. Click "Generate Token", add scope `connections:write`. Copy the token (`xapp-...`) → paste into settings as **Slack App-Level Token**
+3. **Bot scopes:** Features → OAuth & Permissions → **Bot Token Scopes**, add:
+   - `channels:history`, `channels:read`, `reactions:read`, `users:read`
+4. **User scopes:** Same page → **User Token Scopes**, add:
+   - `reactions:write`, `chat:write` (so reactions show as you, not the bot)
+5. **Events:** Features → Event Subscriptions → Enable → **Subscribe to bot events** (not "on behalf of users"), add:
+   - `reaction_added`, `message.channels`, `app_mention`
+6. **Install:** Click "Install to Workspace" at the top of the OAuth page. After installing, two tokens appear on the same page:
+   - **Bot User OAuth Token** (`xoxb-...`) → paste into settings as **Slack Bot Token**
+   - **User OAuth Token** (`xoxp-...`) → paste into settings as **Slack User Token**
 
 **OpenAI** — for vector embeddings:
 1. Get an API key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
