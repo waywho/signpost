@@ -9,12 +9,23 @@
   </h2>
   <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
     <%= hidden_field_tag :section, "api_keys" %>
-    <% %w[openai_api_key anthropic_api_key github_pat slack_bot_token slack_user_token slack_app_token].each do |key| %>
+    <%
+      api_keys = {
+        "openai_api_key" => { label: "OpenAI API Key", hint: "For vector embeddings (sk-...)" },
+        "anthropic_api_key" => { label: "Anthropic API Key", hint: "For PR analysis, 1:1 prep, noise filtering (sk-ant-...)" },
+        "github_pat" => { label: "GitHub Personal Access Token", hint: "For PR queue, developer activity, issue creation (ghp-...)" },
+        "slack_bot_token" => { label: "Slack Bot Token", hint: "For reading channels and events (xoxb-...)" },
+        "slack_user_token" => { label: "Slack User Token", hint: "For reacting/replying as you, not the bot (xoxp-...)" },
+        "slack_app_token" => { label: "Slack App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" }
+      }
+    %>
+    <% api_keys.each do |key, meta| %>
       <div>
-        <label class="text-sm font-bold mbe-1" style="display: block"><%= key.tr("_", " ").titleize %></label>
+        <label class="text-sm font-bold mbe-1" style="display: block"><%= meta[:label] %></label>
         <% has_value = EncryptedSetting.get("credentials", key).present? %>
         <input type="password" name="<%= key %>" value="<%= has_value ? '••••••••' : '' %>"
                class="input" style="inline-size: 100%" placeholder="<%= has_value ? 'Configured' : 'Not set' %>">
+        <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
       </div>
     <% end %>
     <%= f.submit "Save API Keys", class: "btn btn--primary", style: "align-self: flex-start" %>
