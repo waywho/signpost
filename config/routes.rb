@@ -41,6 +41,13 @@ Rails.application.routes.draw do
   get "/search", to: "search#index"
   post "/search", to: "search#create"
 
+  resources :action_items, only: [] do
+    member do
+      post :approve
+      post :dismiss
+    end
+  end
+
   resource :settings, only: [:show, :update]
   resource :status, only: :show, controller: "status"
   resource :dashboard, only: :show, controller: "dashboard"
