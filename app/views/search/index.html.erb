@@ -6,7 +6,7 @@
   <div class="flex items-center gap">
     <%= f.search_field :query, value: @query, placeholder: "Search threads, topics, and messages…",
           class: "input flex-1", style: "font-size: var(--text-base)", autofocus: true %>
-    <%= f.submit "Search", class: "btn" %>
+    <%= f.submit "Search", class: "btn btn--primary" %>
   </div>
   <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
     <span>Search across:</span>
@@ -21,7 +21,7 @@
 <% end %>
 
 <% if @error %>
-  <div class="card" style="color: var(--color-negative); margin-block-end: var(--size-4)">
+  <div class="alert alert--negative" style="margin-block-end: var(--size-4)">
     <p class="text-sm"><i class="ph ph-warning"></i> Search failed: <%= @error %></p>
   </div>
 <% end %>

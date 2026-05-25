@@ -2,7 +2,7 @@
 
 <div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">
   <h1 class="font-bold text-2xl">Slack Threads</h1>
-  <%= link_to new_slack_thread_path, class: "btn" do %><i class="ph ph-plus"></i> Log Thread<% end %>
+  <%= link_to new_slack_thread_path, class: "btn btn--primary" do %><i class="ph ph-plus"></i> Log Thread<% end %>
 </div>
 
 <%# Status tabs %>
@@ -72,10 +72,10 @@
 
         <% if thread.status.in?(%w[new triaged]) %>
           <div class="flex items-center gap-half" style="flex-shrink: 0">
-            <%= button_to acknowledge_slack_thread_path(thread), method: :post, class: "text-sm", style: "color: var(--color-positive)", title: "Acknowledge" do %>
+            <%= button_to acknowledge_slack_thread_path(thread), method: :post, class: "btn btn--positive btn--icon btn--borderless", title: "Acknowledge" do %>
               <i class="ph ph-check"></i>
             <% end %>
-            <%= button_to dismiss_slack_thread_path(thread), method: :post, class: "text-sm", style: "color: var(--color-text-subtle)", title: "Dismiss" do %>
+            <%= button_to dismiss_slack_thread_path(thread), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
               <i class="ph ph-x"></i>
             <% end %>
           </div>

@@ -4,7 +4,7 @@
     <%= form_with model: [@developer, DeveloperNote.new], class: "flex items-center gap", style: "margin-block-end: var(--size-4)" do |f| %>
       <%= f.select :note_type, [["Good", "good"], ["Growth", "growth"], ["Concern", "concern"], ["Context", "context"]], {}, class: "input", style: "max-inline-size: 8rem" %>
       <%= f.text_field :content, placeholder: "Add observation...", class: "input flex-1" %>
-      <%= f.submit "Add", class: "btn" %>
+      <%= f.submit "Add", class: "btn btn--primary" %>
     <% end %>
   <% end %>
 <% end %>

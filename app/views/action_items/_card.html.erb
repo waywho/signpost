@@ -65,10 +65,10 @@
     <%= f.collection_select :developer_id, developers, :id, :name,
           { selected: item.suggested_developer_id, include_blank: "— unassigned —" },
           class: "input text-xs", style: "max-inline-size: 12rem" %>
-    <%= f.submit "Approve & Create Issue", class: "btn text-xs" %>
+    <%= f.submit "Approve & Create Issue", class: "btn btn--primary text-xs" %>
   <% end %>
   <div style="margin-block-start: var(--size-2)">
-    <%= button_to dismiss_action_item_path(item), method: :post, class: "text-xs", style: "color: var(--color-text-subtle)" do %>
+    <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--borderless text-xs" do %>
       <i class="ph ph-x"></i> Dismiss
     <% end %>
   </div>

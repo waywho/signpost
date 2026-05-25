@@ -10,7 +10,7 @@
   <h1 class="font-bold text-2xl"><%= @delegation.summary %></h1>
   <div class="flex items-center gap-half">
     <%= link_to edit_delegation_path(@delegation), class: "text-sm" do %><i class="ph ph-pencil"></i> Edit<% end %>
-    <%= button_to delegation_path(@delegation), method: :delete, class: "text-sm", style: "color: var(--color-negative)", data: { turbo_confirm: "Delete this delegation?" } do %>
+    <%= button_to delegation_path(@delegation), method: :delete, class: "btn btn--negative btn--borderless text-sm", data: { turbo_confirm: "Delete this delegation?" } do %>
       <i class="ph ph-trash"></i> Delete
     <% end %>
   </div>
@@ -51,7 +51,7 @@
     <%= form_with url: create_issue_delegation_path(@delegation), method: :post, class: "flex items-center gap" do |f| %>
       <%= f.select :repo, github_repos.map { |r| [r, r] },
             { include_blank: "— select repo —" }, class: "input" %>
-      <%= f.submit "Create Issue", class: "btn" %>
+      <%= f.submit "Create Issue", class: "btn btn--primary" %>
     <% end %>
   </div>
 <% end %>

@@ -44,7 +44,7 @@
   <% end %>
 
   <div class="flex items-center gap">
-    <%= f.submit delegation.persisted? ? "Save Changes" : "Create Delegation", class: "btn" %>
+    <%= f.submit delegation.persisted? ? "Save Changes" : "Create Delegation", class: "btn btn--primary" %>
     <%= link_to "Cancel", delegation.persisted? ? delegation_path(delegation) : delegations_path, class: "btn btn--borderless" %>
   </div>
 <% end %>

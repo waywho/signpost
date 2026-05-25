@@ -1,6 +1,6 @@
 <%= turbo_frame_tag dom_id(commitment) do %>
   <div class="card flex items-center gap">
-    <%= button_to done_commitment_path(commitment), method: :patch, class: "flex-item-no-shrink", style: "color: var(--color-positive)" do %>
+    <%= button_to done_commitment_path(commitment), method: :patch, class: "btn btn--positive btn--icon btn--borderless flex-item-no-shrink" do %>
       <i class="ph ph-circle" style="font-size: var(--text-xl)"></i>
     <% end %>
     <div class="flex flex-col flex-1">
@@ -21,7 +21,7 @@
         <% end %>
       </div>
     </div>
-    <%= button_to commitment_path(commitment), method: :delete, class: "flex-item-no-shrink", style: "color: var(--color-text-subtle)", data: { turbo_confirm: "Remove?" } do %>
+    <%= button_to commitment_path(commitment), method: :delete, class: "btn btn--icon btn--borderless flex-item-no-shrink", data: { turbo_confirm: "Remove?" } do %>
       <i class="ph ph-trash"></i>
     <% end %>
   </div>

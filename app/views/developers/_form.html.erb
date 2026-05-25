@@ -83,7 +83,7 @@
   </div>
 
   <div class="flex items-center gap" style="margin-block-start: var(--size-2)">
-    <%= f.submit developer.persisted? ? "Update Developer" : "Save Developer", class: "btn" %>
+    <%= f.submit developer.persisted? ? "Update Developer" : "Save Developer", class: "btn btn--primary" %>
     <%= link_to "Cancel", developer.persisted? ? developer_path(developer) : developers_path, class: "btn btn--borderless" %>
   </div>
 <% end %>
