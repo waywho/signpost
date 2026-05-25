@@ -2,353 +2,374 @@
 
 <h1 class="font-bold text-2xl mbe-6">Settings</h1>
 
-<%# AI Backend %>
-<% ai_backend = Setting.get("global", "ai_backend", default: "cli") %>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-brain"></i> AI Backend
-  </h2>
-  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
-    <%= hidden_field_tag :section, "ai_backend" %>
-    <div>
-      <label class="text-sm font-bold mbe-1" style="display: block">Backend</label>
-      <select name="ai_backend" class="input" onchange="document.getElementById('anthropic-key-field').style.display = this.value === 'api' ? '' : 'none'">
-        <% %w[cli api].each do |mode| %>
-          <option value="<%= mode %>" <%= 'selected' if ai_backend == mode %>><%= mode == "cli" ? "Claude Code CLI (uses your subscription)" : "Anthropic API (requires API key)" %></option>
-        <% end %>
-      </select>
-      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
-        <strong>CLI:</strong> Uses your installed <code>claude</code> command. No API key needed.<br>
-        <strong>API:</strong> Direct HTTP calls to Anthropic. Requires an API key.
-      </p>
-    </div>
-    <div id="anthropic-key-field" style="<%= 'display: none' unless ai_backend == 'api' %>" data-controller="password-reveal">
-      <div class="flex items-center gap-half mbe-1">
-        <label class="text-sm font-bold" style="display: block">Anthropic API Key</label>
-        <% has_key = EncryptedSetting.get("credentials", "anthropic_api_key").present? %>
-        <% if has_key %>
-          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
-        <% else %>
-          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
-        <% end %>
-      </div>
-      <div class="group">
-        <input type="password" name="anthropic_api_key" data-password-reveal-target="input"
-               class="input" placeholder="<%= has_key ? 'Configured — leave blank to keep' : 'sk-ant-...' %>">
-        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
-          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
-        </button>
-      </div>
-      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></p>
-    </div>
-    <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
-  <% end %>
-</div>
+<div class="flex gap" data-controller="settings-nav" style="align-items: flex-start">
+  <%# Side nav %>
+  <nav class="flex flex-col gap-half" style="min-inline-size: 12rem; position: sticky; top: var(--size-4)">
+    <%
+      sections = [
+        { icon: "ph-brain", label: "AI Backend" },
+        { icon: "ph-cube", label: "OpenAI" },
+        { icon: "ph-github-logo", label: "GitHub" },
+        { icon: "ph-chat-teardrop-dots", label: "Slack" },
+        { icon: "ph-calendar", label: "Calendar" },
+        { icon: "ph-magnifying-glass", label: "Search" },
+        { icon: "ph-archive", label: "Compression" }
+      ]
+    %>
+    <% sections.each do |section| %>
+      <a href="#" class="sidebar-menu__button btn text-sm flex items-center gap-half"
+         data-settings-nav-target="link" data-action="settings-nav#select">
+        <i class="ph <%= section[:icon] %>"></i> <%= section[:label] %>
+      </a>
+    <% end %>
+  </nav>
 
-<%# OpenAI %>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-cube"></i> OpenAI
-  </h2>
-  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
-    <%= hidden_field_tag :section, "api_keys" %>
-    <div data-controller="password-reveal">
-      <div class="flex items-center gap-half mbe-1">
-        <label class="text-sm font-bold" style="display: block">API Key</label>
-        <% has_openai = EncryptedSetting.get("credentials", "openai_api_key").present? %>
-        <% if has_openai %>
-          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
-        <% else %>
-          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
-        <% end %>
-      </div>
-      <div class="group">
-        <input type="password" name="openai_api_key" data-password-reveal-target="input"
-               class="input" placeholder="<%= has_openai ? 'Configured — leave blank to keep' : 'sk-...' %>">
-        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
-          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
-        </button>
-      </div>
-      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">For vector embeddings. Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></p>
-    </div>
-    <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
-  <% end %>
-</div>
+  <%# Panels %>
+  <div class="flex-1">
 
-<%# GitHub %>
-<%
-  github_service = GitHubService.new
-  github_configured = github_service.configured?
-  available_repos = github_configured ? (github_service.list_repos rescue []) : []
-  selected_repos = Setting.get("global", "github_repos", default: []) || []
-%>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-github-logo"></i> GitHub
-  </h2>
-  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
-    <%= hidden_field_tag :section, "github" %>
-    <div data-controller="password-reveal">
-      <div class="flex items-center gap-half mbe-1">
-        <label class="text-sm font-bold" style="display: block">Personal Access Token</label>
-        <% has_pat = EncryptedSetting.get("credentials", "github_pat").present? %>
-        <% if has_pat %>
-          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
-        <% else %>
-          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+    <%# AI Backend %>
+    <% ai_backend = Setting.get("global", "ai_backend", default: "cli") %>
+    <div data-settings-nav-target="panel">
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-brain"></i> AI Backend
+        </h2>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+          <%= hidden_field_tag :section, "ai_backend" %>
+          <div>
+            <label class="text-sm font-bold mbe-1" style="display: block">Backend</label>
+            <select name="ai_backend" class="input" onchange="document.getElementById('anthropic-key-field').style.display = this.value === 'api' ? '' : 'none'">
+              <% %w[cli api].each do |mode| %>
+                <option value="<%= mode %>" <%= 'selected' if ai_backend == mode %>><%= mode == "cli" ? "Claude Code CLI (uses your subscription)" : "Anthropic API (requires API key)" %></option>
+              <% end %>
+            </select>
+            <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
+              <strong>CLI:</strong> Uses your installed <code>claude</code> command. No API key needed.<br>
+              <strong>API:</strong> Direct HTTP calls to Anthropic. Requires an API key.
+            </p>
+          </div>
+          <div id="anthropic-key-field" style="<%= 'display: none' unless ai_backend == 'api' %>" data-controller="password-reveal">
+            <div class="flex items-center gap-half mbe-1">
+              <label class="text-sm font-bold" style="display: block">Anthropic API Key</label>
+              <% has_key = EncryptedSetting.get("credentials", "anthropic_api_key").present? %>
+              <i class="ph <%= has_key ? 'ph-check-circle' : 'ph-circle-dashed' %>" style="color: <%= has_key ? 'var(--color-positive)' : 'var(--color-text-subtle)' %>; font-size: var(--text-sm)"></i>
+            </div>
+            <div class="group">
+              <input type="password" name="anthropic_api_key" data-password-reveal-target="input"
+                     class="input" placeholder="<%= has_key ? 'Configured — leave blank to keep' : 'sk-ant-...' %>">
+              <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+                <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+              </button>
+            </div>
+            <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></p>
+          </div>
+          <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
         <% end %>
       </div>
-      <div class="group">
-        <input type="password" name="github_pat" data-password-reveal-target="input"
-               class="input" placeholder="<%= has_pat ? 'Configured — leave blank to keep' : 'ghp-...' %>">
-        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
-          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
-        </button>
+    </div>
+
+    <%# OpenAI %>
+    <div data-settings-nav-target="panel" hidden>
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-cube"></i> OpenAI
+        </h2>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+          <%= hidden_field_tag :section, "api_keys" %>
+          <div data-controller="password-reveal">
+            <div class="flex items-center gap-half mbe-1">
+              <label class="text-sm font-bold" style="display: block">API Key</label>
+              <% has_openai = EncryptedSetting.get("credentials", "openai_api_key").present? %>
+              <i class="ph <%= has_openai ? 'ph-check-circle' : 'ph-circle-dashed' %>" style="color: <%= has_openai ? 'var(--color-positive)' : 'var(--color-text-subtle)' %>; font-size: var(--text-sm)"></i>
+            </div>
+            <div class="group">
+              <input type="password" name="openai_api_key" data-password-reveal-target="input"
+                     class="input" placeholder="<%= has_openai ? 'Configured — leave blank to keep' : 'sk-...' %>">
+              <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+                <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+              </button>
+            </div>
+            <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">For vector embeddings. Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></p>
+          </div>
+          <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
+        <% end %>
       </div>
-      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">For PR queue, developer activity, and issue creation</p>
     </div>
-    <div>
-      <label class="text-sm font-bold mbe-1" style="display: block">Username</label>
-      <input type="text" name="github_username" value="<%= Setting.get('global', 'github_username') %>" class="input" placeholder="your-github-handle">
+
+    <%# GitHub %>
+    <%
+      github_service = GitHubService.new
+      github_configured = github_service.configured?
+      available_repos = github_configured ? (github_service.list_repos rescue []) : []
+      selected_repos = Setting.get("global", "github_repos", default: []) || []
+    %>
+    <div data-settings-nav-target="panel" hidden>
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-github-logo"></i> GitHub
+        </h2>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+          <%= hidden_field_tag :section, "github" %>
+          <div data-controller="password-reveal">
+            <div class="flex items-center gap-half mbe-1">
+              <label class="text-sm font-bold" style="display: block">Personal Access Token</label>
+              <% has_pat = EncryptedSetting.get("credentials", "github_pat").present? %>
+              <i class="ph <%= has_pat ? 'ph-check-circle' : 'ph-circle-dashed' %>" style="color: <%= has_pat ? 'var(--color-positive)' : 'var(--color-text-subtle)' %>; font-size: var(--text-sm)"></i>
+            </div>
+            <div class="group">
+              <input type="password" name="github_pat" data-password-reveal-target="input"
+                     class="input" placeholder="<%= has_pat ? 'Configured — leave blank to keep' : 'ghp-...' %>">
+              <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+                <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+              </button>
+            </div>
+            <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">For PR queue, developer activity, and issue creation</p>
+          </div>
+          <div>
+            <label class="text-sm font-bold mbe-1" style="display: block">Username</label>
+            <input type="text" name="github_username" value="<%= Setting.get('global', 'github_username') %>" class="input" placeholder="your-github-handle">
+          </div>
+          <div>
+            <label class="text-sm font-bold mbe-2" style="display: block">Watched Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(for issue creation)</span></label>
+            <% if available_repos.any? %>
+              <% orgs = available_repos.map { |r| r[:full_name].split("/").first }.uniq.sort %>
+              <div data-controller="repo-filter">
+              <% if orgs.size > 1 %>
+                <div class="flex items-center gap-half mbe-2">
+                  <span class="text-xs" style="color: var(--color-text-subtle)">Filter:</span>
+                  <button type="button" class="badge" data-action="repo-filter#filter" data-repo-filter-org-param="">All</button>
+                  <% orgs.each do |org| %>
+                    <button type="button" class="badge" data-action="repo-filter#filter" data-repo-filter-org-param="<%= org %>"><%= org %></button>
+                  <% end %>
+                </div>
+              <% end %>
+              <div class="flex flex-col gap-half" style="max-block-size: 20rem; overflow-y: auto" data-repo-filter-target="list">
+                <% available_repos.each do |repo| %>
+                  <label class="flex items-center gap-half text-sm" data-org="<%= repo[:full_name].split('/').first %>">
+                    <input type="checkbox" name="github_repos[]" value="<%= repo[:full_name] %>" class="input"
+                           <%= 'checked' if selected_repos.include?(repo[:full_name]) %>>
+                    <%= repo[:full_name] %>
+                    <% if repo[:private] %>
+                      <i class="ph ph-lock" style="color: var(--color-text-subtle)"></i>
+                    <% end %>
+                  </label>
+                <% end %>
+              </div>
+              </div>
+            <% elsif github_configured %>
+              <p class="text-sm" style="color: var(--color-text-subtle)">Could not fetch repos. Check your GitHub PAT.</p>
+            <% else %>
+              <p class="text-sm" style="color: var(--color-text-subtle)">Save your PAT above and reload to see repos.</p>
+            <% end %>
+          </div>
+          <%= f.submit "Save GitHub Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
+        <% end %>
+      </div>
     </div>
-    <div>
-      <label class="text-sm font-bold mbe-2" style="display: block">Watched Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(for issue creation)</span></label>
-      <% if available_repos.any? %>
-        <% orgs = available_repos.map { |r| r[:full_name].split("/").first }.uniq.sort %>
-        <div data-controller="repo-filter">
-        <% if orgs.size > 1 %>
-          <div class="flex items-center gap-half mbe-2">
-            <span class="text-xs" style="color: var(--color-text-subtle)">Filter:</span>
-            <button type="button" class="badge" data-action="repo-filter#filter" data-repo-filter-org-param="">All</button>
-            <% orgs.each do |org| %>
-              <button type="button" class="badge" data-action="repo-filter#filter" data-repo-filter-org-param="<%= org %>"><%= org %></button>
+
+    <%# Slack %>
+    <%
+      slack_keys = {
+        "slack_bot_token" => { label: "Bot Token", hint: "For reading channels and events (xoxb-...)" },
+        "slack_user_token" => { label: "User Token", hint: "For reacting/replying as you (xoxp-...)" },
+        "slack_app_token" => { label: "App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" }
+      }
+    %>
+    <div data-settings-nav-target="panel" hidden>
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-chat-teardrop-dots"></i> Slack
+        </h2>
+
+        <%# Tokens %>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap mbe-6" do |f| %>
+          <%= hidden_field_tag :section, "slack" %>
+          <% slack_keys.each do |key, meta| %>
+            <div data-controller="password-reveal">
+              <div class="flex items-center gap-half mbe-1">
+                <label class="text-sm font-bold" style="display: block"><%= meta[:label] %></label>
+                <% has_value = EncryptedSetting.get("credentials", key).present? %>
+                <i class="ph <%= has_value ? 'ph-check-circle' : 'ph-circle-dashed' %>" style="color: <%= has_value ? 'var(--color-positive)' : 'var(--color-text-subtle)' %>; font-size: var(--text-sm)"></i>
+              </div>
+              <div class="group">
+                <input type="password" name="<%= key %>" data-password-reveal-target="input"
+                       class="input" placeholder="<%= has_value ? 'Configured — leave blank to keep' : 'Not set' %>">
+                <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+                  <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+                </button>
+              </div>
+              <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
+            </div>
+          <% end %>
+
+          <div class="separator mbe-2 mbs-2"></div>
+          <h3 class="font-bold text-xs" style="color: var(--color-text-subtle)">Capture Settings</h3>
+          <div class="flex gap">
+            <div style="flex: 1">
+              <label class="text-sm font-bold mbe-1" style="display: block">Capture Mode</label>
+              <select name="slack_capture_mode" class="input">
+                <% %w[socket poll both].each do |mode| %>
+                  <option value="<%= mode %>" <%= 'selected' if Setting.get('global', 'slack_capture_mode', default: 'both') == mode %>><%= mode %></option>
+                <% end %>
+              </select>
+            </div>
+            <div style="flex: 1">
+              <label class="text-sm font-bold mbe-1" style="display: block">Brain Emoji</label>
+              <input type="text" name="slack_brain_emoji" value="<%= Setting.get('global', 'slack_brain_emoji', default: 'brain') %>" class="input">
+            </div>
+            <div style="flex: 1">
+              <label class="text-sm font-bold mbe-1" style="display: block">Poll Interval (min)</label>
+              <input type="number" name="poll_interval_minutes" value="<%= Setting.get('global', 'poll_interval_minutes', default: 15) %>" class="input">
+            </div>
+          </div>
+          <%= f.submit "Save Slack Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
+        <% end %>
+
+        <%# Watched Channels %>
+        <div class="separator mbe-4"></div>
+        <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Watched Channels</h3>
+        <% if @watched_channels.any? %>
+          <div class="flex flex-col gap-half mbe-4">
+            <% @watched_channels.each do |ch| %>
+              <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
+                <div>
+                  <span class="font-bold text-sm"><%= ch.channel_name %></span>
+                  <span class="text-xs" style="color: var(--color-text-subtle)"><%= ch.channel_id %> · <%= ch.capture_mode %></span>
+                </div>
+                <%= button_to settings_path, method: :patch, params: { section: "watched_channel_remove", channel_id: ch.channel_id }, class: "btn btn--negative btn--icon btn--borderless" do %>
+                  <i class="ph ph-trash"></i>
+                <% end %>
+              </div>
             <% end %>
           </div>
         <% end %>
-        <div class="flex flex-col gap-half" style="max-block-size: 20rem; overflow-y: auto" data-repo-filter-target="list">
-          <% available_repos.each do |repo| %>
-            <label class="flex items-center gap-half text-sm" data-org="<%= repo[:full_name].split('/').first %>">
-              <input type="checkbox" name="github_repos[]" value="<%= repo[:full_name] %>" class="input"
-                     <%= 'checked' if selected_repos.include?(repo[:full_name]) %>>
-              <%= repo[:full_name] %>
-              <% if repo[:private] %>
-                <i class="ph ph-lock" style="color: var(--color-text-subtle)"></i>
-              <% end %>
-            </label>
-          <% end %>
-        </div>
-        </div>
-      <% elsif github_configured %>
-        <p class="text-sm" style="color: var(--color-text-subtle)">Could not fetch repos. Check your GitHub PAT.</p>
-      <% else %>
-        <p class="text-sm" style="color: var(--color-text-subtle)">Save your PAT above and reload to see repos.</p>
-      <% end %>
-    </div>
-    <%= f.submit "Save GitHub Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
-  <% end %>
-</div>
-
-<%# Slack (tokens + capture + channels + noise filters) %>
-<%
-  slack_keys = {
-    "slack_bot_token" => { label: "Bot Token", hint: "For reading channels and events (xoxb-...)" },
-    "slack_user_token" => { label: "User Token", hint: "For reacting/replying as you (xoxp-...)" },
-    "slack_app_token" => { label: "App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" }
-  }
-%>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-chat-teardrop-dots"></i> Slack
-  </h2>
-
-  <%# Tokens %>
-  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap mbe-6" do |f| %>
-    <%= hidden_field_tag :section, "slack" %>
-    <% slack_keys.each do |key, meta| %>
-      <div data-controller="password-reveal">
-        <div class="flex items-center gap-half mbe-1">
-          <label class="text-sm font-bold" style="display: block"><%= meta[:label] %></label>
-          <% has_value = EncryptedSetting.get("credentials", key).present? %>
-          <% if has_value %>
-            <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
-          <% else %>
-            <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
-          <% end %>
-        </div>
-        <div class="group">
-          <input type="password" name="<%= key %>" data-password-reveal-target="input"
-                 class="input" placeholder="<%= has_value ? 'Configured — leave blank to keep' : 'Not set' %>">
-          <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
-            <i class="ph ph-eye" data-password-reveal-target="icon"></i>
-          </button>
-        </div>
-        <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
-      </div>
-    <% end %>
-
-    <%# Capture settings %>
-    <div class="separator mbe-2 mbs-2"></div>
-    <h3 class="font-bold text-xs" style="color: var(--color-text-subtle)">Capture Settings</h3>
-    <div class="flex gap">
-      <div style="flex: 1">
-        <label class="text-sm font-bold mbe-1" style="display: block">Capture Mode</label>
-        <select name="slack_capture_mode" class="input">
-          <% %w[socket poll both].each do |mode| %>
-            <option value="<%= mode %>" <%= 'selected' if Setting.get('global', 'slack_capture_mode', default: 'both') == mode %>><%= mode %></option>
-          <% end %>
-        </select>
-      </div>
-      <div style="flex: 1">
-        <label class="text-sm font-bold mbe-1" style="display: block">Brain Emoji</label>
-        <input type="text" name="slack_brain_emoji" value="<%= Setting.get('global', 'slack_brain_emoji', default: 'brain') %>" class="input">
-      </div>
-      <div style="flex: 1">
-        <label class="text-sm font-bold mbe-1" style="display: block">Poll Interval (min)</label>
-        <input type="number" name="poll_interval_minutes" value="<%= Setting.get('global', 'poll_interval_minutes', default: 15) %>" class="input">
-      </div>
-    </div>
-    <%= f.submit "Save Slack Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
-  <% end %>
-
-  <%# Watched Channels %>
-  <div class="separator mbe-4"></div>
-  <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Watched Channels</h3>
-  <% if @watched_channels.any? %>
-    <div class="flex flex-col gap-half mbe-4">
-      <% @watched_channels.each do |ch| %>
-        <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
-          <div>
-            <span class="font-bold text-sm"><%= ch.channel_name %></span>
-            <span class="text-xs" style="color: var(--color-text-subtle)"><%= ch.channel_id %> · <%= ch.capture_mode %></span>
+        <%= form_with url: settings_path, method: :patch, class: "flex items-end gap mbe-6" do |f| %>
+          <%= hidden_field_tag :section, "watched_channel_add" %>
+          <div style="flex: 1">
+            <label class="text-sm font-bold mbe-1" style="display: block">Channel ID</label>
+            <input type="text" name="channel_id" class="input" placeholder="C04XXXXXXX" required>
           </div>
-          <%= button_to settings_path, method: :patch, params: { section: "watched_channel_remove", channel_id: ch.channel_id }, class: "btn btn--negative btn--icon btn--borderless" do %>
-            <i class="ph ph-trash"></i>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap mbe-6" do |f| %>
-    <%= hidden_field_tag :section, "watched_channel_add" %>
-    <div style="flex: 1">
-      <label class="text-sm font-bold mbe-1" style="display: block">Channel ID</label>
-      <input type="text" name="channel_id" class="input" placeholder="C04XXXXXXX" required>
-    </div>
-    <div style="flex: 1">
-      <label class="text-sm font-bold mbe-1" style="display: block">Channel Name</label>
-      <input type="text" name="channel_name" class="input" placeholder="engineering" required>
-    </div>
-    <div style="flex: 1">
-      <label class="text-sm font-bold mbe-1" style="display: block">Capture Mode</label>
-      <select name="capture_mode" class="input">
-        <option value="full_stream">Full Stream</option>
-        <option value="involvement_only">Involvement Only</option>
-        <option value="ignored">Ignored</option>
-      </select>
-    </div>
-    <%= f.submit "Add Channel", class: "btn btn--primary" %>
-  <% end %>
-
-  <%# Noise Filters %>
-  <div class="separator mbe-4"></div>
-  <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Noise Filters</h3>
-  <% if @noise_filters.any? %>
-    <div class="flex flex-col gap-half mbe-4">
-      <% @noise_filters.each do |nf| %>
-        <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
-          <div>
-            <span class="font-bold text-sm"><%= nf.category %></span>
-            <span class="text-xs" style="color: var(--color-text-subtle)"><%= nf.description %></span>
+          <div style="flex: 1">
+            <label class="text-sm font-bold mbe-1" style="display: block">Channel Name</label>
+            <input type="text" name="channel_name" class="input" placeholder="engineering" required>
           </div>
-          <%= button_to settings_path, method: :patch, params: { section: "noise_filter_remove", filter_id: nf.id }, class: "btn btn--negative btn--icon btn--borderless" do %>
-            <i class="ph ph-trash"></i>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
-    <%= hidden_field_tag :section, "noise_filter_add" %>
-    <div style="flex: 1">
-      <label class="text-sm font-bold mbe-1" style="display: block">Category</label>
-      <input type="text" name="filter_category" class="input" placeholder="deploy_notification" required>
-    </div>
-    <div style="flex: 2">
-      <label class="text-sm font-bold mbe-1" style="display: block">Description</label>
-      <input type="text" name="filter_description" class="input" placeholder="Automated deploy notifications" required>
-    </div>
-    <%= f.submit "Add Filter", class: "btn btn--primary" %>
-  <% end %>
-</div>
+          <div style="flex: 1">
+            <label class="text-sm font-bold mbe-1" style="display: block">Capture Mode</label>
+            <select name="capture_mode" class="input">
+              <option value="full_stream">Full Stream</option>
+              <option value="involvement_only">Involvement Only</option>
+              <option value="ignored">Ignored</option>
+            </select>
+          </div>
+          <%= f.submit "Add Channel", class: "btn btn--primary" %>
+        <% end %>
 
-<%# Calendar %>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-calendar"></i> Google Calendar
-  </h2>
-  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
-    <%= hidden_field_tag :section, "calendar" %>
-    <div data-controller="password-reveal">
-      <div class="flex items-center gap-half mbe-1">
-        <label class="text-sm font-bold" style="display: block">Secret iCal URL</label>
-        <% has_url = EncryptedSetting.get("credentials", "google_ical_url").present? %>
-        <% if has_url %>
-          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
-        <% else %>
-          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+        <%# Noise Filters %>
+        <div class="separator mbe-4"></div>
+        <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Noise Filters</h3>
+        <% if @noise_filters.any? %>
+          <div class="flex flex-col gap-half mbe-4">
+            <% @noise_filters.each do |nf| %>
+              <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
+                <div>
+                  <span class="font-bold text-sm"><%= nf.category %></span>
+                  <span class="text-xs" style="color: var(--color-text-subtle)"><%= nf.description %></span>
+                </div>
+                <%= button_to settings_path, method: :patch, params: { section: "noise_filter_remove", filter_id: nf.id }, class: "btn btn--negative btn--icon btn--borderless" do %>
+                  <i class="ph ph-trash"></i>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
+          <%= hidden_field_tag :section, "noise_filter_add" %>
+          <div style="flex: 1">
+            <label class="text-sm font-bold mbe-1" style="display: block">Category</label>
+            <input type="text" name="filter_category" class="input" placeholder="deploy_notification" required>
+          </div>
+          <div style="flex: 2">
+            <label class="text-sm font-bold mbe-1" style="display: block">Description</label>
+            <input type="text" name="filter_description" class="input" placeholder="Automated deploy notifications" required>
+          </div>
+          <%= f.submit "Add Filter", class: "btn btn--primary" %>
         <% end %>
       </div>
-      <div class="group">
-        <input type="password" name="google_ical_url" data-password-reveal-target="input"
-               class="input" placeholder="<%= has_url ? 'Configured — leave blank to keep' : 'https://calendar.google.com/calendar/ical/.../basic.ics' %>">
-        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
-          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
-        </button>
-      </div>
-      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
-        Google Calendar → Settings → calendar → Secret address in iCal format
-      </p>
     </div>
-    <%= f.submit "Save Calendar URL", class: "btn btn--primary", style: "align-self: flex-start" %>
-  <% end %>
-</div>
 
-<%# Search %>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-magnifying-glass"></i> Search
-  </h2>
-  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
-    <%= hidden_field_tag :section, "search" %>
-    <div style="flex: 1">
-      <label class="text-sm font-bold mbe-1" style="display: block">Default Similarity Threshold</label>
-      <input type="number" name="search_default_threshold" value="<%= Setting.get('global', 'search_default_threshold', default: 0.75) %>" step="0.05" min="0" max="1" class="input">
+    <%# Calendar %>
+    <div data-settings-nav-target="panel" hidden>
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-calendar"></i> Google Calendar
+        </h2>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+          <%= hidden_field_tag :section, "calendar" %>
+          <div data-controller="password-reveal">
+            <div class="flex items-center gap-half mbe-1">
+              <label class="text-sm font-bold" style="display: block">Secret iCal URL</label>
+              <% has_url = EncryptedSetting.get("credentials", "google_ical_url").present? %>
+              <i class="ph <%= has_url ? 'ph-check-circle' : 'ph-circle-dashed' %>" style="color: <%= has_url ? 'var(--color-positive)' : 'var(--color-text-subtle)' %>; font-size: var(--text-sm)"></i>
+            </div>
+            <div class="group">
+              <input type="password" name="google_ical_url" data-password-reveal-target="input"
+                     class="input" placeholder="<%= has_url ? 'Configured — leave blank to keep' : 'https://calendar.google.com/calendar/ical/.../basic.ics' %>">
+              <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+                <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+              </button>
+            </div>
+            <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
+              Google Calendar → Settings → calendar → Secret address in iCal format
+            </p>
+          </div>
+          <%= f.submit "Save Calendar URL", class: "btn btn--primary", style: "align-self: flex-start" %>
+        <% end %>
+      </div>
     </div>
-    <%= f.submit "Save", class: "btn btn--primary" %>
-  <% end %>
-</div>
 
-<%# Compression %>
-<div class="card">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-archive"></i> Compression & Reanalysis
-  </h2>
-  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
-    <%= hidden_field_tag :section, "compression" %>
-    <div class="flex gap">
-      <div style="flex: 1">
-        <label class="text-sm font-bold mbe-1" style="display: block">Compress after (months)</label>
-        <input type="number" name="compression_after_months" value="<%= Setting.get('global', 'compression_after_months', default: 6) %>" class="input">
-      </div>
-      <div style="flex: 1">
-        <label class="text-sm font-bold mbe-1" style="display: block">Reanalysis threshold (messages)</label>
-        <input type="number" name="reanalysis_message_threshold" value="<%= Setting.get('global', 'reanalysis_message_threshold', default: 3) %>" class="input">
-      </div>
-      <div style="flex: 1">
-        <label class="text-sm font-bold mbe-1" style="display: block">Reanalysis quiet period (min)</label>
-        <input type="number" name="reanalysis_quiet_minutes" value="<%= Setting.get('global', 'reanalysis_quiet_minutes', default: 30) %>" class="input">
+    <%# Search %>
+    <div data-settings-nav-target="panel" hidden>
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-magnifying-glass"></i> Search
+        </h2>
+        <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
+          <%= hidden_field_tag :section, "search" %>
+          <div style="flex: 1">
+            <label class="text-sm font-bold mbe-1" style="display: block">Default Similarity Threshold</label>
+            <input type="number" name="search_default_threshold" value="<%= Setting.get('global', 'search_default_threshold', default: 0.75) %>" step="0.05" min="0" max="1" class="input">
+          </div>
+          <%= f.submit "Save", class: "btn btn--primary" %>
+        <% end %>
       </div>
     </div>
-    <%= f.submit "Save Compression Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
-  <% end %>
+
+    <%# Compression %>
+    <div data-settings-nav-target="panel" hidden>
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-archive"></i> Compression & Reanalysis
+        </h2>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+          <%= hidden_field_tag :section, "compression" %>
+          <div class="flex gap">
+            <div style="flex: 1">
+              <label class="text-sm font-bold mbe-1" style="display: block">Compress after (months)</label>
+              <input type="number" name="compression_after_months" value="<%= Setting.get('global', 'compression_after_months', default: 6) %>" class="input">
+            </div>
+            <div style="flex: 1">
+              <label class="text-sm font-bold mbe-1" style="display: block">Reanalysis threshold (messages)</label>
+              <input type="number" name="reanalysis_message_threshold" value="<%= Setting.get('global', 'reanalysis_message_threshold', default: 3) %>" class="input">
+            </div>
+            <div style="flex: 1">
+              <label class="text-sm font-bold mbe-1" style="display: block">Reanalysis quiet period (min)</label>
+              <input type="number" name="reanalysis_quiet_minutes" value="<%= Setting.get('global', 'reanalysis_quiet_minutes', default: 30) %>" class="input">
+            </div>
+          </div>
+          <%= f.submit "Save Compression Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
+        <% end %>
+      </div>
+    </div>
+
+  </div>
 </div>
