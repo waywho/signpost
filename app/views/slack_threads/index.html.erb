@@ -1,12 +1,12 @@
 <% content_for(:title, "Slack Threads — Tech Lead OS") %>
 
-<div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">
+<div class="flex items-center justify-between mbe-4">
   <h1 class="font-bold text-2xl">Slack Threads</h1>
   <%= link_to new_slack_thread_path, class: "btn btn--primary" do %><i class="ph ph-plus"></i> Log Thread<% end %>
 </div>
 
 <%# Status tabs %>
-<div class="flex items-center gap-half" style="margin-block-end: var(--size-4)">
+<div class="flex items-center gap-half mbe-4">
   <% current_status = params[:status] || "new" %>
   <% [["New", "new"], ["Triaged", "triaged"], ["Actioned", "actioned"], ["Archived", "archived"], ["All", "all"]].each do |label, status| %>
     <% active = current_status == status %>
@@ -20,7 +20,7 @@
 </div>
 
 <%# Category + search %>
-<div class="flex items-center gap" style="margin-block-end: var(--size-4); flex-wrap: wrap">
+<div class="flex items-center gap mbe-4" style="flex-wrap: wrap">
   <div class="flex items-center gap-half">
     <%= link_to "All categories", slack_threads_path(status: params[:status] || "new", q: params[:q]),
           class: "text-sm #{params[:category].blank? ? 'font-bold' : ''}",
@@ -87,10 +87,10 @@
   </div>
 <% else %>
   <div class="card text-center" style="color: var(--color-text-subtle)">
-    <i class="ph ph-chat-dots" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4)"></i>
+    <i class="ph ph-chat-dots mbe-4" style="font-size: var(--text-4xl); display: block"></i>
     <p>No threads found.</p>
     <% if params[:q].present? || params[:category].present? || (params[:status] || "new") != "new" %>
-      <p class="text-sm" style="margin-block-start: var(--size-2)"><%= link_to "Clear filters", slack_threads_path %></p>
+      <p class="text-sm mbs-2"><%= link_to "Clear filters", slack_threads_path %></p>
     <% end %>
   </div>
 <% end %>

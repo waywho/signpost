@@ -1,6 +1,6 @@
 <% content_for(:title, "New Commitment — Tech Lead OS") %>
-<div class="container" style="max-inline-size: 40rem; margin-block-start: var(--size-6)">
-  <h1 class="font-bold text-2xl" style="margin-block-end: var(--size-6)">New Commitment</h1>
+<div class="container mbs-6" style="max-inline-size: 40rem">
+  <h1 class="font-bold text-2xl mbe-6">New Commitment</h1>
   <div class="card">
     <%= form_with model: @commitment, class: "flex flex-col gap" do |f| %>
       <% if @commitment.errors.any? %>
@@ -9,21 +9,21 @@
         </div>
       <% end %>
       <div>
-        <%= f.label :text, "What did you commit to?", class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+        <%= f.label :text, "What did you commit to?", class: "text-sm font-bold mbe-1", style: "display: block" %>
         <%= f.text_area :text, class: "input", rows: 3, required: true %>
       </div>
       <div class="flex gap">
         <div style="flex: 1">
-          <%= f.label :stakeholder, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+          <%= f.label :stakeholder, class: "text-sm font-bold mbe-1", style: "display: block" %>
           <%= f.text_field :stakeholder, class: "input", placeholder: "Who did you promise this to?" %>
         </div>
         <div style="flex: 1">
-          <%= f.label :due_date, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+          <%= f.label :due_date, class: "text-sm font-bold mbe-1", style: "display: block" %>
           <%= f.date_field :due_date, class: "input" %>
         </div>
       </div>
       <div>
-        <%= f.label :source, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+        <%= f.label :source, class: "text-sm font-bold mbe-1", style: "display: block" %>
         <%= f.select :source, [["", ""], ["Manual", "manual"], ["Slack", "slack"], ["Meeting", "meeting"]], {}, class: "input" %>
       </div>
       <div class="flex items-center gap">

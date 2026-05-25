@@ -7,7 +7,7 @@
 
 <div id="main">
   <div class="container">
-    <div class="flex items-center justify-between" style="margin-block-end: var(--size-6)">
+    <div class="flex items-center justify-between mbe-6">
       <h1 class="font-bold text-2xl"><%= @developer.name %></h1>
       <div class="flex items-center gap-half">
         <%= link_to edit_developer_path(@developer), class: "text-sm", style: "color: var(--color-text-subtle)" do %>
@@ -21,7 +21,7 @@
     </div>
 
     <%# Profile info %>
-    <div class="card" style="margin-block-end: var(--size-4)">
+    <div class="card mbe-4">
       <dl class="flex flex-col gap-half">
         <% { "Role" => @developer.role, "Level" => @developer.level, "GitHub" => @developer.github_handle, "Slack" => @developer.slack_handle, "Joined" => @developer.joined_team&.strftime("%B %Y") }.each do |label, value| %>
           <% next unless value.present? %>
@@ -34,29 +34,29 @@
     </div>
 
     <% if @developer.strengths.present? %>
-      <div class="card" style="margin-block-end: var(--size-4)">
-        <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Strengths</h2>
+      <div class="card mbe-4">
+        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Strengths</h2>
         <p class="text-sm"><%= @developer.strengths %></p>
       </div>
     <% end %>
 
     <% if @developer.growth_areas.present? %>
-      <div class="card" style="margin-block-end: var(--size-4)">
-        <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Growth Areas</h2>
+      <div class="card mbe-4">
+        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Growth Areas</h2>
         <p class="text-sm"><%= @developer.growth_areas %></p>
       </div>
     <% end %>
 
     <% if @developer.career_goals.present? %>
-      <div class="card" style="margin-block-end: var(--size-4)">
-        <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Career Goals</h2>
+      <div class="card mbe-4">
+        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Career Goals</h2>
         <p class="text-sm"><%= @developer.career_goals %></p>
       </div>
     <% end %>
 
     <% if @developer.skills.present? && @developer.skills.any? %>
-      <div class="card" style="margin-block-end: var(--size-4)">
-        <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Skills</h2>
+      <div class="card mbe-4">
+        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Skills</h2>
         <div class="flex flex-col gap-half">
           <% @developer.skills.each do |skill| %>
             <% skill = skill.is_a?(Hash) ? skill : {} %>
@@ -77,13 +77,13 @@
     <%= render "github_activity", developer: @developer, activities: @github_activities %>
 
     <%# Notes section %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <div class="card mbe-4">
+      <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
         <i class="ph ph-note"></i> Observations
       </h2>
 
       <%= turbo_frame_tag "new_note_form" do %>
-        <%= form_with model: [@developer, @developer_note], class: "flex items-center gap", style: "margin-block-end: var(--size-4)" do |f| %>
+        <%= form_with model: [@developer, @developer_note], class: "flex items-center gap mbe-4" do |f| %>
           <%= f.select :note_type, [["Good", "good"], ["Growth", "growth"], ["Concern", "concern"], ["Context", "context"]], {}, class: "input", style: "max-inline-size: 8rem" %>
           <%= f.text_field :content, placeholder: "Add observation...", class: "input flex-1" %>
           <%= f.submit "Add", class: "btn btn--primary" %>
@@ -100,11 +100,11 @@
     <%# 1:1 Prep %>
     <turbo-frame id="oneone_prep">
       <% if ClaudeService.new.configured? %>
-        <div class="card" style="margin-block-end: var(--size-4)">
+        <div class="card mbe-4">
           <%= button_to prep_developer_path(@developer), method: :post, class: "btn btn--primary", data: { turbo_frame: "oneone_prep" } do %>
             <i class="ph ph-brain"></i> Prep 1:1
           <% end %>
-          <p class="text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-2)">
+          <p class="text-xs mbs-2" style="color: var(--color-text-subtle)">
             Generate talking points from recent notes, activity, and last 1:1.
           </p>
         </div>
@@ -113,7 +113,7 @@
 
     <%# 1:1 Sessions section %>
     <div class="card">
-      <div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">
+      <div class="flex items-center justify-between mbe-4">
         <h2 class="font-bold text-sm" style="color: var(--color-text-subtle)">
           <i class="ph ph-chats"></i> 1:1 Sessions
         </h2>

@@ -1,13 +1,13 @@
 <% content_for(:title, "Delegations — Tech Lead OS") %>
 
-<div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">
+<div class="flex items-center justify-between mbe-4">
   <h1 class="font-bold text-2xl">Delegations</h1>
   <%= link_to new_delegation_path, class: "btn btn--primary" do %>
     <i class="ph ph-plus"></i> New Delegation
   <% end %>
 </div>
 
-<div class="flex items-center gap-half" style="margin-block-end: var(--size-4)">
+<div class="flex items-center gap-half mbe-4">
   <% [["All active", nil], ["Delegated", "delegated"], ["In Progress", "in_progress"], ["Blocked", "blocked"], ["Done", "done"]].each do |label, status| %>
     <% active = params[:status] == status || (status.nil? && params[:status].blank?) %>
     <%= link_to label, delegations_path(status: status), class: "text-sm #{active ? 'font-bold' : ''}", style: active ? '' : 'color: var(--color-text-subtle)' %>
@@ -47,7 +47,7 @@
   </div>
 <% else %>
   <div class="card text-center" style="color: var(--color-text-subtle)">
-    <i class="ph ph-clipboard" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4)"></i>
+    <i class="ph ph-clipboard mbe-4" style="font-size: var(--text-4xl); display: block"></i>
     <p>No delegations found.</p>
   </div>
 <% end %>

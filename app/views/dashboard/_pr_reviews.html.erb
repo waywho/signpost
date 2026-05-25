@@ -1,13 +1,13 @@
 <div class="card">
-  <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+  <h2 class="font-bold flex items-center gap-half mbe-4">
     <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i> PR Reviews
     <span class="text-sm font-normal" style="color: var(--color-text-subtle)">Last 5</span>
   </h2>
   <% if pr_queue&.any? %>
-    <p class="text-xs font-bold" style="color: var(--color-negative); margin-block-end: var(--size-2)">
+    <p class="text-xs font-bold mbe-2" style="color: var(--color-negative)">
       <i class="ph ph-warning-circle"></i> <%= pr_queue.size %> awaiting your review
     </p>
-    <ul class="flex flex-col gap-half" style="margin-block-end: var(--size-4)">
+    <ul class="flex flex-col gap-half mbe-4">
       <% pr_queue.first(3).each do |pr| %>
         <li class="flex items-center justify-between text-sm">
           <%= link_to "##{pr[:number]} #{pr[:title]&.truncate(40)}", pr[:url], target: "_blank", style: "text-decoration: none" %>

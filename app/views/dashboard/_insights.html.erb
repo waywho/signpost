@@ -1,11 +1,11 @@
 <% if alerts.any? || patterns.any? %>
-  <div style="margin-block-end: var(--size-6)">
-    <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+  <div class="mbe-6">
+    <h2 class="font-bold flex items-center gap-half mbe-4">
       <i class="ph ph-lightbulb" style="color: var(--color-primary)"></i> Insights
     </h2>
 
     <% if alerts.any? %>
-      <div class="flex flex-col gap-half" style="margin-block-end: var(--size-4)">
+      <div class="flex flex-col gap-half mbe-4">
         <% alerts.each do |alert| %>
           <%
             bg = case alert[:type]
@@ -29,7 +29,7 @@
 
     <% if patterns.any? %>
       <div class="card">
-        <h3 class="font-bold text-xs" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">
+        <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">
           <i class="ph ph-chart-line-up"></i> Patterns This Week
         </h3>
         <div class="flex flex-col gap-half">

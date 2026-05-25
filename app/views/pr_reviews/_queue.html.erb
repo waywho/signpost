@@ -1,10 +1,10 @@
 <% if pr_queue.nil? %>
-  <div class="card" style="margin-block-end: var(--size-6); color: var(--color-text-subtle)">
+  <div class="card mbe-6" style="color: var(--color-text-subtle)">
     <p class="text-sm"><i class="ph ph-info"></i> Set <code>github_pat</code> in encrypted settings to see your PR queue.</p>
   </div>
 <% elsif pr_queue.any? %>
-  <div class="card" style="margin-block-end: var(--size-6)">
-    <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+  <div class="card mbe-6">
+    <h2 class="font-bold flex items-center gap-half mbe-4">
       <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
       Awaiting Your Review
       <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= pr_queue.size %>)</span>

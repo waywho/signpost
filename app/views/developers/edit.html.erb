@@ -1,7 +1,7 @@
 <% content_for(:title, "Edit #{@developer.name} — Tech Lead OS") %>
 
-<div class="container" style="max-inline-size: 40rem; margin-block-start: var(--size-6)">
-  <h1 class="font-bold text-2xl" style="margin-block-end: var(--size-6)">Edit <%= @developer.name %></h1>
+<div class="container mbs-6" style="max-inline-size: 40rem">
+  <h1 class="font-bold text-2xl mbe-6">Edit <%= @developer.name %></h1>
   <div class="card">
     <%= render "form", developer: @developer %>
   </div>

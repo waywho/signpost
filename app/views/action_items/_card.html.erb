@@ -7,8 +7,8 @@
               else "var(--color-text-subtle)"
               end
 %>
-<div class="card" style="margin-block-end: var(--size-3)">
-  <div class="flex items-center gap-half" style="margin-block-end: var(--size-2)">
+<div class="card mbe-3">
+  <div class="flex items-center gap-half mbe-2">
     <span class="text-xs font-bold" style="color: <%= urg_color %>"><%= urg || "—" %></span>
     <span class="font-bold text-sm flex-1"><%= item.slack_topic.title %></span>
     <% if item.slack_thread.slack_url.present? %>
@@ -18,9 +18,9 @@
     <% end %>
   </div>
 
-  <p class="text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-3)"><%= item.slack_topic.summary.truncate(150) %></p>
+  <p class="text-sm mbe-3" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary.truncate(150) %></p>
 
-  <div class="flex items-center gap text-xs" style="color: var(--color-text-subtle); margin-block-end: var(--size-3)">
+  <div class="flex items-center gap text-xs mbe-3" style="color: var(--color-text-subtle)">
     <% if item.suggested_developer %>
       <span><i class="ph ph-user"></i> <%= item.suggested_developer.name %></span>
       <% if item.suggestion_reason.present? %>
@@ -33,10 +33,10 @@
   </div>
 
   <% if item.related_items.present? && item.related_items.any? %>
-    <div style="margin-block-end: var(--size-3)">
+    <div class="mbe-3">
       <span class="text-xs font-bold" style="color: var(--color-text-subtle)">Related:</span>
       <% item.related_items.each do |related| %>
-        <div class="text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-1)">
+        <div class="text-xs mbs-1" style="color: var(--color-text-subtle)">
           <% if related["thread_id"] %>
             <%= link_to slack_thread_path(related["thread_id"]), style: "text-decoration: none" do %>
               <%= related["title"] || "Thread" %> (<%= ((related["similarity"] || 0) * 100).round %>% match)
@@ -49,11 +49,11 @@
     </div>
   <% end %>
 
-  <details style="margin-block-end: var(--size-3)">
+  <details class="mbe-3">
     <summary class="text-xs font-bold" style="color: var(--color-text-subtle); cursor: pointer">
       <i class="ph ph-file-text"></i> Draft: <%= item.draft_title %>
     </summary>
-    <div class="text-sm" style="white-space: pre-wrap; margin-block-start: var(--size-2); padding: var(--size-3); background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= item.draft_body %></div>
+    <div class="text-sm mbs-2 p-3" style="white-space: pre-wrap; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= item.draft_body %></div>
   </details>
 
   <%= form_with url: approve_action_item_path(item), method: :post, class: "flex items-center gap" do |f| %>
@@ -67,7 +67,7 @@
           class: "input text-xs", style: "max-inline-size: 12rem" %>
     <%= f.submit "Approve & Create Issue", class: "btn btn--primary text-xs" %>
   <% end %>
-  <div style="margin-block-start: var(--size-2)">
+  <div class="mbs-2">
     <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--borderless text-xs" do %>
       <i class="ph ph-x"></i> Dismiss
     <% end %>

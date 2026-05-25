@@ -1,6 +1,6 @@
-<div style="margin-block-start: var(--size-4)">
+<div class="mbs-4">
   <%# Receiving-review reminder %>
-  <div style="background: var(--color-secondary); padding: var(--size-3); border-radius: var(--rounded-lg); margin-block-end: var(--size-4)">
+  <div class="mbe-4 p-3" style="background: var(--color-secondary); border-radius: var(--rounded-lg)">
     <p class="text-xs" style="color: var(--color-text-subtle)">
       <i class="ph ph-info"></i>
       This is AI analysis — verify before acting. Check suggestions against your codebase. Push back on anything that doesn't fit.
@@ -8,8 +8,8 @@
   </div>
 
   <%# Recommendation %>
-  <div class="card" style="margin-block-end: var(--size-4)">
-    <div class="flex items-center gap" style="margin-block-end: var(--size-2)">
+  <div class="card mbe-4">
+    <div class="flex items-center gap mbe-2">
       <%
         rec_color = case analysis[:recommendation]
                     when "APPROVE" then "var(--color-positive)"
@@ -21,21 +21,21 @@
     </div>
     <p class="text-sm"><%= analysis[:recommendation_reason] %></p>
     <% if analysis[:summary].present? %>
-      <p class="text-sm" style="margin-block-start: var(--size-2); color: var(--color-text-subtle)"><%= analysis[:summary] %></p>
+      <p class="text-sm mbs-2" style="color: var(--color-text-subtle)"><%= analysis[:summary] %></p>
     <% end %>
   </div>
 
   <%# Critical flags %>
   <% if analysis[:critical_flags]&.any? %>
-    <div style="margin-block-end: var(--size-4)">
+    <div class="mbe-4">
       <% analysis[:critical_flags].each do |flag| %>
-        <div class="card" style="border-color: var(--color-negative); margin-block-end: var(--size-2)">
+        <div class="card mbe-2" style="border-color: var(--color-negative)">
           <div class="flex items-center gap-half">
             <i class="ph ph-warning-circle" style="color: var(--color-negative)"></i>
             <span class="font-bold text-sm" style="color: var(--color-negative)"><%= flag[:title] %></span>
             <span class="text-xs" style="color: var(--color-text-subtle)"><%= flag[:severity] %></span>
           </div>
-          <p class="text-sm" style="margin-block-start: var(--size-1)"><%= flag[:detail] %></p>
+          <p class="text-sm mbs-1"><%= flag[:detail] %></p>
         </div>
       <% end %>
     </div>
@@ -43,16 +43,16 @@
 
   <%# Solves ticket %>
   <% if analysis[:solves_ticket].present? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Solves Ticket?</h3>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Solves Ticket?</h3>
       <p class="text-sm"><strong><%= analysis[:solves_ticket][:result] %></strong> — <%= analysis[:solves_ticket][:explanation] %></p>
     </div>
   <% end %>
 
   <%# Before review tips %>
   <% if analysis[:before_review_tips]&.any? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><i class="ph ph-compass"></i> Focus Areas</h3>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-compass"></i> Focus Areas</h3>
       <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
         <% analysis[:before_review_tips].each do |tip| %><li class="text-sm">• <%= tip %></li><% end %>
       </ul>
@@ -61,8 +61,8 @@
 
   <%# Strengths %>
   <% if analysis[:strengths]&.any? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: var(--color-positive); margin-block-end: var(--size-2)"><i class="ph ph-check-circle"></i> Strengths</h3>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-positive)"><i class="ph ph-check-circle"></i> Strengths</h3>
       <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
         <% analysis[:strengths].each do |s| %><li class="text-sm">• <%= s %></li><% end %>
       </ul>
@@ -74,8 +74,8 @@
     <% items = analysis.dig(:issues, severity.to_sym) %>
     <% next unless items&.any? %>
     <% sev_color = case severity when "critical" then "var(--color-negative)" when "important" then "#f97316" else "var(--color-text-subtle)" end %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: <%= sev_color %>; margin-block-end: var(--size-2)"><%= severity.capitalize %> Issues (<%= items.size %>)</h3>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: <%= sev_color %>"><%= severity.capitalize %> Issues (<%= items.size %>)</h3>
       <% items.each do |item| %>
         <div style="border-block-end: 1px solid var(--color-border); padding-block: var(--size-2)">
           <div class="text-sm font-bold" style="font-family: monospace"><%= item[:file] %><% if item[:line].present? %>:<%= item[:line] %><% end %></div>
@@ -90,8 +90,8 @@
   <%# Risk areas, missing tests, performance, security %>
   <% { "Risk Areas" => analysis[:risk_areas], "Missing Tests" => analysis[:missing_tests], "Performance Concerns" => analysis[:performance_concerns], "Security Issues" => analysis[:security_issues] }.each do |title, items| %>
     <% next unless items&.any? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><%= title %></h3>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><%= title %></h3>
       <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
         <% items.each do |item| %><li class="text-sm">• <%= item.is_a?(Hash) ? "#{item[:file]} (#{item[:severity]}): #{item[:reason]}" : item %></li><% end %>
       </ul>
@@ -100,8 +100,8 @@
 
   <%# Inline tips %>
   <% if analysis[:inline_tips]&.any? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><i class="ph ph-lightbulb"></i> Per-File Tips</h3>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-lightbulb"></i> Per-File Tips</h3>
       <% analysis[:inline_tips].each do |tip| %>
         <div style="border-block-end: 1px solid var(--color-border); padding-block: var(--size-2)">
           <div class="text-sm font-bold" style="font-family: monospace"><%= tip[:file] %></div>
@@ -114,16 +114,16 @@
 
   <%# Draft comment %>
   <% if analysis[:draft_comment].present? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><i class="ph ph-chat-text"></i> Draft Comment</h3>
-      <pre class="text-sm" style="white-space: pre-wrap; font-family: inherit; background: var(--color-secondary); padding: var(--size-3); border-radius: var(--rounded-lg)"><%= analysis[:draft_comment] %></pre>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-chat-text"></i> Draft Comment</h3>
+      <pre class="text-sm p-3" style="white-space: pre-wrap; font-family: inherit; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= analysis[:draft_comment] %></pre>
     </div>
   <% end %>
 
   <%# After checklist %>
   <% if analysis[:after_checklist]&.any? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h3 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><i class="ph ph-check-square"></i> Pre-Submit Checklist</h3>
+    <div class="card mbe-4">
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-check-square"></i> Pre-Submit Checklist</h3>
       <% analysis[:after_checklist].each do |item| %>
         <div class="flex gap" style="padding-block: var(--size-1); border-block-end: 1px solid var(--color-border)">
           <input type="checkbox" style="flex-shrink: 0; margin-block-start: 0.125rem">
@@ -139,9 +139,9 @@
   <%# Claude Code command %>
   <% if cc_command.present? %>
     <div class="card">
-      <h3 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><i class="ph ph-terminal"></i> Deep Review (Claude Code)</h3>
-      <p class="text-xs" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Run in your terminal for deeper analysis using local codebase + CLAUDE.md</p>
-      <pre class="text-xs" style="white-space: pre-wrap; font-family: monospace; background: var(--color-secondary); padding: var(--size-3); border-radius: var(--rounded-lg)"><%= cc_command %></pre>
+      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-terminal"></i> Deep Review (Claude Code)</h3>
+      <p class="text-xs mbe-2" style="color: var(--color-text-subtle)">Run in your terminal for deeper analysis using local codebase + CLAUDE.md</p>
+      <pre class="text-xs p-3" style="white-space: pre-wrap; font-family: monospace; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= cc_command %></pre>
     </div>
   <% end %>
 </div>

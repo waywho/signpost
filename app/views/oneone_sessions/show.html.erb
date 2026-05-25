@@ -1,28 +1,28 @@
 <% content_for(:title, "1:1 #{@oneone_session.session_date.strftime('%B %-d')} — #{@developer.name} — Tech Lead OS") %>
 
-<div class="container" style="max-inline-size: 40rem; margin-block-start: var(--size-6)">
-  <div style="margin-block-end: var(--size-4)">
+<div class="container mbs-6" style="max-inline-size: 40rem">
+  <div class="mbe-4">
     <%= link_to developer_path(@developer), class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)" do %>
       <i class="ph ph-caret-left"></i> <%= @developer.name %>
     <% end %>
   </div>
 
-  <h1 class="font-bold text-2xl" style="margin-block-end: var(--size-6)">
+  <h1 class="font-bold text-2xl mbe-6">
     1:1 — <%= @oneone_session.session_date.strftime("%B %-d, %Y") %>
   </h1>
 
   <% %w[discussed wins challenges growth action_items].each do |field| %>
     <% value = @oneone_session.send(field) %>
     <% next unless value.present? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)"><%= field.humanize %></h2>
+    <div class="card mbe-4">
+      <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><%= field.humanize %></h2>
       <p class="text-sm" style="white-space: pre-wrap"><%= value %></p>
     </div>
   <% end %>
 
   <% if @oneone_session.private_notes.present? %>
-    <div class="card" style="margin-block-end: var(--size-4); border-color: var(--color-border-dark)">
-      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">
+    <div class="card mbe-4" style="border-color: var(--color-border-dark)">
+      <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">
         <i class="ph ph-lock"></i> Private Notes
       </h2>
       <p class="text-sm" style="white-space: pre-wrap"><%= @oneone_session.private_notes %></p>
@@ -30,8 +30,8 @@
   <% end %>
 
   <% if @oneone_session.summary.present? %>
-    <div class="card" style="margin-block-end: var(--size-4)">
-      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">Summary</h2>
+    <div class="card mbe-4">
+      <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Summary</h2>
       <p class="text-sm"><%= @oneone_session.summary %></p>
     </div>
   <% end %>

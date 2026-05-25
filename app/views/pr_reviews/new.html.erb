@@ -1,13 +1,13 @@
 <% content_for(:title, "Log PR Review — Tech Lead OS") %>
 
-<div class="container" style="max-inline-size: 40rem; margin-block-start: var(--size-6)">
-  <div style="margin-block-end: var(--size-4)">
+<div class="container mbs-6" style="max-inline-size: 40rem">
+  <div class="mbe-4">
     <%= link_to pr_reviews_path, class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)" do %>
       <i class="ph ph-caret-left"></i> PR Reviews
     <% end %>
   </div>
 
-  <h1 class="font-bold text-2xl" style="margin-block-end: var(--size-6)">Log a PR Review</h1>
+  <h1 class="font-bold text-2xl mbe-6">Log a PR Review</h1>
 
   <div class="card">
     <%= form_with model: @pr_review, class: "flex flex-col gap" do |f| %>
@@ -19,39 +19,39 @@
 
       <div class="flex gap">
         <div style="flex: 1">
-          <%= f.label :repo, "Repository", class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+          <%= f.label :repo, "Repository", class: "text-sm font-bold mbe-1", style: "display: block" %>
           <%= f.text_field :repo, class: "input", placeholder: "org/repo", required: true %>
         </div>
         <div style="flex: 0 0 6rem">
-          <%= f.label :pr_number, "PR #", class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+          <%= f.label :pr_number, "PR #", class: "text-sm font-bold mbe-1", style: "display: block" %>
           <%= f.number_field :pr_number, class: "input", required: true %>
         </div>
       </div>
 
-      <div><%= f.label :pr_title, "Title", class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.text_field :pr_title, class: "input" %></div>
-      <div><%= f.label :pr_author, "Author", class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.text_field :pr_author, class: "input" %></div>
+      <div><%= f.label :pr_title, "Title", class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.text_field :pr_title, class: "input" %></div>
+      <div><%= f.label :pr_author, "Author", class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.text_field :pr_author, class: "input" %></div>
 
       <div class="flex gap">
         <div style="flex: 1">
-          <%= f.label :recommendation, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+          <%= f.label :recommendation, class: "text-sm font-bold mbe-1", style: "display: block" %>
           <%= f.select :recommendation, [["—", ""], ["Approve", "APPROVE"], ["Request Changes", "REQUEST_CHANGES"], ["Needs Discussion", "NEEDS_DISCUSSION"]], {}, class: "input" %>
         </div>
         <div style="flex: 1">
-          <%= f.label :risk_level, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %>
+          <%= f.label :risk_level, class: "text-sm font-bold mbe-1", style: "display: block" %>
           <%= f.select :risk_level, [["—", ""], ["Low", "LOW"], ["Medium", "MEDIUM"], ["High", "HIGH"], ["Critical", "CRITICAL"]], {}, class: "input" %>
         </div>
       </div>
 
-      <div><%= f.label :summary, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.text_area :summary, class: "input", rows: 3 %></div>
-      <div><%= f.label :draft_comment, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.text_area :draft_comment, class: "input", rows: 3 %></div>
+      <div><%= f.label :summary, class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.text_area :summary, class: "input", rows: 3 %></div>
+      <div><%= f.label :draft_comment, class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.text_area :draft_comment, class: "input", rows: 3 %></div>
 
       <div class="flex gap">
-        <div style="flex: 1"><%= f.label :files_changed, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.number_field :files_changed, class: "input" %></div>
-        <div style="flex: 1"><%= f.label :additions, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.number_field :additions, class: "input" %></div>
-        <div style="flex: 1"><%= f.label :deletions, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.number_field :deletions, class: "input" %></div>
+        <div style="flex: 1"><%= f.label :files_changed, class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.number_field :files_changed, class: "input" %></div>
+        <div style="flex: 1"><%= f.label :additions, class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.number_field :additions, class: "input" %></div>
+        <div style="flex: 1"><%= f.label :deletions, class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.number_field :deletions, class: "input" %></div>
       </div>
 
-      <div><%= f.label :reviewed_at, class: "text-sm font-bold", style: "display: block; margin-block-end: var(--size-1)" %><%= f.datetime_local_field :reviewed_at, class: "input", value: @pr_review.reviewed_at&.strftime("%Y-%m-%dT%H:%M") %></div>
+      <div><%= f.label :reviewed_at, class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.datetime_local_field :reviewed_at, class: "input", value: @pr_review.reviewed_at&.strftime("%Y-%m-%dT%H:%M") %></div>
 
       <div class="flex items-center gap"><%= f.submit "Log Review", class: "btn btn--primary" %><%= link_to "Cancel", pr_reviews_path, class: "btn btn--borderless" %></div>
     <% end %>

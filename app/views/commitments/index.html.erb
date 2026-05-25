@@ -1,15 +1,15 @@
 <% content_for(:title, "Commitments — Tech Lead OS") %>
 
-<div class="flex items-center justify-between" style="margin-block-end: var(--size-6)">
+<div class="flex items-center justify-between mbe-6">
   <h1 class="font-bold text-2xl">Commitments</h1>
   <%= link_to new_commitment_path, class: "btn btn--primary" do %><i class="ph ph-plus"></i> New Commitment<% end %>
 </div>
 
 <% if @overdue.any? %>
-  <h2 class="font-bold text-sm" style="color: var(--color-negative); margin-block-end: var(--size-2)">
+  <h2 class="font-bold text-sm mbe-2" style="color: var(--color-negative)">
     <i class="ph ph-warning-circle"></i> Overdue
   </h2>
-  <div class="flex flex-col gap" style="margin-block-end: var(--size-6)">
+  <div class="flex flex-col gap mbe-6">
     <% @overdue.each do |c| %>
       <%= render "commitment_row", commitment: c %>
     <% end %>
@@ -17,10 +17,10 @@
 <% end %>
 
 <% if @due_soon.any? %>
-  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">
+  <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">
     <i class="ph ph-clock"></i> Due Soon
   </h2>
-  <div class="flex flex-col gap" style="margin-block-end: var(--size-6)">
+  <div class="flex flex-col gap mbe-6">
     <% @due_soon.each do |c| %>
       <%= render "commitment_row", commitment: c %>
     <% end %>
@@ -28,10 +28,10 @@
 <% end %>
 
 <% if @no_date.any? %>
-  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-2)">
+  <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">
     <i class="ph ph-list-bullets"></i> No Due Date
   </h2>
-  <div class="flex flex-col gap" style="margin-block-end: var(--size-6)">
+  <div class="flex flex-col gap mbe-6">
     <% @no_date.each do |c| %>
       <%= render "commitment_row", commitment: c %>
     <% end %>
@@ -40,17 +40,17 @@
 
 <% if @overdue.empty? && @due_soon.empty? && @no_date.empty? %>
   <div class="card text-center" style="color: var(--color-text-subtle)">
-    <i class="ph ph-check-circle" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4); color: var(--color-positive)"></i>
+    <i class="ph ph-check-circle mbe-4" style="font-size: var(--text-4xl); display: block; color: var(--color-positive)"></i>
     <p>No pending commitments.</p>
   </div>
 <% end %>
 
 <% if @done_recent.any? %>
-  <details style="margin-block-start: var(--size-4)">
+  <details class="mbs-4">
     <summary class="text-sm font-bold" style="color: var(--color-text-subtle); cursor: pointer">
       <i class="ph ph-check-square"></i> Done (last 10)
     </summary>
-    <div class="flex flex-col gap" style="margin-block-start: var(--size-2)">
+    <div class="flex flex-col gap mbs-2">
       <% @done_recent.each do |c| %>
         <div class="card flex items-center gap" style="opacity: 0.5">
           <i class="ph ph-check-circle" style="color: var(--color-positive)"></i>

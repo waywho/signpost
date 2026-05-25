@@ -1,5 +1,5 @@
-<div style="margin-block-end: var(--size-6)">
-  <h2 class="font-bold flex items-center gap-half" style="margin-block-end: var(--size-4)">
+<div class="mbe-6">
+  <h2 class="font-bold flex items-center gap-half mbe-4">
     <i class="ph ph-tray" style="color: var(--color-primary)"></i> Action Queue
     <% if items.any? %>
       <span class="text-sm font-normal" style="color: var(--color-negative)">(<%= items.size %> pending)</span>
@@ -12,7 +12,7 @@
     <% end %>
   <% else %>
     <div class="card text-center" style="color: var(--color-text-subtle)">
-      <i class="ph ph-check-circle" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4); color: var(--color-positive)"></i>
+      <i class="ph ph-check-circle mbe-4" style="font-size: var(--text-4xl); display: block; color: var(--color-positive)"></i>
       <p class="text-sm">All caught up. No pending actions.</p>
     </div>
   <% end %>

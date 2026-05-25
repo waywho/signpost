@@ -3,7 +3,7 @@
     <i class="ph ph-user text-xs"></i>
   </div>
   <div style="flex: 1; min-inline-size: 0">
-    <div class="flex items-center gap-half" style="margin-block-end: var(--size-1)">
+    <div class="flex items-center gap-half mbe-1">
       <span class="font-bold text-sm"><%= msg["user"] || msg["username"] || "Unknown" %></span>
       <% if msg["ts"].present? %>
         <span class="text-xs" style="color: var(--color-text-subtle)"><%= Time.at(msg["ts"].to_f).strftime("%-m/%-d %H:%M") rescue msg["ts"] %></span>

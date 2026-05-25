@@ -1,12 +1,12 @@
 <% if developer.github_handle.present? %>
-  <div class="card" style="margin-block-end: var(--size-4)">
-    <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+  <div class="card mbe-4">
+    <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
       <i class="ph ph-github-logo"></i> GitHub Activity (30 days)
     </h2>
 
     <% if activities.any? %>
       <% grouped = activities.group_by { |a| a[:type] } %>
-      <div class="flex items-center gap text-sm" style="margin-block-end: var(--size-4)">
+      <div class="flex items-center gap text-sm mbe-4">
         <% if grouped["commit"] %><span><i class="ph ph-git-commit"></i> <%= grouped["commit"].size %> commits</span><% end %>
         <% if grouped["pr_opened"] %><span><i class="ph ph-git-pull-request"></i> <%= grouped["pr_opened"].size %> PRs</span><% end %>
         <% if grouped["pr_merged"] %><span><i class="ph ph-git-merge"></i> <%= grouped["pr_merged"].size %> merged</span><% end %>

@@ -1,13 +1,13 @@
 <% content_for(:title, "PR Reviews — Tech Lead OS") %>
 
-<div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">
+<div class="flex items-center justify-between mbe-4">
   <h1 class="font-bold text-2xl">PR Reviews</h1>
   <%= link_to new_pr_review_path, class: "btn btn--primary" do %><i class="ph ph-plus"></i> Log Review<% end %>
 </div>
 
 <%= render "queue", pr_queue: @pr_queue %>
 
-<%= form_with url: pr_reviews_path, method: :get, class: "flex items-center gap", style: "margin-block-end: var(--size-4)",
+<%= form_with url: pr_reviews_path, method: :get, class: "flex items-center gap mbe-4",
       data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |f| %>
   <%= f.text_field :repo, value: params[:repo], placeholder: "Filter by repo…", class: "input", style: "max-inline-size: 16rem" %>
   <%= f.select :recommendation, [["All recommendations", ""], ["Approve", "APPROVE"], ["Request Changes", "REQUEST_CHANGES"], ["Needs Discussion", "NEEDS_DISCUSSION"]], { selected: params[:recommendation] }, class: "input" %>
@@ -36,7 +36,7 @@
   </div>
 <% else %>
   <div class="card text-center" style="color: var(--color-text-subtle)">
-    <i class="ph ph-git-pull-request" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4)"></i>
+    <i class="ph ph-git-pull-request mbe-4" style="font-size: var(--text-4xl); display: block"></i>
     <p>No reviews found.</p>
   </div>
 <% end %>
