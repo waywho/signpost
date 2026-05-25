@@ -81,9 +81,15 @@ Setting.set("global", "github_repos", ["org/repo1", "org/repo2"])
 **Slack tokens** — for thread capture and triage reactions:
 1. Create a Slack App at [api.slack.com/apps](https://api.slack.com/apps)
 2. Enable **Socket Mode** (Settings → Socket Mode → Enable). Copy the App-Level Token (`xapp-...`)
-3. Under **OAuth & Permissions**, add scopes: `channels:history`, `channels:read`, `reactions:read`, `reactions:write`, `users:read`, `chat:write`
-4. Install the app to your workspace. Copy the Bot User OAuth Token (`xoxb-...`)
-5. Under **Event Subscriptions**, subscribe to: `reaction_added`, `message.channels`, `app_mention`
+3. Under **OAuth & Permissions**, scroll to **Bot Token Scopes** and add:
+   - `channels:history` — read messages in public channels
+   - `channels:read` — list channels
+   - `reactions:read` — detect 🧠 emoji reactions
+   - `reactions:write` — post acknowledge reactions
+   - `users:read` — resolve user display names
+   - `chat:write` — post messages (future)
+4. Install the app to your workspace. Copy the **Bot User OAuth Token** (`xoxb-...`)
+5. Under **Event Subscriptions**, enable events and subscribe to bot events: `reaction_added`, `message.channels`, `app_mention`
 
 ```ruby
 EncryptedSetting.set("credentials", "slack_bot_token", "xoxb-...")
