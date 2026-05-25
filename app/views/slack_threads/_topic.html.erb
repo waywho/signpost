@@ -19,4 +19,11 @@
       <i class="ph ph-check-circle"></i> <%= topic.status %>
     </span>
   <% end %>
+  <% if topic.status == "open" %>
+    <div style="margin-block-start: var(--size-2)">
+      <%= button_to delegate_slack_thread_slack_topic_path(topic.slack_thread, topic), method: :post, class: "text-sm", style: "color: var(--color-primary)" do %>
+        <i class="ph ph-arrow-bend-up-right"></i> Delegate this topic
+      <% end %>
+    </div>
+  <% end %>
 </div>

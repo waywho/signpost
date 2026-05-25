@@ -31,6 +31,11 @@ Rails.application.routes.draw do
       post :dismiss
       post :delegate
     end
+    resources :slack_topics, only: [] do
+      member do
+        post :delegate, to: "slack_threads#delegate_topic"
+      end
+    end
   end
 
   get "/search", to: "search#index"

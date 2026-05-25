@@ -77,6 +77,23 @@ class SlackThreadsController < ApplicationController
     redirect_to edit_delegation_path(delegation), notice: "Delegation created. Assign a developer and add details."
   end
 
+  def delegate_topic
+    @slack_thread = SlackThread.find(params[:slack_thread_id])
+    @topic = @slack_thread.slack_topics.find(params[:id])
+
+    delegation = Delegation.create!(
+      summary: @topic.title,
+      slack_channel_id: @slack_thread.slack_channel_id,
+      slack_thread_ts: @slack_thread.slack_thread_ts,
+      urgency: @topic.urgency&.capitalize,
+      issue_type: @topic.category,
+      status: "delegated",
+      delegated_at: Time.current
+    )
+    @topic.update!(status: "actioned")
+    redirect_to edit_delegation_path(delegation), notice: "Delegation created from topic: #{@topic.title}"
+  end
+
   private
 
   def slack_thread_params
