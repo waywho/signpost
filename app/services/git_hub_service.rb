@@ -10,6 +10,15 @@ class GitHubService
     EncryptedSetting.get("credentials", "github_pat").present?
   end
 
+  def list_repos
+    @client.repos(nil, sort: :pushed).map do |r|
+      { full_name: r.full_name, private: r.private, pushed_at: r.pushed_at }
+    end
+  rescue Octokit::Error => e
+    Rails.logger.error("GitHubService list_repos error: #{e.message}")
+    []
+  end
+
   def pr_queue
     username = Setting.get("global", "github_username")
     return [] unless username
