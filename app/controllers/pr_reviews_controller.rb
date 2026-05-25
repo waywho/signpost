@@ -40,6 +40,11 @@ class PrReviewsController < ApplicationController
     redirect_back fallback_location: pr_reviews_path, notice: "#{count} PR#{'s' if count > 1} ignored."
   end
 
+  def queue_analysis
+    PrAnalysisJob.perform_later(repo: params[:repo], pr_number: params[:pr_number].to_i)
+    redirect_back fallback_location: pr_reviews_path, notice: "Analysis queued for ##{params[:pr_number]}. Come back shortly."
+  end
+
   def analyze_pr
     @repo = params[:repo]
     @pr_number = params[:pr_number].to_i

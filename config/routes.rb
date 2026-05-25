@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     end
     collection do
       post :ignore
+      post :queue_analysis
       get :analyze_pr
       get :run_analysis
     end
