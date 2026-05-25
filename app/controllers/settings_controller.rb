@@ -8,9 +8,7 @@ class SettingsController < ApplicationController
     case params[:section]
     when "ai_backend"
       Setting.set("global", "ai_backend", params[:ai_backend]) if params[:ai_backend].in?(ClaudeService::BACKENDS)
-      if params[:anthropic_api_key].present? && params[:anthropic_api_key] != "••••••••"
-        EncryptedSetting.set("credentials", "anthropic_api_key", params[:anthropic_api_key])
-      end
+      EncryptedSetting.set("credentials", "anthropic_api_key", params[:anthropic_api_key]) if params[:anthropic_api_key].present?
     when "api_keys"
       update_api_keys
     when "github"
@@ -41,7 +39,7 @@ class SettingsController < ApplicationController
   def update_api_keys
     %w[openai_api_key anthropic_api_key github_pat slack_bot_token slack_user_token slack_app_token].each do |key|
       value = params[key]
-      EncryptedSetting.set("credentials", key, value) if value.present? && value != "••••••••"
+      EncryptedSetting.set("credentials", key, value) if value.present?
     end
   end
 
@@ -95,6 +93,6 @@ class SettingsController < ApplicationController
 
   def update_calendar
     value = params[:google_ical_url]
-    EncryptedSetting.set("credentials", "google_ical_url", value) if value.present? && value != "••••••••"
+    EncryptedSetting.set("credentials", "google_ical_url", value) if value.present?
   end
 end

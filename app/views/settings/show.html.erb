@@ -25,8 +25,8 @@
     <div id="anthropic-key-field" style="<%= 'display: none' unless ai_backend == 'api' %>">
       <label class="text-sm font-bold mbe-1" style="display: block">Anthropic API Key</label>
       <% has_key = EncryptedSetting.get("credentials", "anthropic_api_key").present? %>
-      <input type="password" name="anthropic_api_key" value="<%= has_key ? '••••••••' : '' %>"
-             class="input" style="inline-size: 100%" placeholder="<%= has_key ? 'Configured' : 'sk-ant-...' %>">
+      <input type="password" name="anthropic_api_key"
+             class="input" style="inline-size: 100%" placeholder="<%= has_key ? 'Configured — leave blank to keep' : 'sk-ant-...' %>">
       <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></p>
     </div>
     <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
@@ -53,8 +53,8 @@
       <div>
         <label class="text-sm font-bold mbe-1" style="display: block"><%= meta[:label] %></label>
         <% has_value = EncryptedSetting.get("credentials", key).present? %>
-        <input type="password" name="<%= key %>" value="<%= has_value ? '••••••••' : '' %>"
-               class="input" style="inline-size: 100%" placeholder="<%= has_value ? 'Configured' : 'Not set' %>">
+        <input type="password" name="<%= key %>"
+               class="input" style="inline-size: 100%" placeholder="<%= has_value ? 'Configured — leave blank to keep' : 'Not set' %>">
         <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
       </div>
     <% end %>
@@ -196,9 +196,9 @@
     <div>
       <label class="text-sm font-bold mbe-1" style="display: block">Secret iCal URL</label>
       <% has_url = EncryptedSetting.get("credentials", "google_ical_url").present? %>
-      <input type="url" name="google_ical_url" value="<%= has_url ? '••••••••' : '' %>"
+      <input type="url" name="google_ical_url"
              class="input" style="inline-size: 100%"
-             placeholder="<%= has_url ? 'Configured' : 'https://calendar.google.com/calendar/ical/.../basic.ics' %>">
+             placeholder="<%= has_url ? 'Configured — leave blank to keep' : 'https://calendar.google.com/calendar/ical/.../basic.ics' %>">
       <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
         Google Calendar → Settings → calendar → Secret address in iCal format
       </p>
