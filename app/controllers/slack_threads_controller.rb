@@ -22,6 +22,8 @@ class SlackThreadsController < ApplicationController
 
   def show
     @slack_thread = SlackThread.find(params[:id])
+    @topics = @slack_thread.slack_topics.by_urgency
+    @messages = @slack_thread.slack_messages.chronological
   end
 
   def new

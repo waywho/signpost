@@ -1,0 +1,22 @@
+<div class="card" style="margin-block-end: var(--size-2)">
+  <div class="flex items-center gap-half" style="margin-block-end: var(--size-2)">
+    <span class="font-bold text-sm flex-1"><%= topic.title %></span>
+    <% if topic.urgency.present? %>
+      <span class="text-xs font-bold" style="color: <%= urgency_color(topic.urgency) %>"><%= topic.urgency %></span>
+    <% end %>
+    <% if topic.category.present? %>
+      <span class="text-xs" style="color: var(--color-text-subtle)"><%= topic.category %></span>
+    <% end %>
+  </div>
+  <p class="text-sm" style="margin-block-end: var(--size-2)"><%= topic.summary %></p>
+  <% if topic.action_recommendation.present? %>
+    <span class="text-xs" style="color: var(--color-text-subtle)">
+      <i class="ph ph-arrow-right"></i> Recommended: <strong><%= topic.action_recommendation.tr("_", " ") %></strong>
+    </span>
+  <% end %>
+  <% if topic.status != "open" %>
+    <span class="text-xs" style="color: var(--color-positive); margin-inline-start: var(--size-2)">
+      <i class="ph ph-check-circle"></i> <%= topic.status %>
+    </span>
+  <% end %>
+</div>
