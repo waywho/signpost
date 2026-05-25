@@ -77,6 +77,20 @@
       </div>
     </div>
 
+    <%# 1:1 Prep %>
+    <turbo-frame id="oneone_prep">
+      <% if ClaudeService.new.configured? %>
+        <div class="card" style="margin-block-end: var(--size-4)">
+          <%= button_to prep_developer_path(@developer), method: :post, class: "button", data: { turbo_frame: "oneone_prep" } do %>
+            <i class="ph ph-brain"></i> Prep 1:1
+          <% end %>
+          <p class="text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-2)">
+            Generate talking points from recent notes, activity, and last 1:1.
+          </p>
+        </div>
+      <% end %>
+    </turbo-frame>
+
     <%# 1:1 Sessions section %>
     <div class="card">
       <div class="flex items-center justify-between" style="margin-block-end: var(--size-4)">

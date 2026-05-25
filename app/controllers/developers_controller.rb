@@ -49,6 +49,21 @@ class DevelopersController < ApplicationController
     redirect_to developers_path, notice: "Developer removed."
   end
 
+  def prep
+    set_developer
+    @briefing = OneOnePrepService.new.prep(@developer)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @developer }
+    end
+  rescue => e
+    @error = e.message
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @developer, alert: "Prep failed: #{e.message}" }
+    end
+  end
+
   private
 
   def set_developer
