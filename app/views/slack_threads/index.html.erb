@@ -5,47 +5,91 @@
   <%= link_to new_slack_thread_path, class: "button" do %><i class="ph ph-plus"></i> Log Thread<% end %>
 </div>
 
+<%# Status tabs %>
+<div class="flex items-center gap-half" style="margin-block-end: var(--size-4)">
+  <% current_status = params[:status] || "new" %>
+  <% [["New", "new"], ["Triaged", "triaged"], ["Actioned", "actioned"], ["Archived", "archived"], ["All", "all"]].each do |label, status| %>
+    <% active = current_status == status %>
+    <% count = status == "all" ? @status_counts.values.sum : (@status_counts[status] || 0) %>
+    <%= link_to slack_threads_path(status: status, category: params[:category], q: params[:q]),
+          class: "text-sm #{active ? 'font-bold' : ''}",
+          style: active ? '' : 'color: var(--color-text-subtle)' do %>
+      <%= label %><% if count > 0 && status != "all" %> <span class="text-xs">(<%= count %>)</span><% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Category + search %>
 <div class="flex items-center gap" style="margin-block-end: var(--size-4); flex-wrap: wrap">
   <div class="flex items-center gap-half">
-    <%= link_to "All", slack_threads_path(q: params[:q]), class: "text-sm #{params[:category].blank? ? 'font-bold' : ''}", style: params[:category].blank? ? '' : 'color: var(--color-text-subtle)' %>
+    <%= link_to "All categories", slack_threads_path(status: params[:status] || "new", q: params[:q]),
+          class: "text-sm #{params[:category].blank? ? 'font-bold' : ''}",
+          style: params[:category].blank? ? '' : 'color: var(--color-text-subtle)' %>
     <% @categories.each do |cat| %>
-      <%= link_to cat, slack_threads_path(category: cat, q: params[:q]), class: "text-sm #{params[:category] == cat ? 'font-bold' : ''}", style: params[:category] == cat ? '' : 'color: var(--color-text-subtle)' %>
+      <%= link_to cat, slack_threads_path(status: params[:status] || "new", category: cat, q: params[:q]),
+            class: "text-sm #{params[:category] == cat ? 'font-bold' : ''}",
+            style: params[:category] == cat ? '' : 'color: var(--color-text-subtle)' %>
     <% end %>
   </div>
 
   <%= form_with url: slack_threads_path, method: :get, class: "flex items-center gap-half",
         data: { controller: "thread-filter", action: "submit->thread-filter#submit" } do |f| %>
+    <%= hidden_field_tag :status, params[:status] || "new" %>
     <%= hidden_field_tag :category, params[:category] %>
     <%= f.search_field :q, value: params[:q], placeholder: "Search…", class: "input", style: "min-inline-size: 16rem",
           data: { "thread-filter-target": "input", action: "input->thread-filter#scheduleSubmit" } %>
   <% end %>
 </div>
 
+<%# Thread list %>
 <% if @slack_threads.any? %>
   <div class="flex flex-col gap">
     <% @slack_threads.each do |thread| %>
-      <%= link_to slack_thread_path(thread), class: "card flex items-center gap", style: "text-decoration: none" do %>
-        <i class="ph <%= category_icon(thread.category) %>" style="font-size: var(--text-xl); color: var(--color-primary); flex-shrink: 0"></i>
-        <div class="flex flex-col flex-1" style="min-inline-size: 0">
-          <span class="font-bold text-sm"><%= thread.title.presence || "Untitled" %></span>
-          <% if thread.summary.present? %>
-            <span class="text-xs overflow-ellipsis" style="color: var(--color-text-subtle)"><%= thread.summary.truncate(80) %></span>
-          <% end %>
-          <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
-            <% if thread.slack_channel_name.present? %><span><i class="ph ph-hash"></i> <%= thread.slack_channel_name %></span><% end %>
-            <% if thread.participants.present? %><span><i class="ph ph-users"></i> <%= thread.participants.size %></span><% end %>
-            <% if thread.keywords.present? %><span><i class="ph ph-tag"></i> <%= thread.keywords.first(3).join(", ") %></span><% end %>
+      <div class="card flex items-center gap">
+        <%= link_to slack_thread_path(thread), class: "flex items-center gap flex-1", style: "text-decoration: none; min-inline-size: 0" do %>
+          <i class="ph <%= category_icon(thread.category) %>" style="font-size: var(--text-xl); color: var(--color-primary); flex-shrink: 0"></i>
+          <div class="flex flex-col flex-1" style="min-inline-size: 0">
+            <div class="flex items-center gap-half">
+              <span class="font-bold text-sm"><%= thread.title.presence || "Untitled" %></span>
+              <% urgency = highest_urgency(thread) %>
+              <% if urgency %>
+                <span class="text-xs font-bold" style="color: <%= urgency_color(urgency) %>"><%= urgency %></span>
+              <% end %>
+              <% if thread.slack_topics.any? %>
+                <span class="text-xs" style="color: var(--color-text-subtle)"><%= thread.slack_topics.size %> topics</span>
+              <% end %>
+            </div>
+            <% if thread.summary.present? %>
+              <span class="text-xs overflow-ellipsis" style="color: var(--color-text-subtle)"><%= thread.summary.truncate(80) %></span>
+            <% end %>
+            <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
+              <% if thread.slack_channel_name.present? %><span><i class="ph ph-hash"></i> <%= thread.slack_channel_name %></span><% end %>
+              <% if thread.capture_reason.present? %><span><%= thread.capture_reason.tr("_", " ") %></span><% end %>
+              <span><%= thread.captured_at&.strftime("%b %-d") %></span>
+            </div>
           </div>
-        </div>
-        <span class="text-xs" style="color: var(--color-text-subtle); flex-shrink: 0"><%= thread.captured_at&.strftime("%b %-d") %></span>
-      <% end %>
+        <% end %>
+
+        <% if thread.status.in?(%w[new triaged]) %>
+          <div class="flex items-center gap-half" style="flex-shrink: 0">
+            <%= button_to acknowledge_slack_thread_path(thread), method: :post, class: "text-sm", style: "color: var(--color-positive)", title: "Acknowledge" do %>
+              <i class="ph ph-check"></i>
+            <% end %>
+            <%= button_to dismiss_slack_thread_path(thread), method: :post, class: "text-sm", style: "color: var(--color-text-subtle)", title: "Dismiss" do %>
+              <i class="ph ph-x"></i>
+            <% end %>
+          </div>
+        <% else %>
+          <span class="text-xs" style="color: <%= status_color(thread.status) %>"><%= thread.status %></span>
+        <% end %>
+      </div>
     <% end %>
   </div>
 <% else %>
   <div class="card text-center" style="color: var(--color-text-subtle)">
     <i class="ph ph-chat-dots" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4)"></i>
     <p>No threads found.</p>
-    <% if params[:q].present? || params[:category].present? %>
+    <% if params[:q].present? || params[:category].present? || (params[:status] || "new") != "new" %>
       <p class="text-sm" style="margin-block-start: var(--size-2)"><%= link_to "Clear filters", slack_threads_path %></p>
     <% end %>
   </div>

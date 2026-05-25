@@ -1,6 +1,13 @@
 class SlackThreadsController < ApplicationController
   def index
-    @slack_threads = SlackThread.recent
+    @slack_threads = SlackThread.recent.includes(:slack_topics)
+
+    if params[:status].present?
+      @slack_threads = @slack_threads.where(status: params[:status]) unless params[:status] == "all"
+    else
+      @slack_threads = @slack_threads.where(status: "new")
+    end
+
     @slack_threads = @slack_threads.by_category(params[:category]) if params[:category].present?
     if params[:q].present?
       q = params[:q].strip
@@ -10,6 +17,7 @@ class SlackThreadsController < ApplicationController
       )
     end
     @categories = %w[architecture stakeholder team-decision incident other]
+    @status_counts = SlackThread.group(:status).count
   end
 
   def show
