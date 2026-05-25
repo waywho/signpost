@@ -64,17 +64,43 @@ App is now available at `https://techos.test`.
 
 ### 6. Configure API keys (optional)
 
-Via the settings page at `https://techos.test/settings`, or via Rails console:
+Configure via the settings page at `https://techos.test/settings`, or via Rails console.
+
+**GitHub PAT** — for PR queue, developer activity, and issue creation:
+1. Go to [GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens](https://github.com/settings/tokens?type=beta)
+2. Create a new token with scopes: `repo` (read/write issues, read PRs), `read:user` (activity)
+3. Set your username and repos for issue creation:
 
 ```ruby
-EncryptedSetting.set("credentials", "openai_api_key", "sk-...")        # For vector embeddings
-EncryptedSetting.set("credentials", "anthropic_api_key", "sk-ant-...")  # For PR analysis, 1:1 prep, noise filtering
-EncryptedSetting.set("credentials", "github_pat", "ghp_...")            # For PR queue, developer activity, issue creation
-EncryptedSetting.set("credentials", "slack_bot_token", "xoxb-...")      # For Slack triage (acknowledge reactions)
-EncryptedSetting.set("credentials", "slack_app_token", "xapp-...")      # For Socket Mode (real-time capture)
-
+EncryptedSetting.set("credentials", "github_pat", "ghp_...")
 Setting.set("global", "github_username", "your-handle")
-Setting.set("global", "github_repos", ["org/repo1", "org/repo2"])       # For issue creation
+Setting.set("global", "github_repos", ["org/repo1", "org/repo2"])
+```
+
+**Slack tokens** — for thread capture and triage reactions:
+1. Create a Slack App at [api.slack.com/apps](https://api.slack.com/apps)
+2. Enable **Socket Mode** (Settings → Socket Mode → Enable). Copy the App-Level Token (`xapp-...`)
+3. Under **OAuth & Permissions**, add scopes: `channels:history`, `channels:read`, `reactions:read`, `reactions:write`, `users:read`, `chat:write`
+4. Install the app to your workspace. Copy the Bot User OAuth Token (`xoxb-...`)
+5. Under **Event Subscriptions**, subscribe to: `reaction_added`, `message.channels`, `app_mention`
+
+```ruby
+EncryptedSetting.set("credentials", "slack_bot_token", "xoxb-...")
+EncryptedSetting.set("credentials", "slack_app_token", "xapp-...")
+```
+
+**OpenAI** — for vector embeddings:
+1. Get an API key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+
+```ruby
+EncryptedSetting.set("credentials", "openai_api_key", "sk-...")
+```
+
+**Anthropic** — for PR analysis, 1:1 prep, noise filtering, topic extraction:
+1. Get an API key at [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys)
+
+```ruby
+EncryptedSetting.set("credentials", "anthropic_api_key", "sk-ant-...")
 ```
 
 ### 7. Connect Google Calendar (optional)
