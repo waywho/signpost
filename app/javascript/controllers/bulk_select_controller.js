@@ -19,9 +19,11 @@ export default class extends Controller {
 
   updateActions() {
     const count = this.selectedCount
-    this.actionsTarget.hidden = count === 0
-    const label = this.actionsTarget.querySelector("[data-count]")
-    if (label) label.textContent = `${count} selected`
+    this.actionsTargets.forEach(el => {
+      el.hidden = count === 0
+      const label = el.querySelector("[data-count]")
+      if (label) label.textContent = `${count} selected`
+    })
   }
 
   get selectedCount() {

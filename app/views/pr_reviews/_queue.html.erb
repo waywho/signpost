@@ -19,6 +19,10 @@
     </div>
 
     <%= form_with url: ignore_pr_reviews_path, method: :post do |f| %>
+      <div class="flex items-center gap-half mbe-2" data-bulk-select-target="actions" hidden>
+        <span class="text-xs" style="color: var(--color-text-subtle)" data-count></span>
+        <%= f.submit "Ignore Selected", class: "btn btn--borderless text-xs" %>
+      </div>
       <div class="flex flex-col gap-half">
         <% pr_queue.each do |pr| %>
           <div class="flex items-center gap" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
