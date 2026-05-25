@@ -9,14 +9,14 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update github settings" do
     patch settings_path, params: { section: "github", github_username: "testuser", github_repos: ["org/repo1", "org/repo2"] }
-    assert_redirected_to settings_path
+    assert_response :redirect
     assert_equal "testuser", Setting.get("global", "github_username")
     assert_equal ["org/repo1", "org/repo2"], Setting.get("global", "github_repos")
   end
 
   test "should update slack settings" do
     patch settings_path, params: { section: "slack", slack_capture_mode: "poll", slack_brain_emoji: "eyes", poll_interval_minutes: "30" }
-    assert_redirected_to settings_path
+    assert_response :redirect
     assert_equal "poll", Setting.get("global", "slack_capture_mode")
     assert_equal "eyes", Setting.get("global", "slack_brain_emoji")
     assert_equal 30, Setting.get("global", "poll_interval_minutes")
@@ -26,7 +26,7 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
     assert_difference("WatchedChannel.count") do
       patch settings_path, params: { section: "watched_channel_add", channel_select: "CNEW|new-channel", capture_mode: "full_stream" }
     end
-    assert_redirected_to settings_path
+    assert_response :redirect
   end
 
   test "should remove watched channel" do

@@ -29,7 +29,7 @@
 
     <%# AI Backend %>
     <% ai_backend = Setting.get("global", "ai_backend", default: "cli") %>
-    <div data-settings-nav-target="panel">
+    <div data-settings-nav-target="panel" id="ai_backend">
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
           <i class="ph ph-brain"></i> AI Backend
@@ -69,7 +69,7 @@
     </div>
 
     <%# OpenAI %>
-    <div data-settings-nav-target="panel" hidden>
+    <div data-settings-nav-target="panel" id="api_keys" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
           <i class="ph ph-cube"></i> OpenAI
@@ -103,7 +103,7 @@
       available_repos = github_configured ? (github_service.list_repos rescue []) : []
       selected_repos = Setting.get("global", "github_repos", default: []) || []
     %>
-    <div data-settings-nav-target="panel" hidden>
+    <div data-settings-nav-target="panel" id="github" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
           <i class="ph ph-github-logo"></i> GitHub
@@ -175,7 +175,7 @@
         "slack_app_token" => { label: "App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" }
       }
     %>
-    <div data-settings-nav-target="panel" hidden>
+    <div data-settings-nav-target="panel" id="slack" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
           <i class="ph ph-chat-teardrop-dots"></i> Slack
@@ -319,7 +319,7 @@
     </div>
 
     <%# Calendar %>
-    <div data-settings-nav-target="panel" hidden>
+    <div data-settings-nav-target="panel" id="calendar" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
           <i class="ph ph-calendar"></i> Google Calendar
@@ -349,7 +349,7 @@
     </div>
 
     <%# Search %>
-    <div data-settings-nav-target="panel" hidden>
+    <div data-settings-nav-target="panel" id="search" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
           <i class="ph ph-magnifying-glass"></i> Search
@@ -366,7 +366,7 @@
     </div>
 
     <%# Archive %>
-    <div data-settings-nav-target="panel" hidden>
+    <div data-settings-nav-target="panel" id="compression" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
           <i class="ph ph-archive"></i> Archive & Reanalysis

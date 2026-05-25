@@ -41,9 +41,11 @@ class SettingsController < ApplicationController
       save_encrypted(:google_ical_url)
     end
 
-    redirect_to settings_path, notice: "Settings saved."
+    anchor = section_anchor(params[:section])
+    redirect_to "#{settings_path}##{anchor}", notice: "Settings saved."
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to settings_path, alert: e.message
+    anchor = section_anchor(params[:section])
+    redirect_to "#{settings_path}##{anchor}", alert: e.message
   end
 
   private
@@ -71,6 +73,15 @@ class SettingsController < ApplicationController
     Setting.set("global", "github_repos", repos)
   end
 
+  def section_anchor(section)
+    case section
+    when "slack_tokens", "watched_channel_add", "watched_channel_remove", "noise_filter_add", "noise_filter_remove"
+      "slack"
+    else
+      section
+    end
+  end
+
   def cast_value(key, value)
     if key.in?(INTEGER_SETTINGS)
       value.to_i
@@ -80,4 +91,5 @@ class SettingsController < ApplicationController
       value
     end
   end
+
 end
