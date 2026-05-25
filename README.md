@@ -85,7 +85,7 @@ All API keys are entered via the settings page at `https://techos.test/settings`
    - `reactions:write` — react as yourself
    - `chat:write` — reply as yourself
 5. Install the app to your workspace. Copy the **Bot User OAuth Token** (`xoxb-...`) and the **User OAuth Token** (`xoxp-...`)
-6. Under **Event Subscriptions**, enable events and subscribe to bot events: `reaction_added`, `message.channels`, `app_mention`
+6. Under **Event Subscriptions**, enable events. Under **Subscribe to bot events** (not "on behalf of users"), add: `reaction_added`, `message.channels`, `app_mention`
 7. Paste all three tokens into settings: **Slack Bot Token**, **Slack User Token**, **Slack App Token**
 
 **OpenAI** — for vector embeddings:
