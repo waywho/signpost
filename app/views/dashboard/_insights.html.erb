@@ -8,8 +8,16 @@
       <div class="flex flex-col gap-half" style="margin-block-end: var(--size-4)">
         <% alerts.each do |alert| %>
           <%
-            bg = alert[:type] == "danger" ? "light-dark(var(--red-100), var(--red-950))" : "light-dark(var(--amber-100), var(--amber-950))"
-            color = alert[:type] == "danger" ? "var(--color-negative)" : "#f97316"
+            bg = case alert[:type]
+                 when "danger" then "light-dark(var(--red-100), var(--red-950))"
+                 when "info" then "light-dark(var(--blue-100), var(--blue-950))"
+                 else "light-dark(var(--amber-100), var(--amber-950))"
+                 end
+            color = case alert[:type]
+                    when "danger" then "var(--color-negative)"
+                    when "info" then "var(--color-primary)"
+                    else "#f97316"
+                    end
           %>
           <div class="flex items-center gap" style="padding: var(--size-2) var(--size-3); border-radius: var(--rounded-lg); background: <%= bg %>">
             <i class="ph <%= alert[:icon] %>" style="color: <%= color %>; flex-shrink: 0"></i>

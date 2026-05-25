@@ -5,7 +5,8 @@ class InsightsService
       *overloaded_developers,
       *overdue_commitments,
       *aging_prs,
-      *unresolved_concerns
+      *unresolved_concerns,
+      *upcoming_oneone_alerts
     ]
   end
 
@@ -144,6 +145,20 @@ class InsightsService
         { name: dev.name, done_last_30: done_last_30, done_prev_30: done_prev_30, active: active, trend: "declining" }
       elsif done_last_30 > 0 && done_last_30 > (done_prev_30 * 1.5) && done_prev_30 > 0
         { name: dev.name, done_last_30: done_last_30, done_prev_30: done_prev_30, active: active, trend: "accelerating" }
+      end
+    end
+  end
+
+  def upcoming_oneone_alerts
+    calendar = CalendarService.new
+    return [] unless calendar.configured?
+
+    calendar.upcoming_events(hours: 3).filter_map do |event|
+      next unless event[:is_oneone] && event[:matched_developer]
+      dev = event[:matched_developer]
+      minutes = ((event[:start_time] - Time.current) / 60).to_i
+      if minutes > 0 && minutes <= 180
+        { type: "info", icon: "ph-calendar-check", message: "1:1 with #{dev.name} in #{minutes} minutes" }
       end
     end
   end

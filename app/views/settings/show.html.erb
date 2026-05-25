@@ -145,6 +145,27 @@
   <% end %>
 </div>
 
+<%# Calendar %>
+<div class="card" style="margin-block-end: var(--size-6)">
+  <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <i class="ph ph-calendar"></i> Google Calendar
+  </h2>
+  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+    <%= hidden_field_tag :section, "calendar" %>
+    <div>
+      <label class="text-sm font-bold" style="display: block; margin-block-end: var(--size-1)">Secret iCal URL</label>
+      <% has_url = EncryptedSetting.get("credentials", "google_ical_url").present? %>
+      <input type="url" name="google_ical_url" value="<%= has_url ? '••••••••' : '' %>"
+             class="input" style="inline-size: 100%"
+             placeholder="<%= has_url ? 'Configured' : 'https://calendar.google.com/calendar/ical/.../basic.ics' %>">
+      <p class="text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-1)">
+        Google Calendar → Settings → calendar → Secret address in iCal format
+      </p>
+    </div>
+    <%= f.submit "Save Calendar URL", class: "button", style: "align-self: flex-start" %>
+  <% end %>
+</div>
+
 <%# Search %>
 <div class="card" style="margin-block-end: var(--size-6)">
   <h2 class="font-bold text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">

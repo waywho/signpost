@@ -24,6 +24,8 @@ class SettingsController < ApplicationController
       add_noise_filter
     when "noise_filter_remove"
       remove_noise_filter
+    when "calendar"
+      update_calendar
     end
 
     redirect_to settings_path, notice: "Settings saved."
@@ -84,5 +86,10 @@ class SettingsController < ApplicationController
 
   def remove_noise_filter
     NoiseFilter.find(params[:filter_id])&.destroy
+  end
+
+  def update_calendar
+    value = params[:google_ical_url]
+    EncryptedSetting.set("credentials", "google_ical_url", value) if value.present? && value != "••••••••"
   end
 end
