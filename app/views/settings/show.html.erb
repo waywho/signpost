@@ -125,8 +125,9 @@
       <label class="text-sm font-bold mbe-2" style="display: block">Watched Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(for issue creation)</span></label>
       <% if available_repos.any? %>
         <% orgs = available_repos.map { |r| r[:full_name].split("/").first }.uniq.sort %>
+        <div data-controller="repo-filter">
         <% if orgs.size > 1 %>
-          <div class="flex items-center gap-half mbe-2" data-controller="repo-filter">
+          <div class="flex items-center gap-half mbe-2">
             <span class="text-xs" style="color: var(--color-text-subtle)">Filter:</span>
             <button type="button" class="badge" data-action="repo-filter#filter" data-repo-filter-org-param="">All</button>
             <% orgs.each do |org| %>
@@ -145,6 +146,7 @@
               <% end %>
             </label>
           <% end %>
+        </div>
         </div>
       <% elsif github_configured %>
         <p class="text-sm" style="color: var(--color-text-subtle)">Could not fetch repos. Check your GitHub PAT.</p>
