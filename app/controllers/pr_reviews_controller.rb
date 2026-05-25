@@ -37,6 +37,14 @@ class PrReviewsController < ApplicationController
     end
   end
 
+  def ignore
+    url = params[:url]
+    ignored = Setting.get("global", "ignored_prs", default: []) || []
+    ignored << url unless ignored.include?(url)
+    Setting.set("global", "ignored_prs", ignored)
+    redirect_back fallback_location: pr_reviews_path, notice: "PR ignored."
+  end
+
   def analyze
     @pr_review = PrReview.find(params[:id])
     service = PrAnalysisService.new

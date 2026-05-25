@@ -25,8 +25,11 @@ class GitHubService
     return [] unless username
 
     results = @client.search_issues("is:pr is:open review-requested:#{username}")
+    ignored = Setting.get("global", "ignored_prs", default: []) || []
+
     results.items
       .reject { |pr| pr.user.login.match?(/\[bot\]$|^dependabot|^renovate|^github-actions/i) }
+      .reject { |pr| ignored.include?(pr.html_url) }
       .map do |pr|
         repo = pr.repository_url.sub("https://api.github.com/repos/", "")
         {
