@@ -1,0 +1,11 @@
+<%= turbo_stream.replace "pr_analysis" do %>
+  <div id="pr_analysis">
+    <% if @error %>
+      <div class="card" style="margin-block-start: var(--size-4); color: var(--color-negative)">
+        <p class="text-sm"><i class="ph ph-warning"></i> Analysis failed: <%= @error %></p>
+      </div>
+    <% else %>
+      <%= render "analysis", analysis: @analysis, cc_command: @cc_command %>
+    <% end %>
+  </div>
+<% end %>

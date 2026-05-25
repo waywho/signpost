@@ -37,6 +37,26 @@ class PrReviewsController < ApplicationController
     end
   end
 
+  def analyze
+    @pr_review = PrReview.find(params[:id])
+    service = PrAnalysisService.new
+    @analysis = service.analyze(repo: @pr_review.repo, pr_number: @pr_review.pr_number)
+    @cc_command = service.claude_code_command(
+      @pr_review,
+      (@analysis[:risk_areas] || []).map { |r| r[:file] }.compact
+    )
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @pr_review }
+    end
+  rescue => e
+    @error = e.message
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @pr_review, alert: "Analysis failed: #{e.message}" }
+    end
+  end
+
   private
 
   def pr_review_params

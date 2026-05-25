@@ -53,6 +53,22 @@ class GitHubService
     { number: issue.number, url: issue.html_url, title: issue.title }
   end
 
+  def pr_detail(repo, number)
+    pr = @client.pull_request(repo, number)
+    {
+      number: pr.number,
+      title: pr.title,
+      author: pr.user.login,
+      body: pr.body,
+      additions: pr.additions,
+      deletions: pr.deletions,
+      changed_files: pr.changed_files
+    }
+  rescue Octokit::Error => e
+    Rails.logger.error("GitHubService pr_detail error: #{e.message}")
+    { number: number, title: "", author: "", body: "", additions: 0, deletions: 0, changed_files: 0 }
+  end
+
   def pr_diff(repo, number)
     @client.get("repos/#{repo}/pulls/#{number}", accept: "application/vnd.github.v3.diff").to_s
   rescue Octokit::Error => e

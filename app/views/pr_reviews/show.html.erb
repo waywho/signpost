@@ -58,3 +58,17 @@
     <pre class="text-sm" style="white-space: pre-wrap; font-family: inherit"><%= @pr_review.draft_comment %></pre>
   </div>
 <% end %>
+
+<%# Claude Analysis %>
+<div id="pr_analysis">
+  <% if @pr_review.repo.present? && @pr_review.pr_number.present? && ClaudeService.new.configured? && GitHubService.new.configured? %>
+    <div class="card" style="margin-block-start: var(--size-4)">
+      <%= button_to analyze_pr_review_path(@pr_review), method: :post, class: "button", data: { turbo_frame: "_top" } do %>
+        <i class="ph ph-brain"></i> Analyze with Claude
+      <% end %>
+      <p class="text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-2)">
+        Fetches diff from GitHub and runs structured code review analysis.
+      </p>
+    </div>
+  <% end %>
+</div>
