@@ -1,0 +1,118 @@
+<% content_for(:title, "Search — Tech Lead OS") %>
+
+<h1 class="font-bold text-2xl" style="margin-block-end: var(--size-6)">Semantic Search</h1>
+
+<%= form_with url: search_path, method: :get, class: "flex flex-col gap", style: "margin-block-end: var(--size-6)" do |f| %>
+  <div class="flex items-center gap">
+    <%= f.search_field :query, value: @query, placeholder: "Search threads, topics, and messages…",
+          class: "input flex-1", style: "font-size: var(--text-base)", autofocus: true %>
+    <%= f.submit "Search", class: "button" %>
+  </div>
+  <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
+    <span>Search across:</span>
+    <% %w[thread topic message].each do |level| %>
+      <label class="flex items-center gap-half">
+        <input type="checkbox" name="levels[]" value="<%= level %>"
+               <%= 'checked' if params[:levels].blank? || params[:levels]&.include?(level) %>>
+        <%= level.capitalize %>s
+      </label>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @error %>
+  <div class="card" style="color: var(--color-negative); margin-block-end: var(--size-4)">
+    <p class="text-sm"><i class="ph ph-warning"></i> Search failed: <%= @error %></p>
+  </div>
+<% end %>
+
+<% if @query.present? %>
+  <p class="text-sm" style="color: var(--color-text-subtle); margin-block-end: var(--size-4)">
+    <%= @results.size %> results for "<%= @query %>"
+  </p>
+
+  <% if @results.any? %>
+    <div class="flex flex-col gap">
+      <% @results.each do |result| %>
+        <div class="card">
+          <div class="flex items-center gap-half" style="margin-block-end: var(--size-2)">
+            <%
+              type_icon = case result[:type]
+                          when "thread" then "ph-chat-dots"
+                          when "topic" then "ph-list-checks"
+                          when "message" then "ph-chat-text"
+                          else "ph-magnifying-glass"
+                          end
+              type_color = case result[:type]
+                           when "thread" then "var(--color-primary)"
+                           when "topic" then "#f97316"
+                           when "message" then "var(--color-text-subtle)"
+                           else "var(--color-text-subtle)"
+                           end
+            %>
+            <i class="ph <%= type_icon %>" style="color: <%= type_color %>"></i>
+            <span class="text-xs font-bold" style="color: <%= type_color %>"><%= result[:type].capitalize %></span>
+            <span class="text-xs" style="color: var(--color-text-subtle)">
+              similarity: <%= (result[:similarity] * 100).round(1) %>%
+            </span>
+          </div>
+
+          <% case result[:type] %>
+          <% when "thread" %>
+            <% thread = result[:thread] %>
+            <%= link_to slack_thread_path(thread[:id]), style: "text-decoration: none" do %>
+              <span class="font-bold text-sm"><%= thread[:title] || "Untitled thread" %></span>
+            <% end %>
+            <% if thread[:summary].present? %>
+              <p class="text-sm" style="color: var(--color-text-subtle); margin-block-start: var(--size-1)"><%= thread[:summary].truncate(150) %></p>
+            <% end %>
+            <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-1)">
+              <% if thread[:category] %><span><%= thread[:category] %></span><% end %>
+              <% if thread[:captured_at] %><span><%= thread[:captured_at].to_date %></span><% end %>
+            </div>
+
+          <% when "topic" %>
+            <% topic = result[:topic] %>
+            <% thread = result[:thread] %>
+            <span class="font-bold text-sm"><%= topic[:title] %></span>
+            <p class="text-sm" style="margin-block-start: var(--size-1)"><%= topic[:summary] %></p>
+            <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-1)">
+              <% if topic[:urgency] %>
+                <%
+                  urg_color = case topic[:urgency]
+                              when "critical" then "var(--color-negative)"
+                              when "high" then "#f97316"
+                              else "var(--color-text-subtle)"
+                              end
+                %>
+                <span style="color: <%= urg_color %>; font-weight: bold"><%= topic[:urgency] %></span>
+              <% end %>
+              <% if topic[:category] %><span><%= topic[:category] %></span><% end %>
+              <% if thread %>
+                <span>in <%= link_to thread[:title] || "thread", slack_thread_path(thread[:id]) %></span>
+              <% end %>
+            </div>
+
+          <% when "message" %>
+            <% msg = result[:message] %>
+            <% thread = result[:thread] %>
+            <div class="flex items-center gap-half" style="margin-block-end: var(--size-1)">
+              <span class="font-bold text-sm"><%= msg[:user_name] || "Unknown" %></span>
+            </div>
+            <p class="text-sm" style="white-space: pre-wrap; word-break: break-word"><%= msg[:content].truncate(200) %></p>
+            <% if thread %>
+              <div class="text-xs" style="color: var(--color-text-subtle); margin-block-start: var(--size-1)">
+                in <%= link_to thread[:title] || "thread", slack_thread_path(thread[:id]) %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% elsif @query.present? %>
+    <div class="card text-center" style="color: var(--color-text-subtle)">
+      <i class="ph ph-magnifying-glass" style="font-size: var(--text-4xl); display: block; margin-block-end: var(--size-4)"></i>
+      <p>No results found.</p>
+    </div>
+  <% end %>
+<% end %>

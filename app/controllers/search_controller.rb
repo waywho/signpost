@@ -1,4 +1,23 @@
 class SearchController < ApplicationController
+  def index
+    if params[:query].present?
+      @query = params[:query]
+      @results = SlackSearchService.new.search(
+        query: @query,
+        threshold: params[:threshold]&.to_f,
+        limit: 20,
+        levels: params[:levels].present? ? params[:levels] : nil
+      )
+    else
+      @query = nil
+      @results = []
+    end
+  rescue => e
+    @query = params[:query]
+    @results = []
+    @error = e.message
+  end
+
   def create
     if params[:query].blank?
       render json: { error: "query is required" }, status: :unprocessable_entity
