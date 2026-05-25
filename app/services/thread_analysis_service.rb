@@ -103,6 +103,8 @@ class ThreadAnalysisService
           SlackTopicMessage.find_or_create_by!(slack_topic: topic, slack_message: msg)
         end
       end
+
+      ActionQueueService.new.process(topic) if topic.action_recommendation.in?(%w[delegate create_ticket])
     end
   end
 

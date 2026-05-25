@@ -29,7 +29,18 @@ class ThreadAnalysisServiceTest < ActiveSupport::TestCase
     mock_embedder.define_singleton_method(:embed) { |text| Array.new(1536, 0.1) }
 
     service = ThreadAnalysisService.new(embedding_service: mock_embedder, anthropic_client: mock_anthropic)
+    noop_queue = ->(topic) { nil }
+    original_new = ActionQueueService.method(:new)
+    ActionQueueService.define_singleton_method(:new) do |**_args|
+      obj = original_new.call(
+        ticket_draft_service: Object.new.tap { |d| d.define_singleton_method(:draft) { |_| { title: "x", body: "x", suggested_repo: nil } } },
+        assignee_suggestion_service: Object.new.tap { |s| s.define_singleton_method(:suggest) { |_| nil } }
+      )
+      obj
+    end
     service.analyze(@thread)
+  ensure
+    ActionQueueService.define_singleton_method(:new, original_new) if original_new
 
     @thread.reload
     assert_equal "Login bug and API performance", @thread.title
