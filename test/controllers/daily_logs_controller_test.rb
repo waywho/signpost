@@ -10,7 +10,7 @@ class DailyLogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update existing daily log" do
-    log = daily_logs(:one)
+    log = create(:daily_log, log_date: Date.current)
     patch daily_log_path(log), params: { daily_log: { eod_notes: "Updated notes" } }
     assert_redirected_to root_path
     assert_equal "Updated notes", log.reload.eod_notes

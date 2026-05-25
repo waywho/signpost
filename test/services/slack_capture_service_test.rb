@@ -46,7 +46,7 @@ class SlackCaptureServiceTest < ActiveSupport::TestCase
   end
 
   test "skips duplicate messages" do
-    existing = slack_threads(:one)
+    existing = create(:slack_thread)
     existing.slack_messages.create!(message_ts: "99.1", content: "already here", embedding: @embedding)
 
     def @mock_slack.conversations_replies(channel:, ts:, limit:)

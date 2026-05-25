@@ -2,7 +2,7 @@ require "test_helper"
 
 class OneOnePrepServiceTest < ActiveSupport::TestCase
   test "prep returns briefing text" do
-    developer = developers(:one)
+    developer = create(:developer)
 
     mock_claude = Object.new
     mock_claude.define_singleton_method(:analyze) { |prompt, **_| "## Suggested Talking Points\n- Discuss project progress" }
@@ -17,7 +17,7 @@ class OneOnePrepServiceTest < ActiveSupport::TestCase
   end
 
   test "handles developer with no data gracefully" do
-    developer = Developer.create!(name: "New Dev")
+    developer = create(:developer, name: "New Dev")
 
     mock_claude = Object.new
     mock_claude.define_singleton_method(:analyze) { |prompt, **_| "## Talking Points\n- Get to know each other" }
@@ -29,6 +29,5 @@ class OneOnePrepServiceTest < ActiveSupport::TestCase
     result = service.prep(developer)
 
     assert result.present?
-    developer.destroy
   end
 end

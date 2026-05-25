@@ -12,7 +12,7 @@ class SlackSearchServiceTest < ActiveSupport::TestCase
   end
 
   test "search finds messages by similarity" do
-    thread = slack_threads(:one)
+    thread = create(:slack_thread)
     embedding = Array.new(1536, 0.1)
     thread.slack_messages.create!(message_ts: "s.1", content: "database migration", embedding: embedding, message_ts_at: 1.hour.ago)
 

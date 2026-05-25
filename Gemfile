@@ -7,6 +7,7 @@ gem "neighbor"
 gem "ruby-openai"
 gem "anthropic"
 gem "slack-ruby-client"
+gem "octokit"
 gem "async-websocket", "~> 0.26"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
@@ -68,3 +69,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]

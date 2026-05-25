@@ -2,7 +2,7 @@ require "test_helper"
 
 class ThreadAnalysisServiceTest < ActiveSupport::TestCase
   setup do
-    @thread = slack_threads(:one)
+    @thread = create(:slack_thread)
     @embedding = Array.new(1536, 0.1)
     @thread.slack_messages.create!(message_ts: "10.1", content: "There's a login bug", user_name: "Alice", message_ts_at: 1.hour.ago)
     @thread.slack_messages.create!(message_ts: "10.2", content: "Also the API is slow", user_name: "Bob", message_ts_at: 30.minutes.ago)
@@ -44,7 +44,7 @@ class ThreadAnalysisServiceTest < ActiveSupport::TestCase
   end
 
   test "handles empty messages gracefully" do
-    thread = slack_threads(:two)
+    thread = create(:slack_thread)
     thread.slack_messages.destroy_all
     service = ThreadAnalysisService.new
     assert_nothing_raised { service.analyze(thread) }

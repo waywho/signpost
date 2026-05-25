@@ -1,0 +1,2 @@
+class WatchedRepo < ApplicationRecord
+end

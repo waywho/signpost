@@ -2,7 +2,7 @@ require "test_helper"
 
 class DelegationsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @delegation = delegations(:one)
+    @delegation = create(:delegation)
   end
 
   test "should get index" do

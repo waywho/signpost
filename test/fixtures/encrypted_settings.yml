@@ -1,9 +1,0 @@
-one:
-  scope: credentials
-  key: openai_api_key
-  value: sk-test-openai
-
-two:
-  scope: credentials
-  key: slack_bot_token
-  value: xoxb-test-token

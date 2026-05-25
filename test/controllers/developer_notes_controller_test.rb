@@ -2,7 +2,7 @@ require "test_helper"
 
 class DeveloperNotesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @developer = developers(:one)
+    @developer = create(:developer)
   end
 
   test "should create note" do

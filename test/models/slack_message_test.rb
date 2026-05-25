@@ -2,7 +2,7 @@ require "test_helper"
 
 class SlackMessageTest < ActiveSupport::TestCase
   setup do
-    @thread = slack_threads(:one)
+    @thread = create(:slack_thread)
   end
 
   test "valid with required fields" do

@@ -2,7 +2,7 @@ require "test_helper"
 
 class SlackThreadsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @thread = slack_threads(:one)
+    @thread = create(:slack_thread)
   end
 
   test "should get index" do

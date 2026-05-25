@@ -2,7 +2,7 @@ require "test_helper"
 
 class CommitmentsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @commitment = commitments(:one)
+    @commitment = create(:commitment)
   end
 
   test "should get index" do

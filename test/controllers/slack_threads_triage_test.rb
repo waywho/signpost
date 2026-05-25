@@ -2,8 +2,7 @@ require "test_helper"
 
 class SlackThreadsTriageTest < ActionDispatch::IntegrationTest
   setup do
-    @thread = slack_threads(:one)
-    @thread.update!(status: "new")
+    @thread = create(:slack_thread, status: "new")
   end
 
   test "dismiss marks thread archived" do

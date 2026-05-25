@@ -2,7 +2,7 @@ require "test_helper"
 
 class PrReviewsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @pr_review = pr_reviews(:one)
+    @pr_review = create(:pr_review)
   end
 
   test "should get index" do

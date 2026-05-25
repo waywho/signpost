@@ -2,8 +2,8 @@ require "test_helper"
 
 class OneoneSessionsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @developer = developers(:one)
-    @session = oneone_sessions(:one)
+    @developer = create(:developer)
+    @session = create(:oneone_session, developer: @developer)
   end
 
   test "should get new" do

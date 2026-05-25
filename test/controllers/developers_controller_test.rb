@@ -2,7 +2,7 @@ require "test_helper"
 
 class DevelopersControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @developer = developers(:one)
+    @developer = create(:developer)
   end
 
   test "should get index" do

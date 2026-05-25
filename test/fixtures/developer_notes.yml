@@ -1,9 +1,0 @@
-one:
-  developer: one
-  note_type: good
-  content: Great work on the API refactor
-
-two:
-  developer: two
-  note_type: growth
-  content: Could improve test coverage
