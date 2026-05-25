@@ -35,6 +35,7 @@ Rails.application.routes.draw do
 
   post "/search", to: "search#create"
 
+  resource :settings, only: [:show, :update]
   resource :status, only: :show, controller: "status"
   resource :dashboard, only: :show, controller: "dashboard"
 
