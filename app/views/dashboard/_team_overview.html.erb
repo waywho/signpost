@@ -1,8 +1,11 @@
 <div class="card">
-  <h2 class="font-bold flex items-center gap-half mbe-4">
-    <i class="ph ph-users-three" style="color: var(--color-primary)"></i> Team
-    <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= developers.size %>)</span>
-  </h2>
+  <div class="flex items-center justify-between mbe-4">
+    <h2 class="font-bold flex items-center gap-half">
+      <i class="ph ph-users-three" style="color: var(--color-primary)"></i> Team
+      <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= developers.size %>)</span>
+    </h2>
+    <%= link_to "View all →", developers_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+  </div>
   <% if developers.any? %>
     <ul class="flex flex-col gap-half">
       <% developers.each do |dev| %>

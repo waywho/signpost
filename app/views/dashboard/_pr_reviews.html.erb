@@ -1,8 +1,11 @@
 <div class="card">
-  <h2 class="font-bold flex items-center gap-half mbe-4">
-    <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i> PR Reviews
-    <span class="text-sm font-normal" style="color: var(--color-text-subtle)">Last 5</span>
-  </h2>
+  <div class="flex items-center justify-between mbe-4">
+    <h2 class="font-bold flex items-center gap-half">
+      <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i> PR Reviews
+      <span class="text-sm font-normal" style="color: var(--color-text-subtle)">Last 5</span>
+    </h2>
+    <%= link_to "View all →", pr_reviews_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+  </div>
   <% if pr_queue&.any? %>
     <p class="badge badge--negative mbe-2">
       <i class="ph ph-warning-circle"></i> <%= pr_queue.size %> awaiting your review

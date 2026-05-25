@@ -1,7 +1,10 @@
 <div class="card">
-  <h2 class="font-bold flex items-center gap-half mbe-4">
-    <i class="ph ph-handshake" style="color: var(--color-primary)"></i> Commitments
-  </h2>
+  <div class="flex items-center justify-between mbe-4">
+    <h2 class="font-bold flex items-center gap-half">
+      <i class="ph ph-handshake" style="color: var(--color-primary)"></i> Commitments
+    </h2>
+    <%= link_to "View all →", commitments_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+  </div>
   <% if overdue.any? %>
     <p class="badge badge--negative mbe-2"><i class="ph ph-warning-circle"></i> Overdue</p>
     <ul class="flex flex-col gap-half mbe-3">
