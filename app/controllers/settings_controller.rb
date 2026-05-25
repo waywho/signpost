@@ -9,7 +9,7 @@ class SettingsController < ApplicationController
   INTEGER_SETTINGS = %w[poll_interval_minutes compression_after_months reanalysis_message_threshold reanalysis_quiet_minutes].freeze
   FLOAT_SETTINGS = %w[search_default_threshold].freeze
 
-  ENCRYPTED_KEYS = %w[openai_api_key github_pat slack_bot_token slack_user_token slack_app_token].freeze
+  ENCRYPTED_KEYS = %w[openai_api_key slack_bot_token slack_user_token slack_app_token].freeze
 
   def show
     @watched_channels = WatchedChannel.order(:channel_name)
@@ -25,8 +25,6 @@ class SettingsController < ApplicationController
       ENCRYPTED_KEYS.each { |key| save_encrypted(key) }
     when "github", "slack", "search", "compression"
       save_settings(params[:section])
-    when "github"
-      save_github_repos
     when "watched_channel_add"
       WatchedChannel.create!(channel_id: params[:channel_id], channel_name: params[:channel_name], capture_mode: params[:capture_mode])
     when "watched_channel_remove"
@@ -53,7 +51,10 @@ class SettingsController < ApplicationController
       Setting.set("global", key, value)
     end
 
-    save_github_repos if section == "github"
+    if section == "github"
+      save_encrypted(:github_pat)
+      save_github_repos
+    end
   end
 
   def save_encrypted(key)

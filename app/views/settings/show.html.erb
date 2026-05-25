@@ -55,7 +55,6 @@
     <%
       api_keys = {
         "openai_api_key" => { label: "OpenAI API Key", hint: "For vector embeddings (sk-...)" },
-        "github_pat" => { label: "GitHub Personal Access Token", hint: "For PR queue, developer activity, issue creation (ghp-...)" },
         "slack_bot_token" => { label: "Slack Bot Token", hint: "For reading channels and events (xoxb-...)" },
         "slack_user_token" => { label: "Slack User Token", hint: "For reacting/replying as you, not the bot (xoxp-...)" },
         "slack_app_token" => { label: "Slack App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" }
@@ -99,6 +98,25 @@
   </h2>
   <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
     <%= hidden_field_tag :section, "github" %>
+    <div data-controller="password-reveal">
+      <div class="flex items-center gap-half mbe-1">
+        <label class="text-sm font-bold" style="display: block">Personal Access Token</label>
+        <% has_pat = EncryptedSetting.get("credentials", "github_pat").present? %>
+        <% if has_pat %>
+          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
+        <% else %>
+          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+        <% end %>
+      </div>
+      <div class="group">
+        <input type="password" name="github_pat" data-password-reveal-target="input"
+               class="input" placeholder="<%= has_pat ? 'Configured — leave blank to keep' : 'ghp-...' %>">
+        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+        </button>
+      </div>
+      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">For PR queue, developer activity, and issue creation</p>
+    </div>
     <div>
       <label class="text-sm font-bold mbe-1" style="display: block">Username</label>
       <input type="text" name="github_username" value="<%= Setting.get('global', 'github_username') %>" class="input" placeholder="your-github-handle">
