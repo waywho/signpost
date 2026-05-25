@@ -172,6 +172,6 @@ class PrReviewsController < ApplicationController
       OpenStruct.new(pr_number: pr_number, pr_title: pr_title, repo: repo),
       (analysis[:risk_areas] || []).map { |r| r[:file] }.compact
     )
-    render_to_string(partial: "pr_reviews/analysis", locals: { analysis: analysis, cc_command: cc_command })
+    render_to_string(partial: "pr_reviews/analysis", locals: { analysis: analysis, cc_command: cc_command, repo: repo, pr_number: pr_number })
   end
 end

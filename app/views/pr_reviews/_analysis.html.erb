@@ -71,7 +71,14 @@
       <h3 class="font-bold text-sm mbe-2" style="color: <%= sev_color %>"><%= severity.capitalize %> Issues (<%= items.size %>)</h3>
       <% items.each do |item| %>
         <div style="border-block-end: 1px solid var(--color-border); padding-block: var(--size-2)">
-          <div class="text-sm font-bold" style="font-family: monospace"><%= item[:file] %><% if item[:line].present? %>:<%= item[:line] %><% end %></div>
+          <div class="text-sm font-bold" style="font-family: monospace">
+            <% if defined?(repo) && defined?(pr_number) && item[:file].present? %>
+              <% gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(item[:file].to_s)}" %>
+              <%= link_to "#{item[:file]}#{":#{item[:line]}" if item[:line].present?}", gh_url, target: "_blank", style: "text-decoration: none; color: var(--color-primary)" %>
+            <% else %>
+              <%= item[:file] %><% if item[:line].present? %>:<%= item[:line] %><% end %>
+            <% end %>
+          </div>
           <p class="text-sm"><%= item[:issue] %></p>
           <p class="text-xs" style="color: var(--color-text-subtle)"><strong>Why:</strong> <%= item[:why] %></p>
           <p class="text-xs" style="color: var(--color-text-subtle)"><strong>Fix:</strong> <%= item[:fix] %></p>
@@ -86,7 +93,18 @@
     <div class="card mbe-4">
       <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><%= title %></h3>
       <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
-        <% items.each do |item| %><li class="text-sm">• <%= item.is_a?(Hash) ? "#{item[:file]} (#{item[:severity]}): #{item[:reason]}" : item %></li><% end %>
+        <% items.each do |item| %>
+          <li class="text-sm">•
+            <% if item.is_a?(Hash) && item[:file].present? && defined?(repo) && defined?(pr_number) %>
+              <% gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(item[:file].to_s)}" %>
+              <%= link_to item[:file], gh_url, target: "_blank", style: "font-family: monospace; color: var(--color-primary)" %> (<%= item[:severity] %>): <%= item[:reason] %>
+            <% elsif item.is_a?(Hash) %>
+              <%= "#{item[:file]} (#{item[:severity]}): #{item[:reason]}" %>
+            <% else %>
+              <%= item %>
+            <% end %>
+          </li>
+        <% end %>
       </ul>
     </div>
   <% end %>
@@ -97,7 +115,14 @@
       <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-lightbulb"></i> Per-File Tips</h3>
       <% analysis[:inline_tips].each do |tip| %>
         <div style="border-block-end: 1px solid var(--color-border); padding-block: var(--size-2)">
-          <div class="text-sm font-bold" style="font-family: monospace"><%= tip[:file] %></div>
+          <div class="text-sm font-bold" style="font-family: monospace">
+            <% if tip[:file].present? && defined?(repo) && defined?(pr_number) %>
+              <% gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(tip[:file].to_s)}" %>
+              <%= link_to tip[:file], gh_url, target: "_blank", style: "color: var(--color-primary)" %>
+            <% else %>
+              <%= tip[:file] %>
+            <% end %>
+          </div>
           <p class="text-sm"><%= tip[:tip] %></p>
           <p class="text-xs" style="color: var(--color-text-subtle)"><em>Why:</em> <%= tip[:why] %></p>
         </div>
