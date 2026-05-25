@@ -3,7 +3,8 @@
     <p class="text-sm"><i class="ph ph-info"></i> Set <code>github_pat</code> in encrypted settings to see your PR queue.</p>
   </div>
 <% elsif pr_queue.any? %>
-  <div class="card mbe-6" data-controller="bulk-select">
+  <% repos = pr_queue.map { |pr| pr[:repo] }.uniq.sort %>
+  <div class="card mbe-6" data-controller="bulk-select pr-filter">
     <div class="flex items-center justify-between mbe-4">
       <h2 class="font-bold flex items-center gap-half">
         <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
@@ -18,6 +19,18 @@
       </div>
     </div>
 
+    <%# Repo tabs + search %>
+    <div class="flex items-center gap mbe-4" style="flex-wrap: wrap">
+      <div class="flex items-center gap-half">
+        <button type="button" class="badge" data-pr-filter-target="repoTab" data-repo="" data-action="pr-filter#filterRepo" aria-current="page">All</button>
+        <% repos.each do |repo| %>
+          <button type="button" class="badge" data-pr-filter-target="repoTab" data-repo="<%= repo %>" data-action="pr-filter#filterRepo"><%= repo.split('/').last %></button>
+        <% end %>
+      </div>
+      <input type="search" placeholder="Search PRs…" class="input text-xs" style="max-inline-size: 14rem"
+             data-pr-filter-target="searchInput" data-action="input->pr-filter#search">
+    </div>
+
     <%= form_with url: ignore_pr_reviews_path, method: :post do |f| %>
       <div class="flex items-center gap-half mbe-2" data-bulk-select-target="actions" hidden>
         <span class="text-xs" style="color: var(--color-text-subtle)" data-count></span>
@@ -25,7 +38,8 @@
       </div>
       <div class="flex flex-col gap-half">
         <% pr_queue.each do |pr| %>
-          <div class="flex items-center gap" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
+          <div class="flex items-center gap" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)"
+               data-pr-filter-target="item" data-repo="<%= pr[:repo] %>" data-title="<%= pr[:title] %>">
             <input type="checkbox" name="urls[]" value="<%= pr[:url] %>" class="input"
                    data-bulk-select-target="checkbox" data-action="bulk-select#toggle" style="flex-shrink: 0">
             <div class="flex flex-col flex-1" style="min-inline-size: 0">
