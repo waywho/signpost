@@ -4,7 +4,7 @@
 
 <%# AI Backend %>
 <% ai_backend = Setting.get("global", "ai_backend", default: "cli") %>
-<div class="card mbe-6" data-controller="toggle-class" data-toggle-class-css-class-value="hidden">
+<div class="card mbe-6">
   <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
     <i class="ph ph-brain"></i> AI Backend
   </h2>
@@ -45,43 +45,33 @@
   <% end %>
 </div>
 
-<%# API Keys %>
+<%# OpenAI %>
 <div class="card mbe-6">
   <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-key"></i> API Keys
+    <i class="ph ph-cube"></i> OpenAI
   </h2>
   <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
     <%= hidden_field_tag :section, "api_keys" %>
-    <%
-      api_keys = {
-        "openai_api_key" => { label: "OpenAI API Key", hint: "For vector embeddings (sk-...)" },
-        "slack_bot_token" => { label: "Slack Bot Token", hint: "For reading channels and events (xoxb-...)" },
-        "slack_user_token" => { label: "Slack User Token", hint: "For reacting/replying as you, not the bot (xoxp-...)" },
-        "slack_app_token" => { label: "Slack App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" }
-      }
-    %>
-    <% api_keys.each do |key, meta| %>
-      <div data-controller="password-reveal">
-        <div class="flex items-center gap-half mbe-1">
-          <label class="text-sm font-bold" style="display: block"><%= meta[:label] %></label>
-          <% has_value = EncryptedSetting.get("credentials", key).present? %>
-          <% if has_value %>
-            <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
-          <% else %>
-            <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
-          <% end %>
-        </div>
-        <div class="group">
-          <input type="password" name="<%= key %>" data-password-reveal-target="input"
-                 class="input" placeholder="<%= has_value ? 'Configured — leave blank to keep' : 'Not set' %>">
-          <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
-            <i class="ph ph-eye" data-password-reveal-target="icon"></i>
-          </button>
-        </div>
-        <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
+    <div data-controller="password-reveal">
+      <div class="flex items-center gap-half mbe-1">
+        <label class="text-sm font-bold" style="display: block">API Key</label>
+        <% has_openai = EncryptedSetting.get("credentials", "openai_api_key").present? %>
+        <% if has_openai %>
+          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
+        <% else %>
+          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+        <% end %>
       </div>
-    <% end %>
-    <%= f.submit "Save API Keys", class: "btn btn--primary", style: "align-self: flex-start" %>
+      <div class="group">
+        <input type="password" name="openai_api_key" data-password-reveal-target="input"
+               class="input" placeholder="<%= has_openai ? 'Configured — leave blank to keep' : 'sk-...' %>">
+        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+        </button>
+      </div>
+      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">For vector embeddings. Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></p>
+    </div>
+    <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
   <% end %>
 </div>
 
@@ -151,20 +141,54 @@
       <% elsif github_configured %>
         <p class="text-sm" style="color: var(--color-text-subtle)">Could not fetch repos. Check your GitHub PAT.</p>
       <% else %>
-        <p class="text-sm" style="color: var(--color-text-subtle)">Configure GitHub PAT above to see your repos.</p>
+        <p class="text-sm" style="color: var(--color-text-subtle)">Save your PAT above and reload to see repos.</p>
       <% end %>
     </div>
     <%= f.submit "Save GitHub Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
   <% end %>
 </div>
 
-<%# Slack %>
+<%# Slack (tokens + capture + channels + noise filters) %>
+<%
+  slack_keys = {
+    "slack_bot_token" => { label: "Bot Token", hint: "For reading channels and events (xoxb-...)" },
+    "slack_user_token" => { label: "User Token", hint: "For reacting/replying as you (xoxp-...)" },
+    "slack_app_token" => { label: "App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" }
+  }
+%>
 <div class="card mbe-6">
   <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-chat-teardrop-dots"></i> Slack Capture
+    <i class="ph ph-chat-teardrop-dots"></i> Slack
   </h2>
-  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+
+  <%# Tokens %>
+  <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap mbe-6" do |f| %>
     <%= hidden_field_tag :section, "slack" %>
+    <% slack_keys.each do |key, meta| %>
+      <div data-controller="password-reveal">
+        <div class="flex items-center gap-half mbe-1">
+          <label class="text-sm font-bold" style="display: block"><%= meta[:label] %></label>
+          <% has_value = EncryptedSetting.get("credentials", key).present? %>
+          <% if has_value %>
+            <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
+          <% else %>
+            <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+          <% end %>
+        </div>
+        <div class="group">
+          <input type="password" name="<%= key %>" data-password-reveal-target="input"
+                 class="input" placeholder="<%= has_value ? 'Configured — leave blank to keep' : 'Not set' %>">
+          <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+            <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+          </button>
+        </div>
+        <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
+      </div>
+    <% end %>
+
+    <%# Capture settings %>
+    <div class="separator mbe-2 mbs-2"></div>
+    <h3 class="font-bold text-xs" style="color: var(--color-text-subtle)">Capture Settings</h3>
     <div class="flex gap">
       <div style="flex: 1">
         <label class="text-sm font-bold mbe-1" style="display: block">Capture Mode</label>
@@ -185,17 +209,14 @@
     </div>
     <%= f.submit "Save Slack Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
   <% end %>
-</div>
 
-<%# Watched Channels %>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-hash"></i> Watched Channels
-  </h2>
+  <%# Watched Channels %>
+  <div class="separator mbe-4"></div>
+  <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Watched Channels</h3>
   <% if @watched_channels.any? %>
     <div class="flex flex-col gap-half mbe-4">
       <% @watched_channels.each do |ch| %>
-        <div class="flex items-center justify-between" style="padding-block: var(--size-1); border-block-end: 1px solid var(--color-border)">
+        <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
           <div>
             <span class="font-bold text-sm"><%= ch.channel_name %></span>
             <span class="text-xs" style="color: var(--color-text-subtle)"><%= ch.channel_id %> · <%= ch.capture_mode %></span>
@@ -207,7 +228,7 @@
       <% end %>
     </div>
   <% end %>
-  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap" do |f| %>
+  <%= form_with url: settings_path, method: :patch, class: "flex items-end gap mbe-6" do |f| %>
     <%= hidden_field_tag :section, "watched_channel_add" %>
     <div style="flex: 1">
       <label class="text-sm font-bold mbe-1" style="display: block">Channel ID</label>
@@ -227,17 +248,14 @@
     </div>
     <%= f.submit "Add Channel", class: "btn btn--primary" %>
   <% end %>
-</div>
 
-<%# Noise Filters %>
-<div class="card mbe-6">
-  <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
-    <i class="ph ph-funnel"></i> Noise Filters
-  </h2>
+  <%# Noise Filters %>
+  <div class="separator mbe-4"></div>
+  <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">Noise Filters</h3>
   <% if @noise_filters.any? %>
     <div class="flex flex-col gap-half mbe-4">
       <% @noise_filters.each do |nf| %>
-        <div class="flex items-center justify-between" style="padding-block: var(--size-1); border-block-end: 1px solid var(--color-border)">
+        <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
           <div>
             <span class="font-bold text-sm"><%= nf.category %></span>
             <span class="text-xs" style="color: var(--color-text-subtle)"><%= nf.description %></span>
