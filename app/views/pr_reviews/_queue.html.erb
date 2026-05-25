@@ -49,8 +49,16 @@
                 <% if pr[:draft] %> · draft<% end %>
               </span>
             </div>
+            <%
+              existing_review = PrReview.find_by(repo: pr[:repo], pr_number: pr[:number])
+            %>
             <div class="flex items-center gap-half" style="flex-shrink: 0">
-              <% if ClaudeService.new.configured? %>
+              <% if existing_review %>
+                <%= link_to analyze_pr_pr_reviews_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
+                      class: "text-sm flex items-center gap-half", style: "color: var(--color-positive)" do %>
+                  <i class="ph ph-check-circle"></i> Analyzed
+                <% end %>
+              <% elsif ClaudeService.new.configured? %>
                 <%= link_to analyze_pr_pr_reviews_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
                       class: "text-sm", style: "color: var(--color-primary)" do %>
                   <i class="ph ph-brain"></i> Analyze
