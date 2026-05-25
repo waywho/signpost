@@ -22,11 +22,23 @@
         <strong>API:</strong> Direct HTTP calls to Anthropic. Requires an API key.
       </p>
     </div>
-    <div id="anthropic-key-field" style="<%= 'display: none' unless ai_backend == 'api' %>">
-      <label class="text-sm font-bold mbe-1" style="display: block">Anthropic API Key</label>
-      <% has_key = EncryptedSetting.get("credentials", "anthropic_api_key").present? %>
-      <input type="password" name="anthropic_api_key"
-             class="input" style="inline-size: 100%" placeholder="<%= has_key ? 'Configured — leave blank to keep' : 'sk-ant-...' %>">
+    <div id="anthropic-key-field" style="<%= 'display: none' unless ai_backend == 'api' %>" data-controller="password-reveal">
+      <div class="flex items-center gap-half mbe-1">
+        <label class="text-sm font-bold" style="display: block">Anthropic API Key</label>
+        <% has_key = EncryptedSetting.get("credentials", "anthropic_api_key").present? %>
+        <% if has_key %>
+          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
+        <% else %>
+          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+        <% end %>
+      </div>
+      <div class="group">
+        <input type="password" name="anthropic_api_key" data-password-reveal-target="input"
+               class="input" placeholder="<%= has_key ? 'Configured — leave blank to keep' : 'sk-ant-...' %>">
+        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+        </button>
+      </div>
       <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></p>
     </div>
     <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
@@ -50,11 +62,23 @@
       }
     %>
     <% api_keys.each do |key, meta| %>
-      <div>
-        <label class="text-sm font-bold mbe-1" style="display: block"><%= meta[:label] %></label>
-        <% has_value = EncryptedSetting.get("credentials", key).present? %>
-        <input type="password" name="<%= key %>"
-               class="input" style="inline-size: 100%" placeholder="<%= has_value ? 'Configured — leave blank to keep' : 'Not set' %>">
+      <div data-controller="password-reveal">
+        <div class="flex items-center gap-half mbe-1">
+          <label class="text-sm font-bold" style="display: block"><%= meta[:label] %></label>
+          <% has_value = EncryptedSetting.get("credentials", key).present? %>
+          <% if has_value %>
+            <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
+          <% else %>
+            <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+          <% end %>
+        </div>
+        <div class="group">
+          <input type="password" name="<%= key %>" data-password-reveal-target="input"
+                 class="input" placeholder="<%= has_value ? 'Configured — leave blank to keep' : 'Not set' %>">
+          <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+            <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+          </button>
+        </div>
         <p class="text-xs mbs-1" style="color: var(--color-text-subtle)"><%= meta[:hint] %></p>
       </div>
     <% end %>
@@ -226,12 +250,23 @@
   </h2>
   <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
     <%= hidden_field_tag :section, "calendar" %>
-    <div>
-      <label class="text-sm font-bold mbe-1" style="display: block">Secret iCal URL</label>
-      <% has_url = EncryptedSetting.get("credentials", "google_ical_url").present? %>
-      <input type="url" name="google_ical_url"
-             class="input" style="inline-size: 100%"
-             placeholder="<%= has_url ? 'Configured — leave blank to keep' : 'https://calendar.google.com/calendar/ical/.../basic.ics' %>">
+    <div data-controller="password-reveal">
+      <div class="flex items-center gap-half mbe-1">
+        <label class="text-sm font-bold" style="display: block">Secret iCal URL</label>
+        <% has_url = EncryptedSetting.get("credentials", "google_ical_url").present? %>
+        <% if has_url %>
+          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-sm)"></i>
+        <% else %>
+          <i class="ph ph-circle-dashed" style="color: var(--color-text-subtle); font-size: var(--text-sm)"></i>
+        <% end %>
+      </div>
+      <div class="group">
+        <input type="password" name="google_ical_url" data-password-reveal-target="input"
+               class="input" placeholder="<%= has_url ? 'Configured — leave blank to keep' : 'https://calendar.google.com/calendar/ical/.../basic.ics' %>">
+        <button type="button" class="btn btn--icon" data-action="password-reveal#toggle" title="Toggle visibility">
+          <i class="ph ph-eye" data-password-reveal-target="icon"></i>
+        </button>
+      </div>
       <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
         Google Calendar → Settings → calendar → Secret address in iCal format
       </p>
