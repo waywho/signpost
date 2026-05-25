@@ -11,9 +11,10 @@ class GitHubService
   end
 
   def list_repos
-    @client.repos(nil, sort: :pushed).map do |r|
+    repos = @client.repos(nil, sort: :pushed, affiliation: "owner,collaborator,organization_member").map do |r|
       { full_name: r.full_name, private: r.private, pushed_at: r.pushed_at }
     end
+    repos.uniq { |r| r[:full_name] }.sort_by { |r| r[:full_name].downcase }
   rescue Octokit::Error => e
     Rails.logger.error("GitHubService list_repos error: #{e.message}")
     []
