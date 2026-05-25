@@ -10,6 +10,15 @@ class PrReviewsController < ApplicationController
       nil
     end
 
+    @claude_configured = ClaudeService.new.configured?
+    if @pr_queue&.any?
+      pr_keys = @pr_queue.map { |pr| [pr[:repo], pr[:number]] }
+      @analyzed_prs = PrReview.where(repo: pr_keys.map(&:first), pr_number: pr_keys.map(&:last))
+                              .pluck(:repo, :pr_number).to_set
+    else
+      @analyzed_prs = Set.new
+    end
+
     @pr_reviews = PrReview.recent
     @pr_reviews = @pr_reviews.where(repo: params[:repo]) if params[:repo].present?
     @pr_reviews = @pr_reviews.where(recommendation: params[:recommendation]) if params[:recommendation].present?
