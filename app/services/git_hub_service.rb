@@ -77,11 +77,12 @@ class GitHubService
       body: pr.body,
       additions: pr.additions,
       deletions: pr.deletions,
-      changed_files: pr.changed_files
+      changed_files: pr.changed_files,
+      head_sha: pr.head.sha
     }
   rescue Octokit::Error => e
     Rails.logger.error("GitHubService pr_detail error: #{e.message}")
-    { number: number, title: "", author: "", body: "", additions: 0, deletions: 0, changed_files: 0 }
+    { number: number, title: "", author: "", body: "", additions: 0, deletions: 0, changed_files: 0, head_sha: nil }
   end
 
   def pr_diff(repo, number)

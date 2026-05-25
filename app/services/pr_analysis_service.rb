@@ -6,15 +6,26 @@ class PrAnalysisService
     @claude = claude_service || ClaudeService.new
   end
 
-  def analyze(repo:, pr_number:)
+  def analyze(repo:, pr_number:, force: false)
     pr = @github.pr_detail(repo, pr_number)
+    head_sha = pr[:head_sha]
+    cache_key = "pr_analysis/#{repo}/#{pr_number}/#{head_sha}"
+
+    unless force
+      cached = Rails.cache.read(cache_key)
+      return cached if cached
+    end
+
     diff = @github.pr_diff(repo, pr_number)
     comments = @github.pr_comments(repo, pr_number)
     linked_issue = @github.linked_issue(repo, pr_number)
     truncated_diff = diff.lines.first(4000).join
     prompt = build_prompt(pr, truncated_diff, comments, linked_issue)
     response = @claude.analyze(prompt, max_tokens: 4000)
-    parse_response(response)
+    result = parse_response(response)
+
+    Rails.cache.write(cache_key, result, expires_in: 7.days)
+    result
   end
 
   def claude_code_command(pr_review, risk_files)
