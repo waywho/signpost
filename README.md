@@ -67,9 +67,10 @@ App is now available at `https://techos.test`.
 Configure via the settings page at `https://techos.test/settings`, or via Rails console.
 
 **GitHub PAT** — for PR queue, developer activity, and issue creation:
-1. Go to [GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens](https://github.com/settings/tokens?type=beta)
-2. Create a new token with scopes: `repo` (read/write issues, read PRs), `read:user` (activity)
-3. Set your username and repos for issue creation:
+1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
+2. **Classic token** (recommended — works with org repos): click "Generate new token (classic)", select scopes `repo`, `read:user`, `read:org`
+3. **Fine-grained token** (alternative): select your org as "Resource owner", choose specific repos, grant `Issues: read/write`, `Pull requests: read`, `Contents: read`
+4. Set your username and repos for issue creation:
 
 ```ruby
 EncryptedSetting.set("credentials", "github_pat", "ghp_...")
