@@ -71,3 +71,5 @@ group :test do
 end
 
 gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]
+
+gem "icalendar", "~> 2.12"
