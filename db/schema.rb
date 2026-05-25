@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_120020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -51,6 +51,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "stakeholder"
     t.text "text", null: false
     t.datetime "updated_at", null: false
+    t.index ["done"], name: "index_commitments_on_done"
+    t.index ["done_at"], name: "index_commitments_on_done_at"
     t.index ["due_date"], name: "index_commitments_on_due_date", where: "(done = false)"
     t.check_constraint "(source = ANY (ARRAY['manual'::text, 'slack'::text, 'meeting'::text])) OR source IS NULL", name: "commitments_source_check"
   end
@@ -82,7 +84,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "summary", null: false
     t.datetime "updated_at", null: false
     t.text "urgency"
+    t.index ["delegated_at"], name: "index_delegations_on_delegated_at"
     t.index ["developer_id"], name: "index_delegations_on_developer_id"
+    t.index ["issue_type"], name: "index_delegations_on_issue_type"
     t.index ["status"], name: "index_delegations_on_status"
     t.check_constraint "(urgency = ANY (ARRAY['Critical'::text, 'High'::text, 'Medium'::text, 'Low'::text])) OR urgency IS NULL", name: "delegations_urgency_check"
     t.check_constraint "status = ANY (ARRAY['delegated'::text, 'in_progress'::text, 'done'::text, 'blocked'::text])", name: "delegations_status_check"
@@ -94,7 +98,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.uuid "developer_id", null: false
     t.text "note_type"
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_developer_notes_on_created_at"
     t.index ["developer_id"], name: "index_developer_notes_on_developer_id"
+    t.index ["note_type"], name: "index_developer_notes_on_note_type"
     t.check_constraint "(note_type = ANY (ARRAY['good'::text, 'growth'::text, 'concern'::text, 'context'::text])) OR note_type IS NULL", name: "developer_notes_type_check"
   end
 
@@ -113,6 +119,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "slack_handle"
     t.text "strengths"
     t.datetime "updated_at", null: false
+    t.index ["github_handle"], name: "index_developers_on_github_handle"
+    t.index ["name"], name: "index_developers_on_name"
+    t.index ["slack_handle"], name: "index_developers_on_slack_handle"
     t.check_constraint "(level = ANY (ARRAY['Junior'::text, 'Mid'::text, 'Senior'::text, 'Staff'::text])) OR level IS NULL", name: "developers_level_check"
   end
 
@@ -134,6 +143,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "title"
     t.datetime "updated_at", null: false
     t.text "url"
+    t.index ["event_type"], name: "index_git_hub_activities_on_event_type"
     t.index ["github_event_id"], name: "index_git_hub_activities_on_github_event_id", unique: true
     t.index ["github_handle", "occurred_at"], name: "index_git_hub_activities_on_github_handle_and_occurred_at"
     t.check_constraint "event_type = ANY (ARRAY['commit'::text, 'pr_opened'::text, 'pr_merged'::text, 'pr_review'::text, 'issue_opened'::text])", name: "git_hub_activities_event_type_check"
@@ -145,6 +155,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "description", null: false
     t.boolean "enabled", default: true, null: false
     t.datetime "updated_at", null: false
+    t.index ["enabled"], name: "index_noise_filters_on_enabled", where: "(enabled = true)"
   end
 
   create_table "oneone_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -185,6 +196,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "summary"
     t.datetime "updated_at", null: false
     t.index ["repo"], name: "index_pr_reviews_on_repo"
+    t.index ["reviewed_at"], name: "index_pr_reviews_on_reviewed_at"
     t.check_constraint "(recommendation = ANY (ARRAY['APPROVE'::text, 'REQUEST_CHANGES'::text, 'NEEDS_DISCUSSION'::text])) OR recommendation IS NULL", name: "pr_reviews_recommendation_check"
     t.check_constraint "(risk_level = ANY (ARRAY['LOW'::text, 'MEDIUM'::text, 'HIGH'::text, 'CRITICAL'::text])) OR risk_level IS NULL", name: "pr_reviews_risk_level_check"
   end
@@ -235,9 +247,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "summary"
     t.text "title"
     t.datetime "updated_at", null: false
+    t.index ["captured_at"], name: "index_slack_threads_on_captured_at"
     t.index ["category"], name: "index_slack_threads_on_category"
+    t.index ["compressed"], name: "index_slack_threads_on_compressed", where: "(compressed = false)"
     t.index ["embedding"], name: "index_slack_threads_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
     t.index ["keywords"], name: "index_slack_threads_on_keywords", using: :gin
+    t.index ["pending_reanalysis"], name: "index_slack_threads_on_pending_reanalysis", where: "(pending_reanalysis = true)"
     t.index ["slack_channel_id", "slack_thread_ts"], name: "index_slack_threads_on_slack_channel_id_and_slack_thread_ts", unique: true
     t.index ["slack_thread_ts"], name: "index_slack_threads_on_slack_thread_ts", unique: true
     t.index ["status"], name: "index_slack_threads_on_status"
@@ -267,9 +282,132 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
     t.text "title", null: false
     t.datetime "updated_at", null: false
     t.text "urgency"
+    t.index ["created_at"], name: "index_slack_topics_on_created_at"
     t.index ["embedding"], name: "index_slack_topics_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
     t.index ["slack_thread_id"], name: "index_slack_topics_on_slack_thread_id"
+    t.index ["status"], name: "index_slack_topics_on_status"
     t.check_constraint "status = ANY (ARRAY['open'::text, 'actioned'::text, 'dismissed'::text])", name: "slack_topics_status_check"
+  end
+
+  create_table "solid_queue_blocked_executions", force: :cascade do |t|
+    t.string "concurrency_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.bigint "job_id", null: false
+    t.integer "priority", default: 0, null: false
+    t.string "queue_name", null: false
+    t.index ["concurrency_key", "priority", "job_id"], name: "index_solid_queue_blocked_executions_for_release"
+    t.index ["expires_at", "concurrency_key"], name: "index_solid_queue_blocked_executions_for_maintenance"
+    t.index ["job_id"], name: "index_solid_queue_blocked_executions_on_job_id", unique: true
+  end
+
+  create_table "solid_queue_claimed_executions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "job_id", null: false
+    t.bigint "process_id"
+    t.index ["job_id"], name: "index_solid_queue_claimed_executions_on_job_id", unique: true
+    t.index ["process_id", "job_id"], name: "index_solid_queue_claimed_executions_on_process_id_and_job_id"
+  end
+
+  create_table "solid_queue_failed_executions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "error"
+    t.bigint "job_id", null: false
+    t.index ["job_id"], name: "index_solid_queue_failed_executions_on_job_id", unique: true
+  end
+
+  create_table "solid_queue_jobs", force: :cascade do |t|
+    t.string "active_job_id"
+    t.text "arguments"
+    t.string "class_name", null: false
+    t.string "concurrency_key"
+    t.datetime "created_at", null: false
+    t.datetime "finished_at"
+    t.integer "priority", default: 0, null: false
+    t.string "queue_name", null: false
+    t.datetime "scheduled_at"
+    t.datetime "updated_at", null: false
+    t.index ["active_job_id"], name: "index_solid_queue_jobs_on_active_job_id"
+    t.index ["class_name"], name: "index_solid_queue_jobs_on_class_name"
+    t.index ["finished_at"], name: "index_solid_queue_jobs_on_finished_at"
+    t.index ["queue_name", "finished_at"], name: "index_solid_queue_jobs_for_filtering"
+    t.index ["scheduled_at", "finished_at"], name: "index_solid_queue_jobs_for_alerting"
+  end
+
+  create_table "solid_queue_pauses", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "queue_name", null: false
+    t.index ["queue_name"], name: "index_solid_queue_pauses_on_queue_name", unique: true
+  end
+
+  create_table "solid_queue_processes", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "hostname"
+    t.string "kind", null: false
+    t.datetime "last_heartbeat_at", null: false
+    t.text "metadata"
+    t.string "name", null: false
+    t.integer "pid", null: false
+    t.bigint "supervisor_id"
+    t.index ["last_heartbeat_at"], name: "index_solid_queue_processes_on_last_heartbeat_at"
+    t.index ["name", "supervisor_id"], name: "index_solid_queue_processes_on_name_and_supervisor_id", unique: true
+    t.index ["supervisor_id"], name: "index_solid_queue_processes_on_supervisor_id"
+  end
+
+  create_table "solid_queue_ready_executions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "job_id", null: false
+    t.integer "priority", default: 0, null: false
+    t.string "queue_name", null: false
+    t.index ["job_id"], name: "index_solid_queue_ready_executions_on_job_id", unique: true
+    t.index ["priority", "job_id"], name: "index_solid_queue_poll_all"
+    t.index ["queue_name", "priority", "job_id"], name: "index_solid_queue_poll_by_queue"
+  end
+
+  create_table "solid_queue_recurring_executions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "job_id", null: false
+    t.datetime "run_at", null: false
+    t.string "task_key", null: false
+    t.index ["job_id"], name: "index_solid_queue_recurring_executions_on_job_id", unique: true
+    t.index ["task_key", "run_at"], name: "index_solid_queue_recurring_executions_on_task_key_and_run_at", unique: true
+  end
+
+  create_table "solid_queue_recurring_tasks", force: :cascade do |t|
+    t.text "arguments"
+    t.string "class_name"
+    t.string "command", limit: 2048
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "key", null: false
+    t.integer "priority", default: 0
+    t.string "queue_name"
+    t.string "schedule", null: false
+    t.boolean "static", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_solid_queue_recurring_tasks_on_key", unique: true
+    t.index ["static"], name: "index_solid_queue_recurring_tasks_on_static"
+  end
+
+  create_table "solid_queue_scheduled_executions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "job_id", null: false
+    t.integer "priority", default: 0, null: false
+    t.string "queue_name", null: false
+    t.datetime "scheduled_at", null: false
+    t.index ["job_id"], name: "index_solid_queue_scheduled_executions_on_job_id", unique: true
+    t.index ["scheduled_at", "priority", "job_id"], name: "index_solid_queue_dispatch_all"
+  end
+
+  create_table "solid_queue_semaphores", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.integer "value", default: 1, null: false
+    t.index ["expires_at"], name: "index_solid_queue_semaphores_on_expires_at"
+    t.index ["key", "value"], name: "index_solid_queue_semaphores_on_key_and_value"
+    t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
   create_table "watched_channels", primary_key: "channel_id", id: :text, force: :cascade do |t|
@@ -300,4 +438,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_120019) do
   add_foreign_key "slack_topic_messages", "slack_messages", on_delete: :cascade
   add_foreign_key "slack_topic_messages", "slack_topics", on_delete: :cascade
   add_foreign_key "slack_topics", "slack_threads", on_delete: :cascade
+  add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
 end
