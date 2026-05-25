@@ -85,6 +85,45 @@ bin/slack
 
 Requires Slack bot and app tokens. Listens for brain emoji reactions, @mentions, and watched channel activity.
 
+## Usage
+
+### Daily workflow
+
+1. **Start your day** at the dashboard (`/`) — check your PR queue, overdue commitments, active delegations, and team pulse.
+2. **Triage Slack** at `/slack_threads` — new threads auto-captured via Socket Mode appear in the "New" tab. For each thread:
+   - Claude extracts distinct topics with urgency and action recommendations
+   - **Acknowledge** (posts 👍 to Slack, marks triaged)
+   - **Delegate** (creates a Delegation, redirects to assign a developer)
+   - **Dismiss** (archives — no action needed)
+   - Delegate individual topics within a thread independently
+3. **Review PRs** at `/pr_reviews` — your GitHub PR queue appears at the top (live from GitHub). Click "Review" to pre-fill a review log. Click "Analyze with Claude" on a logged review for a full structured analysis: critical flags, severity-categorized issues with file:line references, inline tips, pre-submit checklist, and a Claude Code terminal command for deeper local review.
+4. **Manage your team** at `/developers` — sidebar layout with per-developer profiles. Add observations (good/growth/concern/context) inline. Click "Prep 1:1" before meetings — Claude generates talking points from recent notes, last 1:1, delegations, and GitHub activity.
+5. **Track commitments** at `/commitments` — overdue items flagged red, due-soon in orange. One-click mark done.
+6. **End your day** on the dashboard — fill in EOD notes and tomorrow's priorities in the daily log.
+
+### Slack capture
+
+Threads are auto-captured when:
+- You react with the 🧠 emoji (configurable)
+- You are @mentioned
+- You participate in a thread
+- A watched channel is set to "full stream" mode
+
+Configure watched channels and capture mode (socket/poll/both) at `/settings`.
+
+### Semantic search
+
+Search at `/search` finds related content across three levels:
+- **Threads** — matches on thread summaries
+- **Topics** — matches on extracted issue descriptions
+- **Messages** — matches on individual message content
+
+Results ranked by cosine similarity with configurable threshold.
+
+### Creating GitHub issues
+
+From any delegation show page, click "Create GitHub Issue" to push it to a watched repo. The delegation summary becomes the issue title, handoff message becomes the body.
+
 ## Running tests
 
 ```bash
