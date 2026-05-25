@@ -18,7 +18,13 @@ Rails.application.routes.draw do
   resources :daily_logs, only: [:create, :update]
 
   resources :pr_reviews, only: %i[index show new create]
-  resources :slack_threads, only: %i[index show new create]
+  resources :slack_threads, only: %i[index show new create] do
+    member do
+      post :acknowledge
+      post :dismiss
+      post :delegate
+    end
+  end
 
   post "/search", to: "search#create"
 
