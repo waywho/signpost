@@ -4,6 +4,7 @@
   </div>
 <% elsif pr_queue.any? %>
   <% repos = pr_queue.map { |pr| pr[:repo] }.uniq.sort %>
+  <% claude_configured = ClaudeService.new.configured? %>
   <div class="card mbe-6" data-controller="bulk-select pr-filter">
     <h2 class="font-bold flex items-center gap-half mbe-4">
       <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
@@ -58,7 +59,7 @@
                       class: "text-sm flex items-center gap-half", style: "color: var(--color-positive)" do %>
                   <i class="ph ph-check-circle"></i> Analyzed
                 <% end %>
-              <% elsif ClaudeService.new.configured? %>
+              <% elsif claude_configured %>
                 <%= link_to analyze_pr_pr_reviews_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
                       class: "text-sm", style: "color: var(--color-primary)" do %>
                   <i class="ph ph-brain"></i> Analyze

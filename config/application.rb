@@ -32,6 +32,7 @@ module TechosRails
       g.orm :active_record, primary_key_type: :uuid
     end
 
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
