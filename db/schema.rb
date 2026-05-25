@@ -10,10 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_24_220513) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_082642) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
+
+  create_table "action_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.timestamptz "approved_at"
+    t.datetime "created_at", null: false
+    t.uuid "delegation_id"
+    t.timestamptz "dismissed_at"
+    t.text "draft_body"
+    t.text "draft_title"
+    t.text "github_issue_url"
+    t.integer "priority", null: false
+    t.jsonb "related_items", default: []
+    t.uuid "slack_thread_id", null: false
+    t.uuid "slack_topic_id", null: false
+    t.text "status", default: "pending", null: false
+    t.uuid "suggested_developer_id"
+    t.text "suggested_repo"
+    t.text "suggestion_reason"
+    t.datetime "updated_at", null: false
+    t.index ["delegation_id"], name: "index_action_items_on_delegation_id"
+    t.index ["priority"], name: "index_action_items_on_priority"
+    t.index ["slack_thread_id"], name: "index_action_items_on_slack_thread_id"
+    t.index ["slack_topic_id"], name: "index_action_items_on_slack_topic_id", unique: true
+    t.index ["status"], name: "index_action_items_on_status"
+    t.index ["suggested_developer_id"], name: "index_action_items_on_suggested_developer_id"
+    t.check_constraint "status = ANY (ARRAY['pending'::text, 'approved'::text, 'dismissed'::text])", name: "action_items_status_check"
+  end
 
   create_table "commitments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -361,6 +387,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_24_220513) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "action_items", "delegations"
+  add_foreign_key "action_items", "developers", column: "suggested_developer_id"
+  add_foreign_key "action_items", "slack_threads"
+  add_foreign_key "action_items", "slack_topics", on_delete: :cascade
   add_foreign_key "delegations", "developers", on_delete: :nullify
   add_foreign_key "developer_notes", "developers", on_delete: :cascade
   add_foreign_key "oneone_sessions", "developers", on_delete: :cascade
