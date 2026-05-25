@@ -49,7 +49,6 @@
   </details>
 
   <%= form_with url: approve_action_item_path(item), method: :post, class: "flex items-center gap" do |f| %>
-    <% github_repos = Setting.get("global", "github_repos", default: []) || [] %>
     <% if github_repos.any? %>
       <%= f.select :repo, github_repos.map { |r| [r, r] },
             { selected: item.suggested_repo }, class: "input text-xs", style: "max-inline-size: 12rem" %>

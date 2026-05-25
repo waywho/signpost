@@ -16,6 +16,7 @@ class DashboardController < ApplicationController
     @overdue_commitments = Commitment.pending.where("due_date < ?", Date.current).order(:due_date)
     @recent_pr_reviews  = PrReview.recent.limit(5)
     @daily_log          = DailyLog.today
+    @github_repos       = Setting.get("global", "github_repos", default: []) || []
     @pr_queue = begin
       service = GitHubService.new
       service.configured? ? service.pr_queue : nil

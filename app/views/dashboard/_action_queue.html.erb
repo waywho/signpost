@@ -8,7 +8,7 @@
 
   <% if items.any? %>
     <% items.each do |item| %>
-      <%= render "action_items/card", item: item, developers: developers %>
+      <%= render "action_items/card", item: item, developers: developers, github_repos: github_repos %>
     <% end %>
   <% else %>
     <div class="card text-center" style="color: var(--color-text-subtle)">

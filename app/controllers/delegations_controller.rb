@@ -11,7 +11,10 @@ class DelegationsController < ApplicationController
     @delegations = @delegations.by_urgency.order(delegated_at: :desc)
   end
 
-  def show; end
+  def show
+    @github_repos = Setting.get("global", "github_repos", default: []) || []
+    @github_configured = GitHubService.new.configured?
+  end
 
   def new
     @delegation = Delegation.new

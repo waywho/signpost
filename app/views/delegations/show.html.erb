@@ -42,14 +42,13 @@
   </p>
 <% end %>
 
-<% github_repos = Setting.get("global", "github_repos", default: []) %>
-<% if @delegation.github_issue_url.blank? && GitHubService.new.configured? && github_repos.any? %>
+<% if @delegation.github_issue_url.blank? && @github_configured && @github_repos.any? %>
   <div class="card mbe-4">
     <span class="text-sm font-bold mbe-2" style="display: block">
       <i class="ph ph-github-logo"></i> Create GitHub Issue
     </span>
     <%= form_with url: create_issue_delegation_path(@delegation), method: :post, class: "flex items-center gap" do |f| %>
-      <%= f.select :repo, github_repos.map { |r| [r, r] },
+      <%= f.select :repo, @github_repos.map { |r| [r, r] },
             { include_blank: "— select repo —" }, class: "input" %>
       <%= f.submit "Create Issue", class: "btn btn--primary" %>
     <% end %>

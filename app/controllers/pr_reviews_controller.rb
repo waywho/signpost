@@ -27,6 +27,8 @@ class PrReviewsController < ApplicationController
 
   def show
     @pr_review = PrReview.find(params[:id])
+    @claude_configured = ClaudeService.new.configured?
+    @github_configured = GitHubService.new.configured?
   end
 
   def new

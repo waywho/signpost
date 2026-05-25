@@ -5,7 +5,7 @@
   <span class="text-sm" style="color: var(--color-text-subtle)"><%= Date.current.strftime("%A, %B %-d") %></span>
 </div>
 
-<%= render "action_queue", items: @action_items, developers: @developers_for_select %>
+<%= render "action_queue", items: @action_items, developers: @developers_for_select, github_repos: @github_repos %>
 
 <%= render "insights", alerts: @alerts, patterns: @patterns %>
 
