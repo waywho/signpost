@@ -46,6 +46,27 @@ class PrReviewsController < ApplicationController
     redirect_back fallback_location: pr_reviews_path, notice: "#{count} PR#{'s' if count > 1} ignored."
   end
 
+  def analyze_pr
+    repo = params[:repo]
+    pr_number = params[:pr_number].to_i
+    service = PrAnalysisService.new
+    @analysis = service.analyze(repo: repo, pr_number: pr_number)
+    @repo = repo
+    @pr_number = pr_number
+    @pr_title = params[:pr_title]
+    @pr_author = params[:pr_author]
+    @cc_command = service.claude_code_command(
+      OpenStruct.new(pr_number: pr_number, pr_title: @pr_title, repo: repo),
+      (@analysis[:risk_areas] || []).map { |r| r[:file] }.compact
+    )
+    render :analyze_pr
+  rescue => e
+    @error = e.message
+    @repo = repo
+    @pr_number = pr_number
+    render :analyze_pr
+  end
+
   def analyze
     @pr_review = PrReview.find(params[:id])
     service = PrAnalysisService.new

@@ -50,9 +50,15 @@
               </span>
             </div>
             <div class="flex items-center gap-half" style="flex-shrink: 0">
+              <% if ClaudeService.new.configured? %>
+                <%= link_to analyze_pr_pr_reviews_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
+                      class: "text-sm", style: "color: var(--color-primary)" do %>
+                  <i class="ph ph-brain"></i> Analyze
+                <% end %>
+              <% end %>
               <%= link_to new_pr_review_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
-                    class: "text-sm", style: "color: var(--color-primary)" do %>
-                <i class="ph ph-pencil-line"></i> Review
+                    class: "text-sm", style: "color: var(--color-text-subtle)" do %>
+                <i class="ph ph-pencil-line"></i> Log
               <% end %>
               <%= button_to ignore_pr_reviews_path(url: pr[:url]), method: :post, form: { style: "display: inline" }, class: "btn btn--icon btn--borderless", title: "Ignore this PR" do %>
                 <i class="ph ph-x"></i>
