@@ -8,7 +8,7 @@ class SlackServiceTest < ActiveSupport::TestCase
       called_with = args
     end
 
-    service = SlackService.new(client: mock_client)
+    service = SlackService.new(user_client: mock_client)
     service.add_reaction(channel: "C123", timestamp: "1.1", emoji: "brain")
 
     assert_equal({ channel: "C123", timestamp: "1.1", name: "brain" }, called_with)

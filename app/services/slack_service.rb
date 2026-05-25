@@ -1,6 +1,7 @@
 class SlackService
-  def initialize(client: nil)
-    @explicit_client = client
+  def initialize(bot_client: nil, user_client: nil)
+    @explicit_bot_client = bot_client
+    @explicit_user_client = user_client
   end
 
   def configured?
@@ -8,14 +9,23 @@ class SlackService
   end
 
   def add_reaction(channel:, timestamp:, emoji:)
-    client.reactions_add(channel: channel, timestamp: timestamp, name: emoji)
+    user_client.reactions_add(channel: channel, timestamp: timestamp, name: emoji)
   end
 
   private
 
-  def client
-    @explicit_client || Slack::Web::Client.new(
+  # Bot token — for reading channels, events
+  def bot_client
+    @explicit_bot_client || Slack::Web::Client.new(
       token: EncryptedSetting.get("credentials", "slack_bot_token")
+    )
+  end
+
+  # User token — for reacting/replying as the user (not the bot)
+  def user_client
+    @explicit_user_client || Slack::Web::Client.new(
+      token: EncryptedSetting.get("credentials", "slack_user_token") ||
+             EncryptedSetting.get("credentials", "slack_bot_token")
     )
   end
 end

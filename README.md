@@ -85,14 +85,16 @@ Setting.set("global", "github_repos", ["org/repo1", "org/repo2"])
    - `channels:history` — read messages in public channels
    - `channels:read` — list channels
    - `reactions:read` — detect 🧠 emoji reactions
-   - `reactions:write` — post acknowledge reactions
    - `users:read` — resolve user display names
-   - `chat:write` — post messages (future)
-4. Install the app to your workspace. Copy the **Bot User OAuth Token** (`xoxb-...`)
-5. Under **Event Subscriptions**, enable events and subscribe to bot events: `reaction_added`, `message.channels`, `app_mention`
+4. Under **User Token Scopes** add (so reactions/replies show as you, not the bot):
+   - `reactions:write` — react as yourself
+   - `chat:write` — reply as yourself
+5. Install the app to your workspace. Copy the **Bot User OAuth Token** (`xoxb-...`) and the **User OAuth Token** (`xoxp-...`)
+6. Under **Event Subscriptions**, enable events and subscribe to bot events: `reaction_added`, `message.channels`, `app_mention`
 
 ```ruby
-EncryptedSetting.set("credentials", "slack_bot_token", "xoxb-...")
+EncryptedSetting.set("credentials", "slack_bot_token", "xoxb-...")    # For reading channels + events
+EncryptedSetting.set("credentials", "slack_user_token", "xoxp-...")   # For reacting/replying as you
 EncryptedSetting.set("credentials", "slack_app_token", "xapp-...")
 ```
 
