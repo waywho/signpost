@@ -8,6 +8,9 @@ class SettingsController < ApplicationController
     case params[:section]
     when "ai_backend"
       Setting.set("global", "ai_backend", params[:ai_backend]) if params[:ai_backend].in?(ClaudeService::BACKENDS)
+      if params[:anthropic_api_key].present? && params[:anthropic_api_key] != "••••••••"
+        EncryptedSetting.set("credentials", "anthropic_api_key", params[:anthropic_api_key])
+      end
     when "api_keys"
       update_api_keys
     when "github"

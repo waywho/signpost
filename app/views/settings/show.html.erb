@@ -3,7 +3,8 @@
 <h1 class="font-bold text-2xl mbe-6">Settings</h1>
 
 <%# AI Backend %>
-<div class="card mbe-6">
+<% ai_backend = Setting.get("global", "ai_backend", default: "cli") %>
+<div class="card mbe-6" data-controller="toggle-class" data-toggle-class-css-class-value="hidden">
   <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
     <i class="ph ph-brain"></i> AI Backend
   </h2>
@@ -11,15 +12,22 @@
     <%= hidden_field_tag :section, "ai_backend" %>
     <div>
       <label class="text-sm font-bold mbe-1" style="display: block">Backend</label>
-      <select name="ai_backend" class="input">
+      <select name="ai_backend" class="input" onchange="document.getElementById('anthropic-key-field').style.display = this.value === 'api' ? '' : 'none'">
         <% %w[cli api].each do |mode| %>
-          <option value="<%= mode %>" <%= 'selected' if Setting.get('global', 'ai_backend', default: 'cli') == mode %>><%= mode == "cli" ? "Claude Code CLI (uses your subscription)" : "Anthropic API (requires API key)" %></option>
+          <option value="<%= mode %>" <%= 'selected' if ai_backend == mode %>><%= mode == "cli" ? "Claude Code CLI (uses your subscription)" : "Anthropic API (requires API key)" %></option>
         <% end %>
       </select>
       <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
         <strong>CLI:</strong> Uses your installed <code>claude</code> command. No API key needed.<br>
-        <strong>API:</strong> Direct HTTP calls to Anthropic. Requires an API key below.
+        <strong>API:</strong> Direct HTTP calls to Anthropic. Requires an API key.
       </p>
+    </div>
+    <div id="anthropic-key-field" style="<%= 'display: none' unless ai_backend == 'api' %>">
+      <label class="text-sm font-bold mbe-1" style="display: block">Anthropic API Key</label>
+      <% has_key = EncryptedSetting.get("credentials", "anthropic_api_key").present? %>
+      <input type="password" name="anthropic_api_key" value="<%= has_key ? '••••••••' : '' %>"
+             class="input" style="inline-size: 100%" placeholder="<%= has_key ? 'Configured' : 'sk-ant-...' %>">
+      <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></p>
     </div>
     <%= f.submit "Save", class: "btn btn--primary", style: "align-self: flex-start" %>
   <% end %>
@@ -35,7 +43,6 @@
     <%
       api_keys = {
         "openai_api_key" => { label: "OpenAI API Key", hint: "For vector embeddings (sk-...)" },
-        "anthropic_api_key" => { label: "Anthropic API Key", hint: "For PR analysis, 1:1 prep, noise filtering (sk-ant-...)" },
         "github_pat" => { label: "GitHub Personal Access Token", hint: "For PR queue, developer activity, issue creation (ghp-...)" },
         "slack_bot_token" => { label: "Slack Bot Token", hint: "For reading channels and events (xoxb-...)" },
         "slack_user_token" => { label: "Slack User Token", hint: "For reacting/replying as you, not the bot (xoxp-...)" },
