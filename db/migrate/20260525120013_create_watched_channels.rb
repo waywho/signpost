@@ -4,8 +4,8 @@ class CreateWatchedChannels < ActiveRecord::Migration[8.1]
       t.text :channel_id, null: false, primary_key: true
       t.text :channel_name, null: false
       t.text :capture_mode, null: false
-      t.boolean :enabled, default: true, null: false
-      t.timestamptz :added_at, default: -> { "NOW()" }
+      t.boolean :enabled, null: false, default: true
+      t.timestamps
     end
 
     add_check_constraint :watched_channels, "capture_mode IN ('full_stream', 'involvement_only', 'ignored')", name: "watched_channels_capture_mode_check"

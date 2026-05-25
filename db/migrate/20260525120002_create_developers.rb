@@ -13,10 +13,9 @@ class CreateDevelopers < ActiveRecord::Migration[8.1]
       t.text :growth_areas
       t.text :private_notes
       t.jsonb :skills, default: []
-
       t.timestamps
     end
 
-    add_check_constraint :developers, "level IN ('Junior', 'Mid', 'Senior', 'Staff')", name: "developers_level_check"
+    add_check_constraint :developers, "level IN ('Junior', 'Mid', 'Senior', 'Staff') OR level IS NULL", name: "developers_level_check"
   end
 end

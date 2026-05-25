@@ -19,12 +19,11 @@ class CreatePrReviews < ActiveRecord::Migration[8.1]
       t.integer :additions
       t.integer :deletions
       t.timestamptz :reviewed_at, default: -> { "NOW()" }
-
       t.timestamps
     end
 
-    add_check_constraint :pr_reviews, "recommendation IN ('APPROVE', 'REQUEST_CHANGES', 'NEEDS_DISCUSSION')", name: "pr_reviews_recommendation_check"
-    add_check_constraint :pr_reviews, "risk_level IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')", name: "pr_reviews_risk_level_check"
     add_index :pr_reviews, :repo
+    add_check_constraint :pr_reviews, "recommendation IN ('APPROVE', 'REQUEST_CHANGES', 'NEEDS_DISCUSSION') OR recommendation IS NULL", name: "pr_reviews_recommendation_check"
+    add_check_constraint :pr_reviews, "risk_level IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL') OR risk_level IS NULL", name: "pr_reviews_risk_level_check"
   end
 end
