@@ -1,5 +1,5 @@
 <% urg = item.slack_topic.urgency %>
-<div class="card mbe-3">
+<div id="action_item_<%= item.id %>" class="card mbe-3">
   <div class="flex items-center gap-half mbe-2">
     <span class="badge <%= urgency_badge_variant(urg) %>"><%= urg || "—" %></span>
     <span class="font-bold text-sm flex-1"><%= item.slack_topic.title %></span>

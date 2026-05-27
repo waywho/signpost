@@ -41,12 +41,18 @@ class ActionItemsController < ApplicationController
   def dismiss
     @item.update!(status: "dismissed", dismissed_at: Time.current)
     @item.slack_topic.update!(status: "dismissed")
-    redirect_to root_path, notice: "Dismissed."
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("action_item_#{@item.id}") }
+      format.html { redirect_to root_path, notice: "Dismissed." }
+    end
   end
 
   def restore
     @item.update!(status: "pending", action_type: "acknowledge")
-    redirect_to root_path, notice: "Restored."
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("action_item_#{@item.id}") }
+      format.html { redirect_to root_path, notice: "Restored." }
+    end
   end
 
   private
