@@ -4,9 +4,9 @@ export default class extends Controller {
   static targets = ["link", "panel"]
 
   connect() {
-    const hash = window.location.hash.replace("#", "")
-    if (hash) {
-      const index = this.panelTargets.findIndex(p => p.id === hash || p.dataset.section === hash)
+    const anchor = new URLSearchParams(window.location.search).get("anchor") || window.location.hash.replace("#", "")
+    if (anchor) {
+      const index = this.panelTargets.findIndex(p => p.id === anchor || p.dataset.section === anchor)
       this.show(index >= 0 ? index : 0)
     } else {
       this.show(0)

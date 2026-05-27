@@ -97,12 +97,6 @@
     </div>
 
     <%# GitHub %>
-    <%
-      github_service = GitHubService.new
-      github_configured = github_service.configured?
-      available_repos = github_configured ? (github_service.list_repos rescue []) : []
-      selected_repos = Setting.get("global", "github_repos", default: []) || []
-    %>
     <div data-settings-nav-target="panel" id="github" hidden>
       <div class="card">
         <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
@@ -131,8 +125,8 @@
           </div>
           <div>
             <label class="text-sm font-bold mbe-2" style="display: block">Watched Repos <span class="font-normal text-xs" style="color: var(--color-text-subtle)">(for issue creation)</span></label>
-            <% if available_repos.any? %>
-              <% orgs = available_repos.map { |r| r[:full_name].split("/").first }.uniq.sort %>
+            <% if @available_repos.any? %>
+              <% orgs = @available_repos.map { |r| r[:full_name].split("/").first }.uniq.sort %>
               <div data-controller="repo-filter">
               <% if orgs.size > 1 %>
                 <div class="flex items-center gap-half mbe-2">
@@ -144,10 +138,10 @@
                 </div>
               <% end %>
               <div class="flex flex-col gap-half" style="max-block-size: 20rem; overflow-y: auto" data-repo-filter-target="list">
-                <% available_repos.each do |repo| %>
+                <% @available_repos.each do |repo| %>
                   <label class="flex items-center gap-half text-sm" data-org="<%= repo[:full_name].split('/').first %>">
                     <input type="checkbox" name="github_repos[]" value="<%= repo[:full_name] %>" class="input"
-                           <%= 'checked' if selected_repos.include?(repo[:full_name]) %>>
+                           <%= 'checked' if @selected_repos.include?(repo[:full_name]) %>>
                     <%= repo[:full_name] %>
                     <% if repo[:private] %>
                       <i class="ph ph-lock" style="color: var(--color-text-subtle)"></i>
@@ -156,7 +150,7 @@
                 <% end %>
               </div>
               </div>
-            <% elsif github_configured %>
+            <% elsif @github_configured %>
               <p class="text-sm" style="color: var(--color-text-subtle)">Could not fetch repos. Check your GitHub PAT.</p>
             <% else %>
               <p class="text-sm" style="color: var(--color-text-subtle)">Save your PAT above and reload to see repos.</p>
@@ -249,25 +243,20 @@
             <% end %>
           </div>
         <% end %>
-        <%
-          slack_service = SlackService.new
-          available_channels = slack_service.configured? ? slack_service.list_channels : []
-          watched_ids = @watched_channels.map(&:channel_id)
-          unwatched_channels = available_channels.reject { |ch| watched_ids.include?(ch[:id]) }
-        %>
         <%= form_with url: settings_path, method: :patch, class: "flex items-end gap mbe-6" do |f| %>
           <%= hidden_field_tag :section, "watched_channel_add" %>
-          <% if unwatched_channels.any? %>
-            <div style="flex: 2">
+          <% if @unwatched_channels.any? %>
+            <div style="flex: 2" data-controller="searchable-select">
               <label class="text-sm font-bold mbe-1" style="display: block">Channel</label>
-              <select name="channel_select" class="input">
+              <input type="text" class="input mbe-1" placeholder="Search channels..." data-searchable-select-target="input" data-action="input->searchable-select#filter">
+              <select name="channel_select" class="input" data-searchable-select-target="select">
                 <option value="">— select a channel —</option>
-                <% unwatched_channels.each do |ch| %>
-                  <option value="<%= ch[:id] %>|<%= ch[:name] %>"><%= ch[:name] %></option>
+                <% @unwatched_channels.each do |ch| %>
+                  <option value="<%= ch[:id] %>|<%= ch[:name] %>" data-name="<%= ch[:name].downcase %>"><%= ch[:name] %></option>
                 <% end %>
               </select>
             </div>
-          <% elsif slack_service.configured? %>
+          <% elsif @slack_configured %>
             <p class="text-sm" style="color: var(--color-text-subtle)">All your channels are already watched.</p>
           <% else %>
             <p class="text-sm" style="color: var(--color-text-subtle)">Configure Slack tokens above to see your channels.</p>
@@ -280,7 +269,7 @@
               <option value="ignored">Ignored</option>
             </select>
           </div>
-          <% if unwatched_channels.any? %>
+          <% if @unwatched_channels.any? %>
             <%= f.submit "Add Channel", class: "btn btn--primary" %>
           <% end %>
         <% end %>
@@ -340,7 +329,7 @@
               </button>
             </div>
             <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">
-              Google Calendar → Settings → calendar → Secret address in iCal format
+              <a href="https://calendar.google.com/calendar/r/settings" target="_blank">Open Google Calendar Settings</a> → click your calendar on the left → scroll to "Secret address in iCal format" → copy the URL
             </p>
           </div>
           <%= f.submit "Save Calendar URL", class: "btn btn--primary", style: "align-self: flex-start" %>

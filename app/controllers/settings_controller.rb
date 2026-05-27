@@ -13,8 +13,24 @@ class SettingsController < ApplicationController
   SLACK_TOKENS = %w[slack_bot_token slack_user_token slack_app_token].freeze
 
   def show
+    # Preload all settings to avoid N+1 queries in view
+    preload_settings!
+
     @watched_channels = WatchedChannel.order(:channel_name)
     @noise_filters = NoiseFilter.order(:category)
+
+    # Slack channels (cached 5 min to avoid slow API pagination on every load)
+    slack_service = SlackService.new
+    @slack_configured = slack_service.configured?
+    available_channels = @slack_configured ? Rails.cache.fetch("slack/channels", expires_in: 5.minutes) { slack_service.list_channels } : []
+    watched_ids = @watched_channels.map(&:channel_id)
+    @unwatched_channels = available_channels.reject { |ch| watched_ids.include?(ch[:id]) }
+
+    # GitHub repos
+    github_service = GitHubService.new
+    @github_configured = github_service.configured?
+    @available_repos = @github_configured ? (github_service.list_repos rescue []) : []
+    @selected_repos = Setting.get("global", "github_repos", default: []) || []
   end
 
   def update
@@ -42,10 +58,10 @@ class SettingsController < ApplicationController
     end
 
     anchor = section_anchor(params[:section])
-    redirect_to "#{settings_path}##{anchor}", notice: "Settings saved."
+    redirect_to settings_path(anchor: anchor), notice: "Settings saved."
   rescue ActiveRecord::RecordInvalid => e
     anchor = section_anchor(params[:section])
-    redirect_to "#{settings_path}##{anchor}", alert: e.message
+    redirect_to settings_path(anchor: anchor), alert: e.message
   end
 
   private
@@ -89,6 +105,16 @@ class SettingsController < ApplicationController
       value.to_f
     else
       value
+    end
+  end
+
+  def preload_settings!
+    # Batch-load all settings and encrypted settings into Current.setting_cache
+    Setting.where(scope: "global").each do |s|
+      Current.setting_cache["#{s.scope}/#{s.key}"] = s.value
+    end
+    EncryptedSetting.where(scope: "credentials").each do |es|
+      Current.setting_cache["encrypted/#{es.scope}/#{es.key}"] = es.value
     end
   end
 
