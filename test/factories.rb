@@ -1,9 +1,10 @@
 FactoryBot.define do
   factory :action_item do
-    slack_topic
+    association :slack_topic
     slack_thread { slack_topic.slack_thread }
     priority { 10 }
     status { "pending" }
+    action_type { "delegate" }
     draft_title { "Fix login bug" }
     draft_body { "## Context\nLogin fails after OAuth redirect" }
   end
