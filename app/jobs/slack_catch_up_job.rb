@@ -7,7 +7,9 @@ class SlackCatchUpJob < ApplicationJob
 
     oldest = 1.hour.ago.to_f.to_s
     emoji = Setting.get("global", "slack_brain_emoji", default: "brain")
-    slack = Slack::Web::Client.new
+    token = EncryptedSetting.get("credentials", "slack_bot_token")
+    return unless token.present?
+    slack = Slack::Web::Client.new(token: token)
 
     WatchedChannel.enabled.each do |channel|
       history = slack.conversations_history(channel: channel.channel_id, oldest: oldest, limit: 100)

@@ -1,7 +1,7 @@
 class ThreadAnalysisService
-  def initialize(embedding_service: nil, anthropic_client: nil)
+  def initialize(embedding_service: nil, claude_service: nil)
     @embedder = embedding_service || EmbeddingService.new
-    @anthropic = anthropic_client || Anthropic::Client.new(api_key: Rails.application.credentials.dig(:anthropic, :api_key))
+    @claude = claude_service || ClaudeService.new
   end
 
   def analyze(thread)
@@ -30,42 +30,37 @@ class ThreadAnalysisService
   private
 
   def analyze_with_claude(content)
-    response = @anthropic.messages(
-      parameters: {
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: <<~PROMPT }]
-          Analyze this Slack thread for a tech lead. Identify the overall topic AND any distinct sub-issues that may be mixed together (e.g., two different bugs discussed in one thread).
+    prompt = <<~PROMPT
+      Analyze this Slack thread for a tech lead. Identify the overall topic AND any distinct sub-issues that may be mixed together (e.g., two different bugs discussed in one thread).
 
-          Thread:
-          #{content.truncate(4000)}
+      Thread:
+      #{content.truncate(4000)}
 
-          Reply in this exact JSON format:
+      Reply in this exact JSON format (no markdown fences, just raw JSON):
+      {
+        "title": "short thread title",
+        "summary": "2-3 sentence summary of the whole thread",
+        "category": "architecture|stakeholder|team-decision|incident|other",
+        "keywords": ["keyword1", "keyword2"],
+        "topics": [
           {
-            "title": "short thread title",
-            "summary": "2-3 sentence summary of the whole thread",
-            "category": "architecture|stakeholder|team-decision|incident|other",
-            "keywords": ["keyword1", "keyword2"],
-            "topics": [
-              {
-                "title": "short topic title",
-                "summary": "1-3 sentence description of this specific issue",
-                "category": "bug|feature|question|incident|architecture|process|other",
-                "urgency": "critical|high|medium|low",
-                "action": "delegate|create_ticket|acknowledge|discuss|ignore",
-                "related_message_indices": [0, 1, 3]
-              }
-            ]
+            "title": "short topic title",
+            "summary": "1-3 sentence description of this specific issue",
+            "category": "bug|feature|question|incident|architecture|process|other",
+            "urgency": "critical|high|medium|low",
+            "action": "delegate|create_ticket|acknowledge|discuss|ignore",
+            "related_message_indices": [0, 1, 3]
           }
-
-          related_message_indices are 0-based indices into the message list above.
-          Always extract at least one topic. If the thread has one clear topic, return one. If multiple issues are mixed, extract each separately.
-        PROMPT
+        ]
       }
-    )
 
-    text = response.dig("content", 0, "text")
-    JSON.parse(text).deep_symbolize_keys
+      related_message_indices are 0-based indices into the message list above.
+      Always extract at least one topic. If the thread has one clear topic, return one. If multiple issues are mixed, extract each separately.
+    PROMPT
+
+    raw = @claude.analyze(prompt, max_tokens: 1000)
+    json_str = raw.gsub(/\A```json\s*/, "").gsub(/```\s*\z/, "").strip
+    JSON.parse(json_str).deep_symbolize_keys
   rescue JSON::ParserError
     { title: "Thread", summary: content.truncate(200), category: "other", keywords: [], topics: [] }
   end

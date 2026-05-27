@@ -2,7 +2,7 @@ class EmbeddingService
   MODEL = "text-embedding-3-small"
 
   def initialize(client: nil)
-    @client = client || OpenAI::Client.new
+    @client = client || OpenAI::Client.new(access_token: EncryptedSetting.get("credentials", "openai_api_key"))
   end
 
   def embed(text)
