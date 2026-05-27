@@ -1,0 +1,9 @@
+<div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
+  <div class="flex items-center gap-half">
+    <span class="badge badge--secondary text-xs"><%= item.slack_topic.slack_thread&.slack_channel_name %></span>
+    <span class="text-sm"><%= item.slack_topic.title %></span>
+  </div>
+  <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless" do %>
+    <i class="ph ph-check"></i>
+  <% end %>
+</div>

@@ -51,6 +51,7 @@ Rails.application.routes.draw do
     member do
       post :approve
       post :dismiss
+      post :restore
     end
   end
 

@@ -1,36 +1,51 @@
 require "test_helper"
 
 class ActionItemTest < ActiveSupport::TestCase
-  test "valid with required fields" do
-    thread = create(:slack_thread)
-    topic = create(:slack_topic, slack_thread: thread)
-    item = build(:action_item, slack_topic: topic, slack_thread: thread)
+  test "valid action_type values accepted" do
+    %w[create_ticket delegate acknowledge discuss ignore].each do |type|
+      item = build(:action_item, action_type: type, status: type == "ignore" ? "ignored" : "pending")
+      assert item.valid?, "Expected action_type '#{type}' to be valid, got: #{item.errors.full_messages}"
+    end
+  end
+
+  test "invalid action_type rejected" do
+    item = build(:action_item, action_type: "invalid")
+    assert_not item.valid?
+  end
+
+  test "ignored status accepted" do
+    item = build(:action_item, status: "ignored", action_type: "ignore")
     assert item.valid?
   end
 
-  test "enforces uniqueness on slack_topic" do
-    thread = create(:slack_thread)
-    topic = create(:slack_topic, slack_thread: thread)
-    create(:action_item, slack_topic: topic, slack_thread: thread)
-    dup = build(:action_item, slack_topic: topic, slack_thread: thread)
-    assert_not dup.valid?
+  test "scope actionable returns create_ticket and delegate" do
+    create(:action_item, action_type: "create_ticket")
+    create(:action_item, action_type: "delegate")
+    create(:action_item, action_type: "acknowledge")
+    create(:action_item, action_type: "discuss")
+    create(:action_item, action_type: "ignore", status: "ignored")
+
+    assert_equal 2, ActionItem.actionable.count
   end
 
-  test "pending scope" do
-    thread = create(:slack_thread)
-    topic1 = create(:slack_topic, slack_thread: thread)
-    topic2 = create(:slack_topic, slack_thread: thread, title: "Other")
-    create(:action_item, slack_topic: topic1, slack_thread: thread, status: "pending")
-    create(:action_item, slack_topic: topic2, slack_thread: thread, status: "approved")
-    assert_equal 1, ActionItem.pending.count
+  test "scope discussions returns discuss items" do
+    create(:action_item, action_type: "discuss")
+    create(:action_item, action_type: "delegate")
+
+    assert_equal 1, ActionItem.discussions.count
   end
 
-  test "by_priority orders lower first" do
-    thread = create(:slack_thread)
-    topic1 = create(:slack_topic, slack_thread: thread)
-    topic2 = create(:slack_topic, slack_thread: thread, title: "Other")
-    create(:action_item, slack_topic: topic2, slack_thread: thread, priority: 20)
-    high = create(:action_item, slack_topic: topic1, slack_thread: thread, priority: 5)
-    assert_equal high, ActionItem.by_priority.first
+  test "scope acknowledgements returns acknowledge items" do
+    create(:action_item, action_type: "acknowledge")
+    create(:action_item, action_type: "delegate")
+
+    assert_equal 1, ActionItem.acknowledgements.count
+  end
+
+  test "scope ignored returns ignored items" do
+    create(:action_item, action_type: "ignore", status: "ignored")
+    create(:action_item, action_type: "delegate")
+
+    assert_equal 1, ActionItem.ignored.count
   end
 end

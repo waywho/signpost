@@ -6,29 +6,66 @@ class ActionQueueService
 
   def process(topic)
     return if ActionItem.exists?(slack_topic_id: topic.id)
-    return unless topic.action_recommendation.in?(%w[delegate create_ticket])
     return unless topic.status == "open"
+    return unless topic.action_recommendation.in?(ActionItem::ACTION_TYPES)
 
-    draft = @drafter.draft(topic)
-    suggestion = @suggester.suggest(topic)
-    repos = Setting.get("global", "github_repos", default: [])
-    related = find_related(topic)
-
-    ActionItem.create!(
+    action_type = topic.action_recommendation
+    attrs = {
       slack_topic: topic,
       slack_thread: topic.slack_thread,
       priority: compute_priority(topic),
       status: "pending",
+      action_type: action_type
+    }
+
+    case action_type
+    when "create_ticket"
+      draft = @drafter.draft(topic)
+      suggestion = @suggester.suggest(topic)
+      attrs.merge!(
+        draft_title: draft[:title],
+        draft_body: draft[:body],
+        suggested_developer: suggestion&.dig(:developer),
+        suggestion_reason: suggestion&.dig(:reason),
+        suggested_repo: draft[:suggested_repo] || default_repo,
+        related_items: find_related(topic)
+      )
+    when "delegate"
+      suggestion = @suggester.suggest(topic)
+      attrs.merge!(
+        suggested_developer: suggestion&.dig(:developer),
+        suggestion_reason: suggestion&.dig(:reason),
+        related_items: find_related(topic)
+      )
+    when "ignore"
+      attrs[:status] = "ignored"
+    end
+
+    ActionItem.create!(attrs)
+  end
+
+  def draft_ticket(action_item)
+    return if action_item.draft_title.present?
+    draft = @drafter.draft(action_item.slack_topic)
+    action_item.update!(
       draft_title: draft[:title],
       draft_body: draft[:body],
-      suggested_developer: suggestion&.dig(:developer),
-      suggestion_reason: suggestion&.dig(:reason),
-      suggested_repo: draft[:suggested_repo] || repos&.first,
-      related_items: related
+      suggested_repo: draft[:suggested_repo] || action_item.suggested_repo || default_repo
     )
   end
 
+  def recompute_priorities
+    ActionItem.pending.find_each do |item|
+      item.update!(priority: compute_priority(item.slack_topic))
+    end
+  end
+
   private
+
+  def default_repo
+    repos = Setting.get("global", "github_repos", default: [])
+    repos&.first
+  end
 
   def find_related(topic)
     return [] unless topic.embedding.present?

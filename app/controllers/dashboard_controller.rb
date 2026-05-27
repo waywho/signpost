@@ -1,6 +1,11 @@
 class DashboardController < ApplicationController
   def show
-    @action_items = ActionItem.pending.by_priority.includes(:slack_topic, :slack_thread, :suggested_developer)
+    action_items_base = ActionItem.includes(:slack_topic, :slack_thread, :suggested_developer)
+    @actionable_items = action_items_base.actionable.by_priority
+    @discussion_items = action_items_base.discussions.by_priority
+    @acknowledge_items = action_items_base.acknowledgements.by_priority
+    @ignored_count = ActionItem.ignored.count
+    @ignored_items = ActionItem.ignored.includes(:slack_topic).by_priority if params[:show_ignored]
     @developers_for_select = Developer.by_name
 
     insights = InsightsService.new
