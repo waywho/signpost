@@ -41,22 +41,33 @@
     </div>
   <% end %>
 
-  <details class="mbe-3">
-    <summary class="text-xs font-bold" style="color: var(--color-text-subtle); cursor: pointer">
-      <i class="ph ph-file-text"></i> Draft: <%= item.draft_title %>
-    </summary>
-    <div class="text-sm mbs-2 p-3" style="white-space: pre-wrap; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= item.draft_body %></div>
-  </details>
+  <% if item.draft_title.present? %>
+    <details class="mbe-3">
+      <summary class="text-xs font-bold" style="color: var(--color-text-subtle); cursor: pointer">
+        <i class="ph ph-file-text"></i> Draft: <%= item.draft_title %>
+      </summary>
+      <div class="text-sm mbs-2 p-3" style="white-space: pre-wrap; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= item.draft_body %></div>
+    </details>
+  <% end %>
 
-  <%= form_with url: approve_action_item_path(item), method: :post, class: "flex items-center gap" do |f| %>
-    <% if github_repos.any? %>
-      <%= f.select :repo, github_repos.map { |r| [r, r] },
-            { selected: item.suggested_repo }, class: "input text-xs", style: "max-inline-size: 12rem" %>
-    <% end %>
-    <%= f.collection_select :developer_id, developers, :id, :name,
-          { selected: item.suggested_developer_id, include_blank: "— unassigned —" },
-          class: "input text-xs", style: "max-inline-size: 12rem" %>
-    <%= f.submit "Approve & Create Issue", class: "btn btn--primary text-xs" %>
+  <%= form_with url: approve_action_item_path(item), method: :post, class: "flex flex-col gap" do |f| %>
+    <div class="flex items-center gap">
+      <% if github_repos.any? %>
+        <%= f.select :repo, github_repos.map { |r| [r, r] },
+              { selected: item.suggested_repo }, class: "input text-xs", style: "max-inline-size: 12rem" %>
+      <% end %>
+      <%= f.collection_select :developer_id, developers, :id, :name,
+            { selected: item.suggested_developer_id, include_blank: "— unassigned —" },
+            class: "input text-xs", style: "max-inline-size: 12rem" %>
+    </div>
+    <div class="flex items-center gap">
+      <label class="flex items-center gap-half text-xs">
+        <input type="checkbox" name="create_issue" value="1" class="input"
+               <%= "checked" if item.action_type == "create_ticket" %>>
+        Create GitHub Issue
+      </label>
+      <%= f.submit "Approve", class: "btn btn--primary text-xs" %>
+    </div>
   <% end %>
   <div class="mbs-2">
     <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--borderless text-xs" do %>

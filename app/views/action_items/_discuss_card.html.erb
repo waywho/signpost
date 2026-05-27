@@ -1,0 +1,20 @@
+<div class="card p-3 mbe-2">
+  <div class="flex items-center justify-between mbe-1">
+    <div class="flex items-center gap-half">
+      <span class="badge badge--primary text-xs">Discuss</span>
+      <span class="badge badge--secondary text-xs"><%= item.slack_topic.slack_thread&.slack_channel_name %></span>
+    </div>
+    <div class="flex items-center gap-half">
+      <% if item.slack_topic.slack_thread&.slack_url.present? %>
+        <a href="<%= item.slack_topic.slack_thread.slack_url %>" target="_blank" class="btn btn--icon btn--borderless" title="Open in Slack">
+          <i class="ph ph-chat-teardrop-dots"></i>
+        </a>
+      <% end %>
+      <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
+        <i class="ph ph-x"></i>
+      <% end %>
+    </div>
+  </div>
+  <p class="font-bold text-sm"><%= item.slack_topic.title %></p>
+  <p class="text-xs" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary.truncate(150) %></p>
+</div>

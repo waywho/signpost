@@ -5,7 +5,14 @@
   <span class="text-sm" style="color: var(--color-text-subtle)"><%= Date.current.strftime("%A, %B %-d") %></span>
 </div>
 
-<%= render "action_queue", items: @action_items, developers: @developers_for_select, github_repos: @github_repos %>
+<%= render "action_queue",
+    actionable_items: @actionable_items,
+    discussion_items: @discussion_items,
+    acknowledge_items: @acknowledge_items,
+    ignored_count: @ignored_count,
+    ignored_items: @ignored_items || [],
+    developers: @developers_for_select,
+    github_repos: @github_repos %>
 
 <%= render "insights", alerts: @alerts, patterns: @patterns %>
 
