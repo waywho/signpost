@@ -22,13 +22,13 @@ class ThreadAnalysisServiceTest < ActiveSupport::TestCase
       ]
     }.to_json
 
-    mock_anthropic = Object.new
-    mock_anthropic.define_singleton_method(:messages) { |**_| { "content" => [{ "text" => analysis_json }] } }
+    mock_claude = Object.new
+    mock_claude.define_singleton_method(:analyze) { |prompt, **_| analysis_json }
 
     mock_embedder = Object.new
     mock_embedder.define_singleton_method(:embed) { |text| Array.new(1536, 0.1) }
 
-    service = ThreadAnalysisService.new(embedding_service: mock_embedder, anthropic_client: mock_anthropic)
+    service = ThreadAnalysisService.new(embedding_service: mock_embedder, claude_service: mock_claude)
     noop_queue = ->(topic) { nil }
     original_new = ActionQueueService.method(:new)
     ActionQueueService.define_singleton_method(:new) do |**_args|
