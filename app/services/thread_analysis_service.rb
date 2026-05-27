@@ -99,7 +99,7 @@ class ThreadAnalysisService
         end
       end
 
-      ActionQueueService.new.process(topic) if topic.action_recommendation.in?(%w[delegate create_ticket])
+      ActionQueueService.new.process(topic) if topic.action_recommendation.present?
     end
   end
 
