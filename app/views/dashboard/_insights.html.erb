@@ -1,8 +1,11 @@
 <% if alerts.any? || patterns.any? %>
   <div class="mbe-6">
-    <h2 class="font-bold flex items-center gap-half mbe-4">
-      <i class="ph ph-lightbulb" style="color: var(--color-primary)"></i> Insights
-    </h2>
+    <div class="flex items-center justify-between mbe-4">
+      <h2 class="font-bold flex items-center gap-half">
+        <i class="ph ph-lightbulb" style="color: var(--color-primary)"></i> Insights
+      </h2>
+      <%= render "section_refresh", url: insights_dashboard_path, frame: "dashboard_insights" %>
+    </div>
 
     <% if alerts.any? %>
       <div class="flex flex-col gap-half mbe-4">

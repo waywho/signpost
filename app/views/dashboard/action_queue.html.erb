@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "dashboard_action_queue" do %>
+  <%= render "action_queue",
+      actionable_items: @actionable_items,
+      discussion_items: @discussion_items,
+      acknowledge_items: @acknowledge_items,
+      ignored_count: @ignored_count,
+      ignored_items: @ignored_items || [],
+      developers: @developers_for_select,
+      github_repos: @github_repos %>
+<% end %>

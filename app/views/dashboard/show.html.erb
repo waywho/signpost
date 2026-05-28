@@ -5,22 +5,36 @@
   <span class="text-sm" style="color: var(--color-text-subtle)"><%= Date.current.strftime("%A, %B %-d") %></span>
 </div>
 
-<%= render "action_queue",
-    actionable_items: @actionable_items,
-    discussion_items: @discussion_items,
-    acknowledge_items: @acknowledge_items,
-    ignored_count: @ignored_count,
-    ignored_items: @ignored_items || [],
-    developers: @developers_for_select,
-    github_repos: @github_repos %>
+<%= turbo_frame_tag "dashboard_action_queue", src: action_queue_dashboard_path do %>
+  <%= render "section_loading", label: "Action Queue" %>
+<% end %>
 
-<%= render "insights", alerts: @alerts, patterns: @patterns %>
+<%= turbo_frame_tag "dashboard_insights", src: insights_dashboard_path do %>
+  <%= render "section_loading", label: "Insights" %>
+<% end %>
 
 <div class="dashboard-grid">
-  <%= render "calendar", events: @today_events %>
-  <%= render "team_overview", developers: @developers %>
-  <%= render "active_delegations", delegations: @active_delegations %>
-  <%= render "commitments", due: @due_commitments, overdue: @overdue_commitments %>
-  <%= render "pr_reviews", reviews: @recent_pr_reviews, pr_queue: @pr_queue %>
-  <%= render "daily_log", log: @daily_log %>
+  <%= turbo_frame_tag "dashboard_calendar", src: calendar_dashboard_path do %>
+    <%= render "section_loading", label: "Calendar" %>
+  <% end %>
+
+  <%= turbo_frame_tag "dashboard_team_overview", src: team_overview_dashboard_path do %>
+    <%= render "section_loading", label: "Team" %>
+  <% end %>
+
+  <%= turbo_frame_tag "dashboard_active_delegations", src: active_delegations_dashboard_path do %>
+    <%= render "section_loading", label: "Delegations" %>
+  <% end %>
+
+  <%= turbo_frame_tag "dashboard_commitments", src: commitments_dashboard_path do %>
+    <%= render "section_loading", label: "Commitments" %>
+  <% end %>
+
+  <%= turbo_frame_tag "dashboard_pr_reviews", src: pr_reviews_dashboard_path do %>
+    <%= render "section_loading", label: "PR Reviews" %>
+  <% end %>
+
+  <%= turbo_frame_tag "dashboard_daily_log", src: daily_log_dashboard_path do %>
+    <%= render "section_loading", label: "Daily Log" %>
+  <% end %>
 </div>

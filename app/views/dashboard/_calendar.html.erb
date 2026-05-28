@@ -1,9 +1,12 @@
 <% if events.present? %>
   <div class="card">
-    <h2 class="font-bold flex items-center gap-half mbe-4">
-      <i class="ph ph-calendar" style="color: var(--color-primary)"></i> Today's Schedule
-      <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= events.size %>)</span>
-    </h2>
+    <div class="flex items-center justify-between mbe-4">
+      <h2 class="font-bold flex items-center gap-half">
+        <i class="ph ph-calendar" style="color: var(--color-primary)"></i> Today's Schedule
+        <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= events.size %>)</span>
+      </h2>
+      <%= render "section_refresh", url: calendar_dashboard_path, frame: "dashboard_calendar" %>
+    </div>
 
     <div class="flex flex-col gap-half">
       <% events.each do |event| %>

@@ -4,7 +4,10 @@
       <i class="ph ph-users-three" style="color: var(--color-primary)"></i> Team
       <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= developers.size %>)</span>
     </h2>
-    <%= link_to "View all →", developers_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+    <div class="flex items-center gap-half">
+      <%= render "section_refresh", url: team_overview_dashboard_path, frame: "dashboard_team_overview" %>
+      <%= link_to "View all →", developers_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+    </div>
   </div>
   <% if developers.any? %>
     <ul class="flex flex-col gap-half">

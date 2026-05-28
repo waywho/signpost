@@ -4,7 +4,10 @@
       <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i> PR Reviews
       <span class="text-sm font-normal" style="color: var(--color-text-subtle)">Last 5</span>
     </h2>
-    <%= link_to "View all →", pr_reviews_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+    <div class="flex items-center gap-half">
+      <%= render "section_refresh", url: pr_reviews_dashboard_path, frame: "dashboard_pr_reviews" %>
+      <%= link_to "View all →", pr_reviews_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+    </div>
   </div>
   <% if pr_queue&.any? %>
     <p class="badge badge--negative mbe-2">

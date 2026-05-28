@@ -1,11 +1,14 @@
 <div class="mbe-6">
-  <h2 class="font-bold flex items-center gap-half mbe-4">
-    <i class="ph ph-tray" style="color: var(--color-primary)"></i> Action Queue
-    <% total = actionable_items.size + discussion_items.size + acknowledge_items.size %>
-    <% if total > 0 %>
-      <span class="text-sm font-normal" style="color: var(--color-negative)">(<%= total %> pending)</span>
-    <% end %>
-  </h2>
+  <div class="flex items-center justify-between mbe-4">
+    <h2 class="font-bold flex items-center gap-half">
+      <i class="ph ph-tray" style="color: var(--color-primary)"></i> Action Queue
+      <% total = actionable_items.size + discussion_items.size + acknowledge_items.size %>
+      <% if total > 0 %>
+        <span class="text-sm font-normal" style="color: var(--color-negative)">(<%= total %> pending)</span>
+      <% end %>
+    </h2>
+    <%= render "section_refresh", url: action_queue_dashboard_path, frame: "dashboard_action_queue" %>
+  </div>
 
   <%# Actionable: create_ticket + delegate %>
   <% if actionable_items.any? %>
