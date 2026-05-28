@@ -3,7 +3,12 @@
     <span class="badge badge--secondary text-xs"><%= item.slack_topic.slack_thread&.slack_channel_name %></span>
     <span class="text-sm"><%= item.slack_topic.title %></span>
   </div>
-  <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless" do %>
-    <i class="ph ph-check"></i>
-  <% end %>
+  <div class="flex items-center gap-half">
+    <%= button_to resolve_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless", title: "Resolved" do %>
+      <i class="ph ph-check-circle"></i>
+    <% end %>
+    <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
+      <i class="ph ph-x"></i>
+    <% end %>
+  </div>
 </div>

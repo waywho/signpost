@@ -10,11 +10,14 @@
           <i class="ph ph-chat-teardrop-dots"></i>
         </a>
       <% end %>
+      <%= button_to resolve_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless", title: "Resolved" do %>
+        <i class="ph ph-check-circle"></i>
+      <% end %>
       <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
         <i class="ph ph-x"></i>
       <% end %>
     </div>
   </div>
   <p class="font-bold text-sm"><%= item.slack_topic.title %></p>
-  <p class="text-xs" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary.truncate(150) %></p>
+  <p class="text-xs" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary %></p>
 </div>
