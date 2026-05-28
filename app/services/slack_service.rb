@@ -12,6 +12,10 @@ class SlackService
     user_client.reactions_add(channel: channel, timestamp: timestamp, name: emoji)
   end
 
+  def post_message(channel:, thread_ts:, text:)
+    user_client.chat_postMessage(channel:, thread_ts:, text:)
+  end
+
   def list_channels
     all = []
     cursor = nil
