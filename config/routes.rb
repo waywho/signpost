@@ -49,15 +49,20 @@ Rails.application.routes.draw do
 
   resources :action_items, only: [] do
     member do
-      post :approve
+      post :act
       post :dismiss
+      post :resolve
       post :restore
     end
   end
 
   resource :settings, only: [:show, :update]
   resource :status, only: :show, controller: "status"
-  resource :dashboard, only: :show, controller: "dashboard"
+  resource :dashboard, only: :show, controller: "dashboard" do
+    %i[action_queue insights calendar team_overview active_delegations commitments pr_reviews daily_log].each do |section|
+      get section, on: :member
+    end
+  end
 
   root "dashboard#show"
 

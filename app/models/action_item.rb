@@ -7,7 +7,7 @@ class ActionItem < ApplicationRecord
   ACTION_TYPES = %w[create_ticket delegate acknowledge discuss ignore].freeze
 
   validates :priority, presence: true
-  validates :status, inclusion: { in: %w[pending approved dismissed ignored] }
+  validates :status, inclusion: { in: %w[pending actioned dismissed ignored resolved] }
   validates :action_type, inclusion: { in: ACTION_TYPES }
   validates :slack_topic_id, uniqueness: true
 
