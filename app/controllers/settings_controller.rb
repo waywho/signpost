@@ -55,6 +55,8 @@ class SettingsController < ApplicationController
       NoiseFilter.find(params[:filter_id])&.destroy
     when "calendar"
       save_encrypted(:google_ical_url)
+    when "repo_paths"
+      save_repo_paths
     end
 
     anchor = section_anchor(params[:section])
@@ -87,6 +89,13 @@ class SettingsController < ApplicationController
   def save_github_repos
     repos = Array(params[:github_repos]).reject(&:blank?)
     Setting.set("global", "github_repos", repos)
+  end
+
+  def save_repo_paths
+    names = Array(params[:repo_names])
+    paths = Array(params[:repo_local_paths])
+    repo_map = names.zip(paths).reject { |n, p| n.blank? || p.blank? }.to_h
+    Setting.set("global", "repo_paths", repo_map)
   end
 
   def section_anchor(section)

@@ -12,6 +12,7 @@
         { icon: "ph-github-logo", label: "GitHub" },
         { icon: "ph-chat-teardrop-dots", label: "Slack" },
         { icon: "ph-calendar", label: "Calendar" },
+        { icon: "ph-folder-open", label: "Repos" },
         { icon: "ph-magnifying-glass", label: "Search" },
         { icon: "ph-archive", label: "Archive" }
       ]
@@ -333,6 +334,48 @@
             </p>
           </div>
           <%= f.submit "Save Calendar URL", class: "btn btn--primary", style: "align-self: flex-start" %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Repo Paths %>
+    <% repo_paths = Setting.get("global", "repo_paths", default: {}) || {} %>
+    <div data-settings-nav-target="panel" id="repo_paths" hidden>
+      <div class="card">
+        <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+          <i class="ph ph-folder-open"></i> Local Repo Paths
+        </h2>
+        <p class="text-xs mbe-4" style="color: var(--color-text-subtle)">
+          Map GitHub repo names to local directories for codebase analysis.
+        </p>
+        <%= form_with url: settings_path, method: :patch, class: "flex flex-col gap" do |f| %>
+          <%= hidden_field_tag :section, "repo_paths" %>
+          <div data-controller="repo-paths">
+            <div data-repo-paths-target="list" class="flex flex-col gap-half mbe-2">
+              <% repo_paths.each do |name, path| %>
+                <div class="flex items-center gap-half" data-repo-paths-target="row">
+                  <input type="text" name="repo_names[]" value="<%= name %>" class="input text-sm" placeholder="myorg/api" style="flex: 1">
+                  <input type="text" name="repo_local_paths[]" value="<%= path %>" class="input text-sm" placeholder="/Users/you/src/api" style="flex: 2">
+                  <button type="button" class="btn btn--negative btn--icon btn--borderless" data-action="repo-paths#remove">
+                    <i class="ph ph-trash"></i>
+                  </button>
+                </div>
+              <% end %>
+            </div>
+            <template data-repo-paths-target="template">
+              <div class="flex items-center gap-half" data-repo-paths-target="row">
+                <input type="text" name="repo_names[]" class="input text-sm" placeholder="myorg/api" style="flex: 1">
+                <input type="text" name="repo_local_paths[]" class="input text-sm" placeholder="/Users/you/src/api" style="flex: 2">
+                <button type="button" class="btn btn--negative btn--icon btn--borderless" data-action="repo-paths#remove">
+                  <i class="ph ph-trash"></i>
+                </button>
+              </div>
+            </template>
+            <button type="button" class="btn btn--borderless text-xs" data-action="repo-paths#add">
+              <i class="ph ph-plus"></i> Add Repo
+            </button>
+          </div>
+          <%= f.submit "Save Repo Paths", class: "btn btn--primary", style: "align-self: flex-start" %>
         <% end %>
       </div>
     </div>

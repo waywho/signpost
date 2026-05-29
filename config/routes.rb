@@ -42,17 +42,22 @@ Rails.application.routes.draw do
         post :delegate, to: "slack_threads#delegate_topic"
       end
     end
+    resources :codebase_analyses, only: %i[create show] do
+      member do
+        post :create_issue
+        post :delegate
+        post :notify
+        post :dismiss
+      end
+    end
   end
 
   get "/search", to: "search#index"
   post "/search", to: "search#create"
 
-  resources :action_items, only: [] do
+  resources :action_items, only: [:update] do
     member do
       post :act
-      post :dismiss
-      post :resolve
-      post :restore
     end
   end
 

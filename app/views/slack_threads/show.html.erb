@@ -9,6 +9,12 @@
 <%# Action bar %>
 <%= render "action_bar", thread: @slack_thread %>
 
+<%# Codebase Analysis %>
+<%= render "codebase_analyses/trigger", slack_thread: @slack_thread, repo_paths: @repo_paths %>
+<% @analyses.each do |analysis| %>
+  <%= render "codebase_analyses/analysis_card", analysis:, developers: @developers, github_repos: @github_repos %>
+<% end %>
+
 <%# Thread header %>
 <div class="card mbe-4">
   <div class="flex items-center gap-half mbe-2">

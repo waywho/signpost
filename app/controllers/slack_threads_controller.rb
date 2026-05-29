@@ -5,7 +5,7 @@ class SlackThreadsController < ApplicationController
     if params[:status].present?
       @slack_threads = @slack_threads.where(status: params[:status]) unless params[:status] == "all"
     else
-      @slack_threads = @slack_threads.where(status: "new")
+      @slack_threads = @slack_threads.where(status: :new_thread)
     end
 
     @slack_threads = @slack_threads.by_category(params[:category]) if params[:category].present?
@@ -16,7 +16,7 @@ class SlackThreadsController < ApplicationController
         q: "%#{q}%", kw: q
       )
     end
-    @categories = %w[architecture stakeholder team-decision incident other]
+    @categories = %w[architecture stakeholder team_decision incident other]
     @status_counts = SlackThread.group(:status).count
   end
 
@@ -24,6 +24,10 @@ class SlackThreadsController < ApplicationController
     @slack_thread = SlackThread.find(params[:id])
     @topics = @slack_thread.slack_topics.by_urgency
     @messages = @slack_thread.slack_messages.chronological
+    @analyses = @slack_thread.codebase_analyses.order(created_at: :desc)
+    @repo_paths = Setting.get("global", "repo_paths", default: {}) || {}
+    @developers = Developer.by_name
+    @github_repos = Setting.get("global", "github_repos", default: []) || []
   end
 
   def new
@@ -66,32 +70,24 @@ class SlackThreadsController < ApplicationController
 
   def delegate
     @slack_thread = SlackThread.find(params[:id])
-    delegation = Delegation.create!(
+    redirect_to new_delegation_path(delegation: {
       summary: @slack_thread.title.presence || @slack_thread.summary&.truncate(100) || "From Slack thread",
       slack_channel_id: @slack_thread.slack_channel_id,
-      slack_thread_ts: @slack_thread.slack_thread_ts,
-      status: "delegated",
-      delegated_at: Time.current
-    )
-    @slack_thread.update!(status: "actioned")
-    redirect_to edit_delegation_path(delegation), notice: "Delegation created. Assign a developer and add details."
+      slack_thread_ts: @slack_thread.slack_thread_ts
+    })
   end
 
   def delegate_topic
     @slack_thread = SlackThread.find(params[:slack_thread_id])
     @topic = @slack_thread.slack_topics.find(params[:id])
 
-    delegation = Delegation.create!(
+    redirect_to new_delegation_path(delegation: {
       summary: @topic.title,
       slack_channel_id: @slack_thread.slack_channel_id,
       slack_thread_ts: @slack_thread.slack_thread_ts,
-      urgency: @topic.urgency&.capitalize,
-      issue_type: @topic.category,
-      status: "delegated",
-      delegated_at: Time.current
-    )
-    @topic.update!(status: "actioned")
-    redirect_to edit_delegation_path(delegation), notice: "Delegation created from topic: #{@topic.title}"
+      urgency: @topic.urgency,
+      issue_type: @topic.category
+    })
   end
 
   private
