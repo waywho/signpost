@@ -2,7 +2,7 @@ module SlackThreadsHelper
   CATEGORY_ICONS = {
     "architecture" => "ph-graph",
     "stakeholder" => "ph-handshake",
-    "team-decision" => "ph-users-three",
+    "team_decision" => "ph-users-three",
     "incident" => "ph-warning-circle",
     "other" => "ph-chat-dots"
   }.freeze
@@ -20,11 +20,15 @@ module SlackThreadsHelper
     end
   end
 
+  def urgency_badge(urgency)
+    tag.span urgency || "—", class: "badge #{urgency_badge_variant(urgency)}"
+  end
+
   def urgency_badge_variant(urgency)
     case urgency&.downcase
     when "critical" then "badge--negative"
-    when "high" then "badge--secondary"
-    when "medium" then "badge--primary"
+    when "high" then "badge--primary"
+    when "medium" then "badge"
     else ""
     end
   end

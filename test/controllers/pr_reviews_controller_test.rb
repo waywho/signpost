@@ -16,7 +16,7 @@ class PrReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should filter by recommendation" do
-    get pr_reviews_path, params: { recommendation: "APPROVE" }
+    get pr_reviews_path, params: { recommendation: "approve" }
     assert_response :success
   end
 

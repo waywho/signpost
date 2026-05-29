@@ -62,7 +62,7 @@ class SlackCaptureService
       capture_reason: capture_reason,
       slack_url: "https://slack.com/archives/#{channel_id}/p#{thread_ts.delete('.')}",
       captured_at: Time.current,
-      status: "new"
+      status: "new_thread"
     )
   end
 

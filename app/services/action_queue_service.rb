@@ -7,7 +7,7 @@ class ActionQueueService
   def process(topic)
     return if ActionItem.exists?(slack_topic_id: topic.id)
     return unless topic.status == "open"
-    return unless topic.action_recommendation.in?(ActionItem::ACTION_TYPES)
+    return unless topic.action_recommendation.in?(ActionItem.action_types.keys)
 
     action_type = topic.action_recommendation
     attrs = {

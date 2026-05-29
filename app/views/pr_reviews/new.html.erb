@@ -34,11 +34,11 @@
       <div class="flex gap">
         <div style="flex: 1">
           <%= f.label :recommendation, class: "text-sm font-bold mbe-1", style: "display: block" %>
-          <%= f.select :recommendation, [["—", ""], ["Approve", "APPROVE"], ["Request Changes", "REQUEST_CHANGES"], ["Needs Discussion", "NEEDS_DISCUSSION"]], {}, class: "input" %>
+          <%= f.select :recommendation, [["—", ""], ["Approve", "approve"], ["Request Changes", "request_changes"], ["Needs Discussion", "needs_discussion"]], {}, class: "input" %>
         </div>
         <div style="flex: 1">
           <%= f.label :risk_level, class: "text-sm font-bold mbe-1", style: "display: block" %>
-          <%= f.select :risk_level, [["—", ""], ["Low", "LOW"], ["Medium", "MEDIUM"], ["High", "HIGH"], ["Critical", "CRITICAL"]], {}, class: "input" %>
+          <%= f.select :risk_level, [["—", ""], ["Low", "low"], ["Medium", "medium"], ["High", "high"], ["Critical", "critical"]], {}, class: "input" %>
         </div>
       </div>
 

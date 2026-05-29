@@ -72,11 +72,27 @@ class ActionItemsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "A ticket is created:\nhttps://github.com/org/repo/issues/42", calls[:post_message].first[:text]
   end
 
-  test "dismiss marks item and topic dismissed" do
-    post dismiss_action_item_path(@item)
+  test "update to dismissed marks item and topic" do
+    patch action_item_path(@item), params: { status: "dismissed" }
     assert_redirected_to root_path
     assert_equal "dismissed", @item.reload.status
     assert_equal "dismissed", @topic.reload.status
+  end
+
+  test "update to resolved marks item resolved and topic actioned" do
+    patch action_item_path(@item), params: { status: "resolved" }
+    assert_redirected_to root_path
+    assert_equal "resolved", @item.reload.status
+    assert_equal "actioned", @topic.reload.status
+  end
+
+  test "update to pending restores item and reopens topic" do
+    @item.update!(status: "ignored")
+    @topic.update!(status: "dismissed")
+    patch action_item_path(@item), params: { status: "pending" }
+    assert_redirected_to root_path
+    assert_equal "pending", @item.reload.status
+    assert_equal "open", @topic.reload.status
   end
 
   private

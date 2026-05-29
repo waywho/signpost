@@ -9,8 +9,7 @@ class ActionItemTest < ActiveSupport::TestCase
   end
 
   test "invalid action_type rejected" do
-    item = build(:action_item, action_type: "invalid")
-    assert_not item.valid?
+    assert_raises(ArgumentError) { build(:action_item, action_type: "invalid") }
   end
 
   test "ignored status accepted" do

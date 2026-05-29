@@ -27,7 +27,7 @@ class DelegationsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create delegation" do
     assert_difference("Delegation.count") do
-      post delegations_path, params: { delegation: { summary: "New task", urgency: "High", status: "delegated" } }
+      post delegations_path, params: { delegation: { summary: "New task", urgency: "high", status: "delegated" } }
     end
     assert_redirected_to delegation_path(Delegation.last)
   end

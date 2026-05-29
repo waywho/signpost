@@ -10,7 +10,7 @@ class PrAnalysisServiceTest < ActiveSupport::TestCase
     mock_github.define_singleton_method(:linked_issue) { |repo, number| nil }
 
     analysis_json = {
-      recommendation: "APPROVE",
+      recommendation: "approve",
       recommendation_reason: "Clean implementation",
       summary: "Adds feature X",
       critical_flags: [],
@@ -33,7 +33,7 @@ class PrAnalysisServiceTest < ActiveSupport::TestCase
     service = PrAnalysisService.new(github_service: mock_github, claude_service: mock_claude)
     result = service.analyze(repo: "org/repo", pr_number: 1)
 
-    assert_equal "APPROVE", result[:recommendation]
+    assert_equal "approve", result[:recommendation]
     assert_includes result[:strengths], "Good test coverage"
   end
 

@@ -11,7 +11,7 @@ class ActionItemsController < ApplicationController
         summary: @item.draft_title || @item.slack_topic.title,
         developer:,
         developer_name: developer&.name,
-        urgency: @item.slack_topic.urgency&.capitalize,
+        urgency: @item.slack_topic.urgency,
         issue_type: @item.slack_topic.category,
         github_issue_url: ticket_url,
         slack_channel_id: @item.slack_thread.slack_channel_id,
@@ -31,30 +31,24 @@ class ActionItemsController < ApplicationController
     redirect_to root_path, alert: "Failed: #{e.message}"
   end
 
-  def resolve
-    @item.update!(status: "resolved", actioned_at: Time.current)
-    @item.slack_topic.update!(status: "resolved")
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove("action_item_#{@item.id}") }
-      format.html { redirect_to root_path, notice: "Marked as resolved." }
-    end
-  end
+  TOPIC_STATUS_MAP = {
+    "dismissed" => "dismissed",
+    "resolved" => "actioned",
+    "pending" => "open"
+  }.freeze
 
-  def dismiss
-    @item.update!(status: "dismissed", dismissed_at: Time.current)
-    @item.slack_topic.update!(status: "dismissed")
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove("action_item_#{@item.id}") }
-      format.html { redirect_to root_path, notice: "Dismissed." }
-    end
-  end
+  def update
+    status = params[:status]
+    @item.update!(status:, actioned_at: Time.current)
+    topic_status = TOPIC_STATUS_MAP.fetch(status, "actioned")
+    @item.slack_topic.update!(status: topic_status)
 
-  def restore
-    @item.update!(status: "pending", action_type: "acknowledge")
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.remove("action_item_#{@item.id}") }
-      format.html { redirect_to root_path, notice: "Restored." }
+      format.html { redirect_to root_path, notice: "#{status.capitalize}." }
     end
+  rescue => e
+    redirect_to root_path, alert: "Failed: #{e.message}"
   end
 
   private

@@ -4,8 +4,9 @@ class Developer < ApplicationRecord
   has_many :delegations, dependent: :nullify
   has_many :pr_reviews, dependent: :nullify
 
+  enum :level, { junior: 0, mid: 1, senior: 2, staff: 3 }
+
   validates :name, presence: true
-  validates :level, inclusion: { in: %w[Junior Mid Senior Staff], allow_nil: true }
 
   scope :by_name, -> { order(:name) }
 

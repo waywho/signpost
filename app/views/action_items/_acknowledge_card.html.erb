@@ -4,10 +4,10 @@
     <span class="text-sm"><%= item.slack_topic.title %></span>
   </div>
   <div class="flex items-center gap-half">
-    <%= button_to resolve_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless", title: "Resolved" do %>
+    <%= button_to action_item_path(item), method: :patch, params: { status: "resolved" }, class: "btn btn--icon btn--borderless", title: "Resolved" do %>
       <i class="ph ph-check-circle"></i>
     <% end %>
-    <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
+    <%= button_to action_item_path(item), method: :patch, params: { status: "dismissed" }, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
       <i class="ph ph-x"></i>
     <% end %>
   </div>

@@ -1,15 +1,15 @@
 module PrReviewsHelper
   RECOMMENDATION_COLORS = {
-    "APPROVE" => "var(--color-positive)",
-    "REQUEST_CHANGES" => "var(--color-negative)",
-    "NEEDS_DISCUSSION" => "#f97316"
+    "approve" => "var(--color-positive)",
+    "request_changes" => "var(--color-negative)",
+    "needs_discussion" => "#f97316"
   }.freeze
 
   RISK_COLORS = {
-    "LOW" => "var(--color-positive)",
-    "MEDIUM" => "#f97316",
-    "HIGH" => "var(--color-negative)",
-    "CRITICAL" => "var(--color-negative)"
+    "low" => "var(--color-positive)",
+    "medium" => "#f97316",
+    "high" => "var(--color-negative)",
+    "critical" => "var(--color-negative)"
   }.freeze
 
   def recommendation_color(rec)
@@ -17,9 +17,9 @@ module PrReviewsHelper
   end
 
   RECOMMENDATION_BADGE_VARIANTS = {
-    "APPROVE" => "badge--positive",
-    "REQUEST_CHANGES" => "badge--negative",
-    "NEEDS_DISCUSSION" => "badge--secondary"
+    "approve" => "badge--positive",
+    "request_changes" => "badge--negative",
+    "needs_discussion" => "badge--secondary"
   }.freeze
 
   def recommendation_badge_variant(rec)
@@ -27,10 +27,10 @@ module PrReviewsHelper
   end
 
   RISK_BADGE_VARIANTS = {
-    "LOW" => "badge--positive",
-    "MEDIUM" => "badge--secondary",
-    "HIGH" => "badge--negative",
-    "CRITICAL" => "badge--negative"
+    "low" => "badge--positive",
+    "medium" => "badge--secondary",
+    "high" => "badge--negative",
+    "critical" => "badge--negative"
   }.freeze
 
   def risk_badge_variant(level)

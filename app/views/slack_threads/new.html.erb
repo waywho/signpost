@@ -44,7 +44,7 @@
 
       <div>
         <%= f.label :category, class: "text-sm font-bold mbe-1", style: "display: block" %>
-        <%= f.select :category, [["—", ""], ["Architecture", "architecture"], ["Stakeholder", "stakeholder"], ["Team Decision", "team-decision"], ["Incident", "incident"], ["Other", "other"]], {}, class: "input" %>
+        <%= f.select :category, [["—", ""], ["Architecture", "architecture"], ["Stakeholder", "stakeholder"], ["Team Decision", "team_decision"], ["Incident", "incident"], ["Other", "other"]], {}, class: "input" %>
       </div>
 
       <div><%= f.label :summary, class: "text-sm font-bold mbe-1", style: "display: block" %><%= f.text_area :summary, class: "input", rows: 4 %></div>

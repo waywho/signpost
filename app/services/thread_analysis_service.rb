@@ -40,7 +40,7 @@ class ThreadAnalysisService
       {
         "title": "short thread title",
         "summary": "2-3 sentence summary of the whole thread",
-        "category": "architecture|stakeholder|team-decision|incident|other",
+        "category": "architecture|stakeholder|team_decision|incident|other",
         "keywords": ["keyword1", "keyword2"],
         "topics": [
           {

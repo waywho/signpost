@@ -23,7 +23,7 @@ class DevelopersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create developer" do
     assert_difference("Developer.count") do
-      post developers_path, params: { developer: { name: "Charlie", level: "Junior" } }
+      post developers_path, params: { developer: { name: "Charlie", level: "junior" } }
     end
     assert_redirected_to developer_path(Developer.last)
   end

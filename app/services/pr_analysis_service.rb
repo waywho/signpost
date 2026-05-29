@@ -85,7 +85,7 @@ class PrAnalysisService
 
       Return ONLY valid JSON:
       {
-        "recommendation": "APPROVE|REQUEST_CHANGES|NEEDS_DISCUSSION",
+        "recommendation": "approve|request_changes|needs_discussion",
         "recommendation_reason": "one clear sentence",
         "summary": "2-3 sentence summary of what this PR does",
         "critical_flags": [{"severity": "critical|warning", "title": "...", "detail": "..."}],
@@ -147,7 +147,7 @@ class PrAnalysisService
       pr_title: pr[:title],
       pr_author: pr[:author],
       recommendation: result[:recommendation],
-      risk_level: result.dig(:risk_areas, 0, :severity)&.upcase,
+      risk_level: result.dig(:risk_areas, 0, :severity),
       summary: competence_summary,
       head_sha: head_sha,
       developer: developer,

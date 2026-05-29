@@ -13,13 +13,11 @@ class DeveloperTest < ActiveSupport::TestCase
   end
 
   test "validates level inclusion" do
-    developer = Developer.new(name: "Alice", level: "Intern")
-    assert_not developer.valid?
-    assert_includes developer.errors[:level], "is not included in the list"
+    assert_raises(ArgumentError) { Developer.new(name: "Alice", level: "Intern") }
   end
 
   test "allows valid levels" do
-    %w[Junior Mid Senior Staff].each do |level|
+    %w[junior mid senior staff].each do |level|
       developer = Developer.new(name: "Alice", level: level)
       assert developer.valid?, "Expected #{level} to be valid"
     end

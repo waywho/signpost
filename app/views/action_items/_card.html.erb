@@ -56,7 +56,8 @@
 
     <%# Right: actions %>
     <div style="min-inline-size: 16rem; max-inline-size: 18rem">
-      <%= form_with url: act_action_item_path(item), method: :post, class: "flex flex-col gap-half",
+      <%= form_with url: act_action_item_path(item), method: :post, id: "act_form_#{item.id}",
+            class: "flex flex-col gap-half",
             data: { controller: "ticket-option" } do |f| %>
         <%= f.collection_select :developer_id, developers, :id, :name,
               { selected: item.suggested_developer_id, include_blank: "— unassigned —" },
@@ -80,15 +81,13 @@
                class="input text-xs"
                data-ticket-option-target="existingUrl"
                data-action="input->ticket-option#urlChanged">
-        <div class="flex items-center gap-half mbs-1">
-          <%= f.submit "Do it", class: "btn btn--primary text-xs" %>
-        </div>
       <% end %>
-      <div class="flex items-center gap-half">
-        <%= button_to resolve_action_item_path(item), method: :post, class: "btn btn--borderless text-xs" do %>
+      <div class="flex items-center gap-half mbs-1">
+        <button type="submit" form="act_form_<%= item.id %>" class="btn btn--primary text-xs">Do it</button>
+        <%= button_to action_item_path(item), method: :patch, params: { status: "resolved" }, class: "btn btn--borderless text-xs" do %>
           <i class="ph ph-check-circle"></i> Resolved
         <% end %>
-        <%= button_to dismiss_action_item_path(item), method: :post, class: "btn btn--borderless text-xs" do %>
+        <%= button_to action_item_path(item), method: :patch, params: { status: "dismissed" }, class: "btn btn--borderless text-xs" do %>
           <i class="ph ph-x"></i> Dismiss
         <% end %>
       </div>

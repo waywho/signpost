@@ -16,8 +16,7 @@ class SlackTopicTest < ActiveSupport::TestCase
   end
 
   test "rejects invalid urgency" do
-    topic = SlackTopic.new(slack_thread: @thread, title: "t", summary: "s", status: "open", urgency: "extreme")
-    assert_not topic.valid?
+    assert_raises(ArgumentError) { SlackTopic.new(slack_thread: @thread, title: "t", summary: "s", status: "open", urgency: "extreme") }
   end
 
   test "open scope" do

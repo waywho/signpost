@@ -17,7 +17,7 @@ class DelegationsController < ApplicationController
   end
 
   def new
-    @delegation = Delegation.new
+    @delegation = Delegation.new(params[:delegation] ? delegation_params : {})
     @developers = Developer.by_name
   end
 
@@ -80,7 +80,8 @@ class DelegationsController < ApplicationController
     params.require(:delegation).permit(
       :summary, :urgency, :issue_type, :handoff_message,
       :codebase_context, :developer_id, :developer_name,
-      :status, :github_issue_url
+      :status, :github_issue_url,
+      :slack_channel_id, :slack_thread_ts
     )
   end
 end

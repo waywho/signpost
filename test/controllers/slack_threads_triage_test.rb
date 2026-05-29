@@ -2,7 +2,7 @@ require "test_helper"
 
 class SlackThreadsTriageTest < ActionDispatch::IntegrationTest
   setup do
-    @thread = create(:slack_thread, status: "new")
+    @thread = create(:slack_thread, status: "new_thread")
   end
 
   test "dismiss marks thread archived" do
@@ -11,29 +11,27 @@ class SlackThreadsTriageTest < ActionDispatch::IntegrationTest
     assert_equal "archived", @thread.reload.status
   end
 
-  test "delegate creates delegation and marks actioned" do
-    assert_difference("Delegation.count") do
-      post delegate_slack_thread_path(@thread)
-    end
-    assert_equal "actioned", @thread.reload.status
-    delegation = Delegation.last
-    assert_equal @thread.title, delegation.summary
-    assert_redirected_to edit_delegation_path(delegation)
+  test "delegate redirects to new delegation form with pre-filled params" do
+    post delegate_slack_thread_path(@thread)
+    assert_redirected_to new_delegation_path(delegation: {
+      summary: @thread.title,
+      slack_channel_id: @thread.slack_channel_id,
+      slack_thread_ts: @thread.slack_thread_ts
+    })
   end
 
-  test "delegate_topic creates delegation from specific topic" do
+  test "delegate_topic redirects to new delegation form with topic details" do
     embedding = Array.new(1536, 0.1)
-    topic = @thread.slack_topics.create!(title: "Specific bug", summary: "A specific bug", status: "open", urgency: "high", embedding: embedding)
+    topic = @thread.slack_topics.create!(title: "Specific bug", summary: "A specific bug", status: "open", urgency: "high", category: "bug", embedding: embedding)
 
-    assert_difference("Delegation.count") do
-      post delegate_slack_thread_slack_topic_path(@thread, topic)
-    end
-
-    delegation = Delegation.last
-    assert_equal "Specific bug", delegation.summary
-    assert_equal "High", delegation.urgency
-    assert_equal "actioned", topic.reload.status
-    assert_redirected_to edit_delegation_path(delegation)
+    post delegate_slack_thread_slack_topic_path(@thread, topic)
+    assert_redirected_to new_delegation_path(delegation: {
+      summary: "Specific bug",
+      slack_channel_id: @thread.slack_channel_id,
+      slack_thread_ts: @thread.slack_thread_ts,
+      urgency: "high",
+      issue_type: "bug"
+    })
   end
 
   test "acknowledge marks thread triaged" do

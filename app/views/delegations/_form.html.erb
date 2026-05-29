@@ -17,7 +17,7 @@
     </div>
     <div style="flex: 1">
       <%= f.label :urgency, class: "text-sm font-bold mbe-1", style: "display: block" %>
-      <%= f.select :urgency, [["", ""], "Critical", "High", "Medium", "Low"], {}, class: "input" %>
+      <%= f.select :urgency, [["", ""], ["Critical", "critical"], ["High", "high"], ["Medium", "medium"], ["Low", "low"]], {}, class: "input" %>
     </div>
   </div>
 

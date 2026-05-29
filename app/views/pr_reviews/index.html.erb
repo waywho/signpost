@@ -9,8 +9,8 @@
 <%= form_with url: pr_reviews_path, method: :get, class: "flex items-center gap mbe-4",
       data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |f| %>
   <%= f.text_field :repo, value: params[:repo], placeholder: "Filter by repo…", class: "input", style: "max-inline-size: 16rem" %>
-  <%= f.select :recommendation, [["All recommendations", ""], ["Approve", "APPROVE"], ["Request Changes", "REQUEST_CHANGES"], ["Needs Discussion", "NEEDS_DISCUSSION"]], { selected: params[:recommendation] }, class: "input" %>
-  <%= f.select :risk_level, [["All risk levels", ""], ["Low", "LOW"], ["Medium", "MEDIUM"], ["High", "HIGH"], ["Critical", "CRITICAL"]], { selected: params[:risk_level] }, class: "input" %>
+  <%= f.select :recommendation, [["All recommendations", ""], ["Approve", "approve"], ["Request Changes", "request_changes"], ["Needs Discussion", "needs_discussion"]], { selected: params[:recommendation] }, class: "input" %>
+  <%= f.select :risk_level, [["All risk levels", ""], ["Low", "low"], ["Medium", "medium"], ["High", "high"], ["Critical", "critical"]], { selected: params[:risk_level] }, class: "input" %>
   <% if params[:repo].present? || params[:recommendation].present? || params[:risk_level].present? %>
     <%= link_to "Clear", pr_reviews_path, class: "text-sm", style: "color: var(--color-text-subtle)" %>
   <% end %>
