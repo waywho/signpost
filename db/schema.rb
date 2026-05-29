@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_29_135734) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
 
   create_table "action_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "action_type", default: "delegate", null: false
+    t.integer "action_type", null: false
     t.timestamptz "actioned_at"
     t.datetime "created_at", null: false
     t.uuid "delegation_id"
@@ -28,19 +28,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
     t.jsonb "related_items", default: []
     t.uuid "slack_thread_id", null: false
     t.uuid "slack_topic_id", null: false
-    t.text "status", default: "pending", null: false
+    t.integer "status", null: false
     t.uuid "suggested_developer_id"
     t.text "suggested_repo"
     t.text "suggestion_reason"
     t.datetime "updated_at", null: false
-    t.index ["action_type"], name: "index_action_items_on_action_type"
     t.index ["delegation_id"], name: "index_action_items_on_delegation_id"
     t.index ["priority"], name: "index_action_items_on_priority"
     t.index ["slack_thread_id"], name: "index_action_items_on_slack_thread_id"
     t.index ["slack_topic_id"], name: "index_action_items_on_slack_topic_id", unique: true
-    t.index ["status"], name: "index_action_items_on_status"
     t.index ["suggested_developer_id"], name: "index_action_items_on_suggested_developer_id"
-    t.check_constraint "action_type::text = ANY (ARRAY['create_ticket'::character varying, 'delegate'::character varying, 'acknowledge'::character varying, 'discuss'::character varying, 'ignore'::character varying]::text[])", name: "action_items_action_type_check"
+  end
+
+  create_table "codebase_analyses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "analysis"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.uuid "delegation_id"
+    t.text "draft_body"
+    t.string "draft_title"
+    t.text "error_message"
+    t.string "github_issue_url"
+    t.text "prompt_context"
+    t.string "repo_name", null: false
+    t.string "repo_path", null: false
+    t.uuid "slack_thread_id", null: false
+    t.datetime "started_at"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["delegation_id"], name: "index_codebase_analyses_on_delegation_id"
+    t.index ["slack_thread_id"], name: "index_codebase_analyses_on_slack_thread_id"
   end
 
   create_table "commitments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -49,14 +66,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
     t.timestamptz "done_at"
     t.date "due_date"
     t.text "slack_thread_url"
-    t.text "source"
+    t.integer "source"
     t.text "stakeholder"
     t.text "text", null: false
     t.datetime "updated_at", null: false
     t.index ["done"], name: "index_commitments_on_done"
     t.index ["done_at"], name: "index_commitments_on_done_at"
     t.index ["due_date"], name: "index_commitments_on_due_date", where: "(done = false)"
-    t.check_constraint "(source = ANY (ARRAY['manual'::text, 'slack'::text, 'meeting'::text])) OR source IS NULL", name: "commitments_source_check"
   end
 
   create_table "daily_logs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -82,28 +98,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
     t.text "slack_thread_ts"
     t.text "source_channel"
     t.text "source_user"
-    t.text "status", default: "delegated", null: false
+    t.integer "status", null: false
     t.text "summary", null: false
     t.datetime "updated_at", null: false
-    t.text "urgency"
+    t.integer "urgency"
     t.index ["delegated_at"], name: "index_delegations_on_delegated_at"
     t.index ["developer_id"], name: "index_delegations_on_developer_id"
     t.index ["issue_type"], name: "index_delegations_on_issue_type"
-    t.index ["status"], name: "index_delegations_on_status"
-    t.check_constraint "(urgency = ANY (ARRAY['Critical'::text, 'High'::text, 'Medium'::text, 'Low'::text])) OR urgency IS NULL", name: "delegations_urgency_check"
-    t.check_constraint "status = ANY (ARRAY['delegated'::text, 'in_progress'::text, 'done'::text, 'blocked'::text])", name: "delegations_status_check"
   end
 
   create_table "developer_notes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "content", null: false
     t.datetime "created_at", null: false
     t.uuid "developer_id", null: false
-    t.text "note_type"
+    t.integer "note_type"
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_developer_notes_on_created_at"
     t.index ["developer_id"], name: "index_developer_notes_on_developer_id"
-    t.index ["note_type"], name: "index_developer_notes_on_note_type"
-    t.check_constraint "(note_type = ANY (ARRAY['good'::text, 'growth'::text, 'concern'::text, 'context'::text])) OR note_type IS NULL", name: "developer_notes_type_check"
   end
 
   create_table "developers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -113,7 +124,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
     t.text "github_handle"
     t.text "growth_areas"
     t.date "joined_team"
-    t.text "level"
+    t.integer "level"
     t.text "name", null: false
     t.text "private_notes"
     t.text "role"
@@ -124,7 +135,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
     t.index ["github_handle"], name: "index_developers_on_github_handle"
     t.index ["name"], name: "index_developers_on_name"
     t.index ["slack_handle"], name: "index_developers_on_slack_handle"
-    t.check_constraint "(level = ANY (ARRAY['Junior'::text, 'Mid'::text, 'Senior'::text, 'Staff'::text])) OR level IS NULL", name: "developers_level_check"
   end
 
   create_table "encrypted_settings", primary_key: ["scope", "key"], force: :cascade do |t|
@@ -194,18 +204,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
     t.text "pr_author"
     t.integer "pr_number", null: false
     t.text "pr_title"
-    t.text "recommendation"
+    t.integer "recommendation"
     t.text "repo", null: false
     t.timestamptz "reviewed_at", default: -> { "now()" }
     t.jsonb "risk_areas", default: []
-    t.text "risk_level"
+    t.integer "risk_level"
     t.text "summary"
     t.datetime "updated_at", null: false
     t.index ["developer_id"], name: "index_pr_reviews_on_developer_id"
     t.index ["repo"], name: "index_pr_reviews_on_repo"
     t.index ["reviewed_at"], name: "index_pr_reviews_on_reviewed_at"
-    t.check_constraint "(recommendation = ANY (ARRAY['APPROVE'::text, 'REQUEST_CHANGES'::text, 'NEEDS_DISCUSSION'::text])) OR recommendation IS NULL", name: "pr_reviews_recommendation_check"
-    t.check_constraint "(risk_level = ANY (ARRAY['LOW'::text, 'MEDIUM'::text, 'HIGH'::text, 'CRITICAL'::text])) OR risk_level IS NULL", name: "pr_reviews_risk_level_check"
   end
 
   create_table "settings", primary_key: ["scope", "key"], force: :cascade do |t|
@@ -234,9 +242,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
   end
 
   create_table "slack_threads", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.text "capture_reason"
+    t.integer "capture_reason"
     t.timestamptz "captured_at", default: -> { "now()" }
-    t.text "category"
+    t.integer "category"
     t.boolean "compressed", default: false, null: false
     t.datetime "created_at", null: false
     t.vector "embedding", limit: 1536
@@ -250,22 +258,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
     t.text "slack_channel_name"
     t.text "slack_thread_ts", null: false
     t.text "slack_url"
-    t.text "status", default: "new", null: false
+    t.integer "status", null: false
     t.text "summary"
     t.text "title"
     t.datetime "updated_at", null: false
     t.index ["captured_at"], name: "index_slack_threads_on_captured_at"
-    t.index ["category"], name: "index_slack_threads_on_category"
     t.index ["compressed"], name: "index_slack_threads_on_compressed", where: "(compressed = false)"
     t.index ["embedding"], name: "index_slack_threads_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
     t.index ["keywords"], name: "index_slack_threads_on_keywords", using: :gin
     t.index ["pending_reanalysis"], name: "index_slack_threads_on_pending_reanalysis", where: "(pending_reanalysis = true)"
     t.index ["slack_channel_id", "slack_thread_ts"], name: "index_slack_threads_on_slack_channel_id_and_slack_thread_ts", unique: true
     t.index ["slack_thread_ts"], name: "index_slack_threads_on_slack_thread_ts", unique: true
-    t.index ["status"], name: "index_slack_threads_on_status"
-    t.check_constraint "(capture_reason = ANY (ARRAY['mention'::text, 'participation'::text, 'brain_emoji'::text, 'channel_stream'::text, 'manual'::text])) OR capture_reason IS NULL", name: "slack_threads_capture_reason_check"
-    t.check_constraint "(category = ANY (ARRAY['architecture'::text, 'stakeholder'::text, 'team-decision'::text, 'incident'::text, 'other'::text])) OR category IS NULL", name: "slack_threads_category_check"
-    t.check_constraint "status = ANY (ARRAY['new'::text, 'triaged'::text, 'actioned'::text, 'archived'::text])", name: "slack_threads_status_check"
   end
 
   create_table "slack_topic_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -279,21 +282,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
   end
 
   create_table "slack_topics", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.text "action_recommendation"
-    t.text "category"
+    t.integer "action_recommendation"
+    t.integer "category"
     t.datetime "created_at", null: false
     t.vector "embedding", limit: 1536
     t.uuid "slack_thread_id", null: false
-    t.text "status", default: "open", null: false
+    t.integer "status", null: false
     t.text "summary", null: false
     t.text "title", null: false
     t.datetime "updated_at", null: false
-    t.text "urgency"
+    t.integer "urgency"
     t.index ["created_at"], name: "index_slack_topics_on_created_at"
     t.index ["embedding"], name: "index_slack_topics_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
     t.index ["slack_thread_id"], name: "index_slack_topics_on_slack_thread_id"
-    t.index ["status"], name: "index_slack_topics_on_status"
-    t.check_constraint "status = ANY (ARRAY['open'::text, 'actioned'::text, 'dismissed'::text])", name: "slack_topics_status_check"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -418,13 +419,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
   end
 
   create_table "watched_channels", primary_key: "channel_id", id: :text, force: :cascade do |t|
-    t.text "capture_mode", null: false
+    t.integer "capture_mode", null: false
     t.text "channel_name", null: false
     t.datetime "created_at", null: false
     t.boolean "enabled", default: true, null: false
     t.datetime "last_polled_at"
     t.datetime "updated_at", null: false
-    t.check_constraint "capture_mode = ANY (ARRAY['full_stream'::text, 'involvement_only'::text, 'ignored'::text])", name: "watched_channels_capture_mode_check"
   end
 
   create_table "watched_repos", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -439,6 +439,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_144140) do
   add_foreign_key "action_items", "developers", column: "suggested_developer_id"
   add_foreign_key "action_items", "slack_threads"
   add_foreign_key "action_items", "slack_topics", on_delete: :cascade
+  add_foreign_key "codebase_analyses", "delegations"
+  add_foreign_key "codebase_analyses", "slack_threads"
   add_foreign_key "delegations", "developers", on_delete: :nullify
   add_foreign_key "developer_notes", "developers", on_delete: :cascade
   add_foreign_key "oneone_sessions", "developers", on_delete: :cascade

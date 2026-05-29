@@ -1,4 +1,5 @@
 FactoryBot.define do
+
   factory :action_item do
     association :slack_topic
     slack_thread { slack_topic.slack_thread }
@@ -12,7 +13,7 @@ FactoryBot.define do
   factory :developer do
     name { "Alice" }
     role { "Backend Engineer" }
-    level { "Senior" }
+    level { "senior" }
   end
 
   factory :oneone_session do
@@ -30,7 +31,7 @@ FactoryBot.define do
 
   factory :delegation do
     summary { "Fix login bug" }
-    urgency { "High" }
+    urgency { "high" }
     status { "delegated" }
     delegated_at { Time.current }
   end
@@ -48,8 +49,8 @@ FactoryBot.define do
     repo { "myorg/myapp" }
     pr_title { "Add user authentication" }
     pr_author { "alice" }
-    recommendation { "APPROVE" }
-    risk_level { "LOW" }
+    recommendation { "approve" }
+    risk_level { "low" }
     summary { "Clean implementation" }
     reviewed_at { Time.current }
   end
@@ -66,7 +67,7 @@ FactoryBot.define do
     title { "Architecture discussion" }
     category { "architecture" }
     summary { "Discussed new service boundaries" }
-    status { "new" }
+    status { "new_thread" }
   end
 
   factory :slack_message do
@@ -119,5 +120,12 @@ FactoryBot.define do
   factory :watched_repo do
     sequence(:full_name) { |n| "org/repo-#{n}" }
     enabled { true }
+  end
+
+  factory :codebase_analysis do
+    slack_thread
+    repo_name { "myorg/myapp" }
+    repo_path { "/tmp/test-repo" }
+    status { "pending" }
   end
 end
