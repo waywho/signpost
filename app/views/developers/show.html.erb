@@ -101,7 +101,7 @@
     <turbo-frame id="oneone_prep">
       <% if @claude_configured %>
         <div class="card mbe-4">
-          <%= button_to prep_developer_path(@developer), method: :post, class: "btn btn--primary", data: { turbo_frame: "oneone_prep" } do %>
+          <%= button_to developer_prep_path(@developer), method: :post, class: "btn btn--primary", data: { turbo_frame: "oneone_prep" } do %>
             <i class="ph ph-brain"></i> Prep 1:1
           <% end %>
           <p class="text-xs mbs-2" style="color: var(--color-text-subtle)">

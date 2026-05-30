@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   resources :developers do
-    member do
-      post :prep
-    end
+    resource :prep, only: [:create], module: :developers
     resources :developer_notes, only: [:create]
     resources :oneone_sessions, only: [:index, :show, :new, :create]
   end
