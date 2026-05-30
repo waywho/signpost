@@ -1,0 +1,3 @@
+<%= turbo_frame_tag "dashboard_pr_reviews" do %>
+  <%= render "dashboard/pr_reviews", reviews: @recent_pr_reviews, pr_queue: @pr_queue %>
+<% end %>

@@ -4,7 +4,7 @@
       <h2 class="font-bold flex items-center gap-half">
         <i class="ph ph-lightbulb" style="color: var(--color-primary)"></i> Insights
       </h2>
-      <%= render "section_refresh", url: insights_dashboard_path, frame: "dashboard_insights" %>
+      <%= render "dashboard/section_refresh", url: dashboard_insights_path, frame: "dashboard_insights" %>
     </div>
 
     <% if alerts.any? %>

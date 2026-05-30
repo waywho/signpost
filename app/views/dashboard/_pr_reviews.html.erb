@@ -5,7 +5,7 @@
       <span class="text-sm font-normal" style="color: var(--color-text-subtle)">Last 5</span>
     </h2>
     <div class="flex items-center gap-half">
-      <%= render "section_refresh", url: pr_reviews_dashboard_path, frame: "dashboard_pr_reviews" %>
+      <%= render "dashboard/section_refresh", url: dashboard_pr_reviews_path, frame: "dashboard_pr_reviews" %>
       <%= link_to "View all →", pr_reviews_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
     </div>
   </div>

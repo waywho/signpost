@@ -5,36 +5,36 @@
   <span class="text-sm" style="color: var(--color-text-subtle)"><%= Date.current.strftime("%A, %B %-d") %></span>
 </div>
 
-<%= turbo_frame_tag "dashboard_action_queue", src: action_queue_dashboard_path do %>
+<%= turbo_frame_tag "dashboard_action_queue", src: dashboard_action_queue_path do %>
   <%= render "section_loading", label: "Action Queue" %>
 <% end %>
 
-<%= turbo_frame_tag "dashboard_insights", src: insights_dashboard_path do %>
+<%= turbo_frame_tag "dashboard_insights", src: dashboard_insights_path do %>
   <%= render "section_loading", label: "Insights" %>
 <% end %>
 
 <div class="dashboard-grid">
-  <%= turbo_frame_tag "dashboard_calendar", src: calendar_dashboard_path do %>
+  <%= turbo_frame_tag "dashboard_calendar", src: dashboard_calendar_path do %>
     <%= render "section_loading", label: "Calendar" %>
   <% end %>
 
-  <%= turbo_frame_tag "dashboard_team_overview", src: team_overview_dashboard_path do %>
+  <%= turbo_frame_tag "dashboard_team_overview", src: dashboard_team_overview_path do %>
     <%= render "section_loading", label: "Team" %>
   <% end %>
 
-  <%= turbo_frame_tag "dashboard_active_delegations", src: active_delegations_dashboard_path do %>
+  <%= turbo_frame_tag "dashboard_active_delegations", src: dashboard_active_delegations_path do %>
     <%= render "section_loading", label: "Delegations" %>
   <% end %>
 
-  <%= turbo_frame_tag "dashboard_commitments", src: commitments_dashboard_path do %>
+  <%= turbo_frame_tag "dashboard_commitments", src: dashboard_commitments_path do %>
     <%= render "section_loading", label: "Commitments" %>
   <% end %>
 
-  <%= turbo_frame_tag "dashboard_pr_reviews", src: pr_reviews_dashboard_path do %>
+  <%= turbo_frame_tag "dashboard_pr_reviews", src: dashboard_pr_reviews_path do %>
     <%= render "section_loading", label: "PR Reviews" %>
   <% end %>
 
-  <%= turbo_frame_tag "dashboard_daily_log", src: daily_log_dashboard_path do %>
+  <%= turbo_frame_tag "dashboard_daily_log", src: dashboard_daily_log_path do %>
     <%= render "section_loading", label: "Daily Log" %>
   <% end %>
 </div>

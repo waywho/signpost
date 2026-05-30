@@ -3,7 +3,7 @@
     <h2 class="font-bold flex items-center gap-half">
       <i class="ph ph-notebook" style="color: var(--color-primary)"></i> Today's Log
     </h2>
-    <%= render "section_refresh", url: daily_log_dashboard_path, frame: "dashboard_daily_log" %>
+    <%= render "dashboard/section_refresh", url: dashboard_daily_log_path, frame: "dashboard_daily_log" %>
   </div>
 
   <%= form_with model: log, url: log.persisted? ? daily_log_path(log) : daily_logs_path do |f| %>

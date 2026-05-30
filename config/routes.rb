@@ -48,8 +48,15 @@ Rails.application.routes.draw do
   resource :settings, only: [:show, :update]
   resource :status, only: :show, controller: "status"
   resource :dashboard, only: :show, controller: "dashboard" do
-    %i[action_queue insights calendar team_overview active_delegations commitments pr_reviews daily_log].each do |section|
-      get section, on: :member
+    scope module: :dashboard do
+      resource :action_queue, only: :show
+      resource :insights, only: :show
+      resource :calendar, only: :show
+      resource :team_overview, only: :show
+      resource :active_delegations, only: :show
+      resource :commitments, only: :show
+      resource :pr_reviews, only: :show
+      resource :daily_log, only: :show
     end
   end
 
