@@ -51,7 +51,7 @@
     <div class="flex items-center gap-half" style="flex-wrap: wrap">
       <%# Create Issue %>
       <% unless analysis.github_issue_url.present? %>
-        <%= form_with url: create_issue_slack_thread_codebase_analysis_path(analysis.slack_thread, analysis),
+        <%= form_with url: slack_thread_codebase_analysis_issue_path(analysis.slack_thread, analysis),
               method: :post, class: "flex items-center gap-half" do |f| %>
           <% if github_repos.any? %>
             <%= f.select :repo, github_repos.map { |r| [r, r] },
@@ -62,7 +62,7 @@
       <% end %>
 
       <%# Delegate %>
-      <%= form_with url: delegate_slack_thread_codebase_analysis_path(analysis.slack_thread, analysis),
+      <%= form_with url: slack_thread_codebase_analysis_delegation_path(analysis.slack_thread, analysis),
             method: :post, class: "flex items-center gap-half" do |f| %>
         <%= f.collection_select :developer_id, developers, :id, :name,
               { include_blank: "— assign —" }, class: "input text-xs" %>
@@ -81,8 +81,8 @@
       <% end %>
 
       <%# Dismiss %>
-      <%= button_to dismiss_slack_thread_codebase_analysis_path(analysis.slack_thread, analysis),
-            method: :post, class: "btn btn--borderless text-xs" do %>
+      <%= button_to slack_thread_codebase_analysis_dismissal_path(analysis.slack_thread, analysis),
+            method: :delete, class: "btn btn--borderless text-xs" do %>
         <i class="ph ph-x"></i> Dismiss
       <% end %>
     </div>
@@ -97,8 +97,8 @@
         <%= f.hidden_field :repo_name, value: analysis.repo_name %>
         <%= f.submit "Retry", class: "btn btn--primary text-xs" %>
       <% end %>
-      <%= button_to dismiss_slack_thread_codebase_analysis_path(analysis.slack_thread, analysis),
-            method: :post, class: "btn btn--borderless text-xs" do %>
+      <%= button_to slack_thread_codebase_analysis_dismissal_path(analysis.slack_thread, analysis),
+            method: :delete, class: "btn btn--borderless text-xs" do %>
         <i class="ph ph-x"></i> Dismiss
       <% end %>
     </div>

@@ -35,12 +35,10 @@ Rails.application.routes.draw do
       resource :delegation, only: [:create], module: :slack_topics
     end
     resources :codebase_analyses, only: %i[create show] do
-      member do
-        post :create_issue
-        post :delegate
-        post :notify
-        post :dismiss
-      end
+      resource :issue, only: [:create], module: :codebase_analyses
+      resource :delegation, only: [:create], module: :codebase_analyses
+      resource :notification, only: [:create], module: :codebase_analyses
+      resource :dismissal, only: [:destroy], module: :codebase_analyses
     end
   end
 
