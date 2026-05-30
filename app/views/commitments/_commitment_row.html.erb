@@ -1,6 +1,6 @@
 <%= turbo_frame_tag dom_id(commitment) do %>
   <div class="card flex items-center gap">
-    <%= button_to done_commitment_path(commitment), method: :patch, class: "btn btn--positive btn--icon btn--borderless flex-item-no-shrink" do %>
+    <%= button_to commitment_completion_path(commitment), method: :post, class: "btn btn--positive btn--icon btn--borderless flex-item-no-shrink" do %>
       <i class="ph ph-circle" style="font-size: var(--text-xl)"></i>
     <% end %>
     <div class="flex flex-col flex-1">

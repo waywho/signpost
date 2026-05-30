@@ -19,15 +19,6 @@ class CommitmentsController < ApplicationController
     end
   end
 
-  def done
-    @commitment = Commitment.find(params[:id])
-    @commitment.update!(done: true, done_at: Time.current)
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to commitments_path }
-    end
-  end
-
   def destroy
     Commitment.find(params[:id]).destroy
     redirect_to commitments_path, notice: "Commitment removed.", status: :see_other

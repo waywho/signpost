@@ -13,9 +13,7 @@ Rails.application.routes.draw do
     end
   end
   resources :commitments, except: [:show, :edit, :update] do
-    member do
-      patch :done
-    end
+    resource :completion, only: [:create], module: :commitments
   end
 
   resources :daily_logs, only: [:create, :update]
