@@ -30,15 +30,11 @@ Rails.application.routes.draw do
     end
   end
   resources :slack_threads, only: %i[index show new create] do
-    member do
-      post :acknowledge
-      post :dismiss
-      post :delegate
-    end
+    resource :acknowledgement, only: [:create], module: :slack_threads
+    resource :dismissal, only: [:create], module: :slack_threads
+    resource :delegation, only: [:create], module: :slack_threads
     resources :slack_topics, only: [] do
-      member do
-        post :delegate, to: "slack_threads#delegate_topic"
-      end
+      resource :delegation, only: [:create], module: :slack_topics
     end
     resources :codebase_analyses, only: %i[create show] do
       member do

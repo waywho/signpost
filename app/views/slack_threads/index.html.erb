@@ -72,10 +72,10 @@
 
         <% if thread.status.in?(%w[new_thread triaged]) %>
           <div class="flex items-center gap-half" style="flex-shrink: 0">
-            <%= button_to acknowledge_slack_thread_path(thread), method: :post, class: "btn btn--positive btn--icon btn--borderless", title: "Acknowledge" do %>
+            <%= button_to slack_thread_acknowledgement_path(thread), method: :post, class: "btn btn--positive btn--icon btn--borderless", title: "Acknowledge" do %>
               <i class="ph ph-check"></i>
             <% end %>
-            <%= button_to dismiss_slack_thread_path(thread), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
+            <%= button_to slack_thread_dismissal_path(thread), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do %>
               <i class="ph ph-x"></i>
             <% end %>
           </div>

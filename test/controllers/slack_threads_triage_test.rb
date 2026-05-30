@@ -6,13 +6,13 @@ class SlackThreadsTriageTest < ActionDispatch::IntegrationTest
   end
 
   test "dismiss marks thread archived" do
-    post dismiss_slack_thread_path(@thread)
+    post slack_thread_dismissal_path(@thread)
     assert_redirected_to slack_threads_path
     assert_equal "archived", @thread.reload.status
   end
 
   test "delegate redirects to new delegation form with pre-filled params" do
-    post delegate_slack_thread_path(@thread)
+    post slack_thread_delegation_path(@thread)
     assert_redirected_to new_delegation_path(delegation: {
       summary: @thread.title,
       slack_channel_id: @thread.slack_channel_id,
@@ -24,7 +24,7 @@ class SlackThreadsTriageTest < ActionDispatch::IntegrationTest
     embedding = Array.new(1536, 0.1)
     topic = @thread.slack_topics.create!(title: "Specific bug", summary: "A specific bug", status: "open", urgency: "high", category: "bug", embedding: embedding)
 
-    post delegate_slack_thread_slack_topic_path(@thread, topic)
+    post slack_thread_slack_topic_delegation_path(@thread, topic)
     assert_redirected_to new_delegation_path(delegation: {
       summary: "Specific bug",
       slack_channel_id: @thread.slack_channel_id,
@@ -36,7 +36,7 @@ class SlackThreadsTriageTest < ActionDispatch::IntegrationTest
 
   test "acknowledge marks thread triaged" do
     # Acknowledge will fail to post to Slack (no real token) but should still mark triaged
-    post acknowledge_slack_thread_path(@thread)
+    post slack_thread_acknowledgement_path(@thread)
     assert_redirected_to slack_threads_path
     assert_equal "triaged", @thread.reload.status
   end

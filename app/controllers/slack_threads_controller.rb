@@ -47,49 +47,6 @@ class SlackThreadsController < ApplicationController
     end
   end
 
-  def acknowledge
-    @slack_thread = SlackThread.find(params[:id])
-    begin
-      SlackService.new.add_reaction(
-        channel: @slack_thread.slack_channel_id,
-        timestamp: @slack_thread.slack_thread_ts,
-        emoji: Setting.get("global", "slack_brain_emoji", default: "brain")
-      )
-    rescue => e
-      Rails.logger.error("Acknowledge failed: #{e.message}")
-    end
-    @slack_thread.update!(status: "triaged")
-    redirect_to slack_threads_path, notice: "Acknowledged."
-  end
-
-  def dismiss
-    @slack_thread = SlackThread.find(params[:id])
-    @slack_thread.update!(status: "archived")
-    redirect_to slack_threads_path, notice: "Dismissed."
-  end
-
-  def delegate
-    @slack_thread = SlackThread.find(params[:id])
-    redirect_to new_delegation_path(delegation: {
-      summary: @slack_thread.title.presence || @slack_thread.summary&.truncate(100) || "From Slack thread",
-      slack_channel_id: @slack_thread.slack_channel_id,
-      slack_thread_ts: @slack_thread.slack_thread_ts
-    })
-  end
-
-  def delegate_topic
-    @slack_thread = SlackThread.find(params[:slack_thread_id])
-    @topic = @slack_thread.slack_topics.find(params[:id])
-
-    redirect_to new_delegation_path(delegation: {
-      summary: @topic.title,
-      slack_channel_id: @slack_thread.slack_channel_id,
-      slack_thread_ts: @slack_thread.slack_thread_ts,
-      urgency: @topic.urgency,
-      issue_type: @topic.category
-    })
-  end
-
   private
 
   def slack_thread_params

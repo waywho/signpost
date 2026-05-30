@@ -21,7 +21,7 @@
   <% end %>
   <% if topic.status == "open" %>
     <div class="mbs-2">
-      <%= button_to delegate_slack_thread_slack_topic_path(topic.slack_thread, topic), method: :post, class: "text-sm", style: "color: var(--color-primary)" do %>
+      <%= button_to slack_thread_slack_topic_delegation_path(topic.slack_thread, topic), method: :post, class: "text-sm", style: "color: var(--color-primary)" do %>
         <i class="ph ph-arrow-bend-up-right"></i> Delegate this topic
       <% end %>
     </div>
