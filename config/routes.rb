@@ -14,16 +14,14 @@ Rails.application.routes.draw do
 
   resources :daily_logs, only: [:create, :update]
 
+  # PR review collection-level actions (before resources to avoid :id matching)
+  scope :pr_reviews, module: :pr_reviews, as: :pr_reviews do
+    resource :ignore, only: [:create]
+    resource :analysis_job, only: [:create]
+    resource :analysis, only: [:new, :show]
+  end
   resources :pr_reviews, only: %i[index show] do
-    member do
-      post :analyze
-    end
-    collection do
-      post :ignore
-      post :queue_analysis
-      get :analyze_pr
-      get :run_analysis
-    end
+    resource :analysis, only: [:create], module: :pr_reviews
   end
   resources :slack_threads, only: %i[index show new create] do
     resource :acknowledgement, only: [:create], module: :slack_threads

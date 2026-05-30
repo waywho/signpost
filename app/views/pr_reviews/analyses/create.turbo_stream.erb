@@ -5,7 +5,7 @@
         <p class="text-sm"><i class="ph ph-warning"></i> Analysis failed: <%= @error %></p>
       </div>
     <% else %>
-      <%= render "analysis", analysis: @analysis, cc_command: @cc_command %>
+      <%= render "pr_reviews/analysis", analysis: @analysis, cc_command: @cc_command %>
     <% end %>
   </div>
 <% end %>

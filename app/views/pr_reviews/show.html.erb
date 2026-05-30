@@ -63,7 +63,7 @@
 <div id="pr_analysis">
   <% if @pr_review.repo.present? && @pr_review.pr_number.present? && @claude_configured && @github_configured %>
     <div class="card mbs-4">
-      <%= button_to analyze_pr_review_path(@pr_review), method: :post, class: "btn btn--primary", data: { turbo_frame: "_top" } do %>
+      <%= button_to pr_review_analysis_path(@pr_review), method: :post, class: "btn btn--primary", data: { turbo_frame: "_top" } do %>
         <i class="ph ph-brain"></i> Analyze with Claude
       <% end %>
       <p class="text-xs mbs-2" style="color: var(--color-text-subtle)">
