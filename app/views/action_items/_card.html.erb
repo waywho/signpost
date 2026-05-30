@@ -56,7 +56,7 @@
 
     <%# Right: actions %>
     <div style="min-inline-size: 16rem; max-inline-size: 18rem">
-      <%= form_with url: act_action_item_path(item), method: :post, id: "act_form_#{item.id}",
+      <%= form_with url: action_item_action_path(item), method: :post, id: "act_form_#{item.id}",
             class: "flex flex-col gap-half",
             data: { controller: "ticket-option" } do |f| %>
         <%= f.collection_select :developer_id, developers, :id, :name,

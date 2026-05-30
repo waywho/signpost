@@ -44,9 +44,7 @@ Rails.application.routes.draw do
   post "/search", to: "search#create"
 
   resources :action_items, only: [:update] do
-    member do
-      post :act
-    end
+    resource :action, only: [:create], module: :action_items
   end
 
   resource :settings, only: [:show, :update]
