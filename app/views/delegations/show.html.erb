@@ -47,7 +47,7 @@
     <span class="text-sm font-bold mbe-2" style="display: block">
       <i class="ph ph-github-logo"></i> Create GitHub Issue
     </span>
-    <%= form_with url: create_issue_delegation_path(@delegation), method: :post, class: "flex items-center gap" do |f| %>
+    <%= form_with url: delegation_issue_path(@delegation), method: :post, class: "flex items-center gap" do |f| %>
       <%= f.select :repo, @github_repos.map { |r| [r, r] },
             { include_blank: "— select repo —" }, class: "input" %>
       <%= f.submit "Create Issue", class: "btn btn--primary" %>

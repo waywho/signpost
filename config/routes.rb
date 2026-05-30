@@ -8,9 +8,7 @@ Rails.application.routes.draw do
   end
 
   resources :delegations do
-    member do
-      post :create_issue
-    end
+    resource :issue, only: [:create], module: :delegations
   end
   resources :commitments, except: [:show, :edit, :update] do
     resource :completion, only: [:create], module: :commitments
