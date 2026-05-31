@@ -10,7 +10,15 @@ class PrAnalysisJob < ApplicationJob
     broadcast_status("Starting analysis...")
 
     service = PrAnalysisService.new
-    result = service.analyze(repo:, pr_number:)
+    prepared = service.prepare(repo:, pr_number:)
+
+    if prepared[:cached]
+      result = prepared[:result]
+    else
+      broadcast_status("Fetching PR diff from GitHub...")
+      broadcast_status("Running Claude analysis...")
+      result = run_analysis(service, prepared)
+    end
 
     cc_command = service.claude_code_command(
       OpenStruct.new(pr_number:, pr_title: result[:summary], repo:),
@@ -28,6 +36,34 @@ class PrAnalysisJob < ApplicationJob
 
   private
 
+  def run_analysis(service, prepared)
+    backend = Setting.get("global", "ai_backend", default: "cli")
+    raw_output = ""
+
+    if backend == "cli"
+      require "open3"
+      Open3.popen3("claude", "-p", "-", "--output-format", "text", "--max-turns", "1") do |stdin, stdout, _stderr, _wait_thr|
+        stdin.write(prepared[:prompt])
+        stdin.close
+
+        stdout.each_line do |line|
+          raw_output << line
+          broadcast_chunk(line)
+        end
+      end
+    else
+      raw_output = ClaudeService.new.analyze(prepared[:prompt], max_tokens: 4000)
+      broadcast_chunk(raw_output)
+    end
+
+    broadcast_status("Parsing results...")
+    service.parse_and_save(
+      raw_output,
+      repo: @repo, pr_number: @pr_number,
+      pr: prepared[:pr], head_sha: prepared[:head_sha], cache_key: prepared[:cache_key]
+    )
+  end
+
   def broadcast_status(text)
     Turbo::StreamsChannel.broadcast_update_to(
       @stream_name,
@@ -40,6 +76,14 @@ class PrAnalysisJob < ApplicationJob
           <p class="text-sm" style="color: var(--color-text-subtle)">#{ERB::Util.html_escape(text)}</p>
         </div>
       HTML
+    )
+  end
+
+  def broadcast_chunk(text)
+    Turbo::StreamsChannel.broadcast_append_to(
+      @stream_name,
+      target: "pr_analysis_stream",
+      html: "<span>#{ERB::Util.html_escape(text)}</span>"
     )
   end
 

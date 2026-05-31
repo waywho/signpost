@@ -53,6 +53,31 @@ class PrAnalysisService
     CMD
   end
 
+  # Returns { prompt:, pr:, head_sha:, cache_key: } for streaming callers
+  def prepare(repo:, pr_number:)
+    pr = @github.pr_detail(repo, pr_number)
+    head_sha = pr[:head_sha]
+    cache_key = "pr_analysis/#{repo}/#{pr_number}/#{head_sha}"
+
+    cached = Rails.cache.read(cache_key)
+    return { cached: true, result: cached, pr:, head_sha:, cache_key: } if cached
+
+    diff = @github.pr_diff(repo, pr_number)
+    comments = @github.pr_comments(repo, pr_number)
+    linked_issue = @github.linked_issue(repo, pr_number)
+    truncated_diff = diff.lines.first(4000).join
+    prompt = build_prompt(pr, truncated_diff, comments, linked_issue)
+
+    { cached: false, prompt:, pr:, head_sha:, cache_key: }
+  end
+
+  def parse_and_save(raw_output, repo:, pr_number:, pr:, head_sha:, cache_key:)
+    result = parse_response(raw_output)
+    Rails.cache.write(cache_key, result)
+    save_to_pr_review(repo, pr_number, pr, head_sha, result)
+    result
+  end
+
   private
 
   def build_prompt(pr, diff, comments, linked_issue)
