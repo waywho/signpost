@@ -15,10 +15,23 @@
       <span class="badge <%= risk_badge_variant(@pr_review.risk_level) %>"><i class="ph ph-shield-warning"></i> <%= @pr_review.risk_level %></span>
     <% end %>
   </div>
-  <h1 class="font-bold text-xl mbe-2">
-    <span style="color: var(--color-text-subtle)">#<%= @pr_review.pr_number %></span>
-    <%= @pr_review.pr_title.presence || "(no title)" %>
-  </h1>
+  <div class="flex items-center justify-between mbe-2">
+    <h1 class="font-bold text-xl">
+      <span style="color: var(--color-text-subtle)">#<%= @pr_review.pr_number %></span>
+      <%= @pr_review.pr_title.presence || "(no title)" %>
+    </h1>
+    <% if @claude_configured && @github_configured %>
+      <% if @job_running %>
+        <button class="btn btn--borderless" disabled>
+          <i class="ph ph-spinner" style="animation: spin 1s linear infinite"></i> Re-analyzing…
+        </button>
+      <% else %>
+        <%= button_to pr_review_analysis_path(@pr_review), method: :post, class: "btn btn--borderless" do %>
+          <i class="ph ph-arrow-clockwise"></i> Re-analyze
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
   <div class="flex items-center gap text-sm" style="color: var(--color-text-subtle)">
     <span><i class="ph ph-git-branch"></i> <%= @pr_review.repo %></span>
     <% if @pr_review.pr_author.present? %><span><i class="ph ph-user"></i> <%= @pr_review.pr_author %></span><% end %>
@@ -61,20 +74,6 @@
     </div>
   <% end %>
 </div>
-
-<% if @claude_configured && @github_configured %>
-  <div class="mbs-4">
-    <% if @job_running %>
-      <button class="btn btn--borderless" disabled>
-        <i class="ph ph-spinner" style="animation: spin 1s linear infinite"></i> Re-analyzing…
-      </button>
-    <% else %>
-      <%= button_to pr_review_analysis_path(@pr_review), method: :post, class: "btn btn--borderless" do %>
-        <i class="ph ph-arrow-clockwise"></i> Re-analyze
-      <% end %>
-    <% end %>
-  </div>
-<% end %>
 
 <style>
   @keyframes spin { to { transform: rotate(360deg); } }
