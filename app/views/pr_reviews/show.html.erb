@@ -33,6 +33,13 @@
   <% end %>
 </div>
 
+<% if @pr_review.summary.present? %>
+  <div class="card mbe-4">
+    <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Summary</h2>
+    <p class="text-sm"><%= @pr_review.summary %></p>
+  </div>
+<% end %>
+
 <%= turbo_stream_from @stream_name %>
 
 <div id="pr_analysis_container">
