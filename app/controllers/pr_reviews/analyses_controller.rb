@@ -1,12 +1,13 @@
 class PrReviews::AnalysesController < ApplicationController
   include ActionController::Live
 
-  # analyze_pr — shows analysis page (cached or streaming)
   def new
     @repo = params[:repo]
     @pr_number = params[:pr_number].to_i
     @pr_title = params[:pr_title]
     @pr_author = params[:pr_author]
+    @stream_name = "pr_analysis:#{@repo}:#{@pr_number}"
+    @job_running = Rails.cache.exist?("pr_analysis_running:#{@repo}:#{@pr_number}")
 
     begin
       if GitHubService.new.configured?
@@ -21,13 +22,13 @@ class PrReviews::AnalysesController < ApplicationController
             OpenStruct.new(pr_number: @pr_number, pr_title: @pr_title, repo: @repo),
             (cached[:risk_areas] || []).map { |r| r[:file] }.compact
           )
-        else
-          review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
-          @has_stale_analysis = review.present? && review.head_sha != current_sha
+        elsif !@job_running
+          PrAnalysisJob.perform_later(repo: @repo, pr_number: @pr_number)
+          @job_running = true
         end
       end
     rescue => e
-      Rails.logger.error("analyze_pr cache check: #{e.message}")
+      Rails.logger.error("analyze_pr: #{e.message}")
     end
   end
 
