@@ -27,5 +27,23 @@ class PrReviewsController < ApplicationController
     @pr_review = PrReview.find(params[:id])
     @claude_configured = ClaudeService.new.configured?
     @github_configured = GitHubService.new.configured?
+    @stream_name = "pr_analysis:#{@pr_review.repo}:#{@pr_review.pr_number}"
+    @job_running = Rails.cache.exist?("pr_analysis_running:#{@pr_review.repo}:#{@pr_review.pr_number}")
+
+    if @pr_review.head_sha.present?
+      cache_key = "pr_analysis/#{@pr_review.repo}/#{@pr_review.pr_number}/#{@pr_review.head_sha}"
+      @analysis = Rails.cache.read(cache_key)
+      if @analysis
+        @cc_command = PrAnalysisService.new.claude_code_command(
+          @pr_review,
+          (@analysis[:risk_areas] || []).map { |r| r[:file] }.compact
+        )
+      end
+    end
+
+    if @analysis.nil? && !@job_running && @claude_configured && @github_configured
+      PrAnalysisJob.perform_later(repo: @pr_review.repo, pr_number: @pr_review.pr_number)
+      @job_running = true
+    end
   end
 end
