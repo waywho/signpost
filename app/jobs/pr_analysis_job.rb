@@ -27,9 +27,11 @@ class PrAnalysisJob < ApplicationJob
 
     broadcast_complete(result, cc_command)
     broadcast_row_update
+    broadcast_reanalyze_button
   rescue => e
     Rails.logger.error("PrAnalysisJob failed for #{@repo}##{@pr_number}: #{e.message}")
     broadcast_error(e.message)
+    broadcast_reanalyze_button
   ensure
     Rails.cache.delete("pr_analysis_running:#{@repo}:#{@pr_number}")
   end
@@ -128,6 +130,25 @@ class PrAnalysisJob < ApplicationJob
              class="text-sm flex items-center gap-half" style="color: var(--color-positive)">
             <i class="ph ph-check-circle"></i> Analyzed
           </a>
+        </div>
+      HTML
+    )
+  end
+
+  def broadcast_reanalyze_button
+    pr_review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
+    return unless pr_review
+
+    Turbo::StreamsChannel.broadcast_replace_to(
+      @stream_name,
+      target: "pr_reanalyze_button",
+      html: <<~HTML
+        <div id="pr_reanalyze_button">
+          <form action="/pr_reviews/#{pr_review.id}/analysis" method="post">
+            <button type="submit" class="btn btn--borderless">
+              <i class="ph ph-arrow-clockwise"></i> Re-analyze
+            </button>
+          </form>
         </div>
       HTML
     )

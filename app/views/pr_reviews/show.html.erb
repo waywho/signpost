@@ -21,15 +21,17 @@
       <%= @pr_review.pr_title.presence || "(no title)" %>
     </h1>
     <% if @claude_configured && @github_configured %>
-      <% if @job_running %>
-        <button class="btn btn--borderless" disabled>
-          <i class="ph ph-spinner" style="animation: spin 1s linear infinite"></i> Re-analyzing…
-        </button>
-      <% else %>
-        <%= button_to pr_review_analysis_path(@pr_review), method: :post, class: "btn btn--borderless" do %>
-          <i class="ph ph-arrow-clockwise"></i> Re-analyze
+      <div id="pr_reanalyze_button">
+        <% if @job_running %>
+          <button class="btn btn--borderless" disabled>
+            <i class="ph ph-spinner" style="animation: spin 1s linear infinite"></i> Re-analyzing…
+          </button>
+        <% else %>
+          <%= button_to pr_review_analysis_path(@pr_review), method: :post, class: "btn btn--borderless" do %>
+            <i class="ph ph-arrow-clockwise"></i> Re-analyze
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     <% end %>
   </div>
   <div class="flex items-center gap text-sm" style="color: var(--color-text-subtle)">
