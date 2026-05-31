@@ -24,6 +24,14 @@ class PrReviewsController < ApplicationController
     @pr_reviews = @pr_reviews.where(risk_level: params[:risk_level]) if params[:risk_level].present?
   end
 
+  def create
+    @pr_review = PrReview.find_or_create_by!(repo: params[:repo], pr_number: params[:pr_number].to_i) do |pr|
+      pr.pr_title = params[:pr_title]
+      pr.pr_author = params[:pr_author]
+    end
+    redirect_to @pr_review
+  end
+
   def show
     @pr_review = PrReview.find(params[:id])
     @claude_configured = ClaudeService.new.configured?

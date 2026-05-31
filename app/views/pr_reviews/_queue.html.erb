@@ -58,7 +58,8 @@
                   <i class="ph ph-check-circle"></i> Analyzed
                 <% end %>
               <% elsif claude_configured %>
-                <%= link_to new_pr_reviews_analysis_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
+                <%= button_to pr_reviews_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
+                      method: :post, form: { style: "display: inline" },
                       class: "text-sm", style: "color: var(--color-primary)" do %>
                   <i class="ph ph-brain"></i> Analyze
                 <% end %>

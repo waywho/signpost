@@ -1,38 +1,7 @@
 class PrReviews::AnalysesController < ApplicationController
   include ActionController::Live
 
-  def new
-    @repo = params[:repo]
-    @pr_number = params[:pr_number].to_i
-    @pr_title = params[:pr_title]
-    @pr_author = params[:pr_author]
-    @stream_name = "pr_analysis:#{@repo}:#{@pr_number}"
-    @job_running = Rails.cache.exist?("pr_analysis_running:#{@repo}:#{@pr_number}")
-
-    begin
-      if GitHubService.new.configured?
-        pr = GitHubService.new.pr_detail(@repo, @pr_number)
-        current_sha = pr[:head_sha]
-        cache_key = "pr_analysis/#{@repo}/#{@pr_number}/#{current_sha}"
-        cached = Rails.cache.read(cache_key)
-
-        if cached
-          @analysis = cached
-          @cc_command = PrAnalysisService.new.claude_code_command(
-            OpenStruct.new(pr_number: @pr_number, pr_title: @pr_title, repo: @repo),
-            (cached[:risk_areas] || []).map { |r| r[:file] }.compact
-          )
-        elsif !@job_running
-          PrAnalysisJob.perform_later(repo: @repo, pr_number: @pr_number)
-          @job_running = true
-        end
-      end
-    rescue => e
-      Rails.logger.error("analyze_pr: #{e.message}")
-    end
-  end
-
-  # run_analysis — SSE streaming endpoint
+  # run_analysis — SSE streaming endpoint (kept for evaluation)
   def show
     repo = params[:repo]
     pr_number = params[:pr_number].to_i

@@ -115,13 +115,16 @@ class PrAnalysisJob < ApplicationJob
   end
 
   def broadcast_row_update
+    pr_review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
+    return unless pr_review
+
     actions_id = "pr_queue_actions_#{@repo.tr('/', '_')}_#{@pr_number}"
     Turbo::StreamsChannel.broadcast_replace_to(
       "pr_analysis_results",
       target: actions_id,
       html: <<~HTML
         <div id="#{actions_id}" class="flex items-center gap-half" style="flex-shrink: 0">
-          <a href="/pr_reviews/analysis/new?repo=#{ERB::Util.url_encode(@repo)}&pr_number=#{@pr_number}"
+          <a href="/pr_reviews/#{pr_review.id}"
              class="text-sm flex items-center gap-half" style="color: var(--color-positive)">
             <i class="ph ph-check-circle"></i> Analyzed
           </a>

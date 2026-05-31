@@ -18,9 +18,9 @@ Rails.application.routes.draw do
   scope :pr_reviews, module: :pr_reviews, as: :pr_reviews do
     resource :ignore, only: [:create]
     resource :analysis_job, only: [:create]
-    resource :analysis, only: [:new, :show]
+    resource :analysis, only: [:show]
   end
-  resources :pr_reviews, only: %i[index show] do
+  resources :pr_reviews, only: %i[index show create] do
     resource :analysis, only: [:create], module: :pr_reviews
   end
   resources :slack_threads, only: %i[index show new create] do
