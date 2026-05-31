@@ -4,6 +4,7 @@
   </div>
 <% elsif pr_queue.any? %>
   <% repos = pr_queue.map { |pr| pr[:repo] }.uniq.sort %>
+  <%= turbo_stream_from "pr_analysis_results" %>
   <div class="card mbe-6" data-controller="bulk-select pr-filter">
     <h2 class="font-bold flex items-center gap-half mbe-4">
       <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
@@ -50,7 +51,7 @@
               </span>
             </div>
             <% already_analyzed = analyzed_prs.include?([pr[:repo], pr[:number]]) %>
-            <div class="flex items-center gap-half" style="flex-shrink: 0">
+            <div id="pr_queue_actions_<%= pr[:repo].tr('/', '_') %>_<%= pr[:number] %>" class="flex items-center gap-half" style="flex-shrink: 0">
               <% if already_analyzed %>
                 <%= link_to new_pr_reviews_analysis_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
                       class: "text-sm flex items-center gap-half", style: "color: var(--color-positive)" do %>
