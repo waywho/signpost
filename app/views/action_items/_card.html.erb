@@ -17,7 +17,7 @@
 
       <div class="flex items-center gap text-xs mbe-3" style="color: var(--color-text-subtle)">
         <% if item.slack_thread %>
-          <%= link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "flex items-center gap-half", style: "color: var(--color-text-subtle)" do %>
+          <%= link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "flex items-center gap-half", style: "color: var(--color-text-subtle)", data: { turbo_frame: "_top" } do %>
             <i class="ph ph-chat-dots"></i> <%= item.slack_thread.title.presence || item.slack_thread.slack_channel_name %>
           <% end %>
         <% end %>
