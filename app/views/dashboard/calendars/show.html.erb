@@ -1,3 +1,48 @@
 <%= turbo_frame_tag "dashboard_calendar" do %>
-  <%= render "dashboard/calendar", events: @today_events %>
+  <% if @today_events.present? %>
+    <div class="card">
+      <div class="flex items-center justify-between mbe-4">
+        <h2 class="font-bold flex items-center gap-half">
+          <i class="ph ph-calendar" style="color: var(--color-primary)"></i> Today's Schedule
+          <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= @today_events.size %>)</span>
+        </h2>
+        <%= render "dashboard/section_refresh", url: dashboard_calendar_path, frame: "dashboard_calendar" %>
+      </div>
+
+      <div class="flex flex-col gap-half">
+        <% @today_events.each do |event| %>
+          <div class="flex items-center gap" style="padding-block: var(--size-2); border-block-end: 1px solid var(--color-border)">
+            <div class="text-xs" style="color: var(--color-text-subtle); min-inline-size: 5rem; flex-shrink: 0">
+              <%= event[:start_time].strftime("%-I:%M %p") %>
+            </div>
+
+            <div class="flex flex-col flex-1" style="min-inline-size: 0">
+              <span class="font-bold text-sm" style="<%= 'color: var(--color-primary)' if event[:is_oneone] %>">
+                <%= event[:title] %>
+              </span>
+              <% if event[:matched_developer] %>
+                <span class="text-xs" style="color: var(--color-text-subtle)">
+                  <i class="ph ph-user"></i> <%= event[:matched_developer].name %>
+                  <% if event[:matched_developer].role.present? %> · <%= event[:matched_developer].role %><% end %>
+                </span>
+              <% end %>
+            </div>
+
+            <% if event[:is_oneone] && event[:matched_developer] && event[:start_time] > Time.current %>
+              <%= link_to developer_path(event[:matched_developer]), class: "text-xs", style: "color: var(--color-primary); flex-shrink: 0" do %>
+                <i class="ph ph-brain"></i> Prep
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% elsif @today_events.nil? %>
+    <%# Not configured — don't show anything %>
+  <% else %>
+    <div class="card text-center" style="color: var(--color-text-subtle)">
+      <i class="ph ph-calendar-blank mbe-2" style="font-size: var(--text-2xl); display: block"></i>
+      <p class="text-sm">No events today.</p>
+    </div>
+  <% end %>
 <% end %>

@@ -1,10 +1,49 @@
 <%= turbo_frame_tag "dashboard_action_queue" do %>
-  <%= render "dashboard/action_queue",
-      actionable_items: @actionable_items,
-      discussion_items: @discussion_items,
-      acknowledge_items: @acknowledge_items,
-      ignored_count: @ignored_count,
-      ignored_items: @ignored_items || [],
-      developers: @developers_for_select,
-      github_repos: @github_repos %>
+  <div class="mbe-6">
+    <div class="flex items-center justify-between mbe-4">
+      <h2 class="font-bold flex items-center gap-half">
+        <i class="ph ph-tray" style="color: var(--color-primary)"></i> Action Queue
+        <% total = @actionable_items.size + @discussion_items.size + @acknowledge_items.size %>
+        <% if total > 0 %>
+          <span class="text-sm font-normal" style="color: var(--color-negative)">(<%= total %> pending)</span>
+        <% end %>
+      </h2>
+      <%= render "dashboard/section_refresh", url: dashboard_action_queue_path, frame: "dashboard_action_queue" %>
+    </div>
+
+    <%# Actionable: create_ticket + delegate %>
+    <% if @actionable_items.any? %>
+      <% @actionable_items.each do |item| %>
+        <%= render "action_items/card", item: item, developers: @developers_for_select, github_repos: @github_repos %>
+      <% end %>
+    <% end %>
+
+    <%# Needs Discussion %>
+    <% if @discussion_items.any? %>
+      <h3 class="font-bold text-xs mbe-2 mbs-4" style="color: var(--color-text-subtle)">Needs Discussion</h3>
+      <% @discussion_items.each do |item| %>
+        <%= render "action_items/discuss_card", item: item %>
+      <% end %>
+    <% end %>
+
+    <%# Acknowledge %>
+    <% if @acknowledge_items.any? %>
+      <h3 class="font-bold text-xs mbe-2 mbs-4" style="color: var(--color-text-subtle)">Acknowledge</h3>
+      <div class="card p-3 mbe-2">
+        <% @acknowledge_items.each do |item| %>
+          <%= render "action_items/acknowledge_card", item: item %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Ignored %>
+    <%= render "action_items/ignored_section", ignored_count: @ignored_count, ignored_items: @ignored_items || [] %>
+
+    <% if total == 0 %>
+      <div class="card text-center" style="color: var(--color-text-subtle)">
+        <i class="ph ph-check-circle mbe-4" style="font-size: var(--text-4xl); display: block; color: var(--color-positive)"></i>
+        <p class="text-sm">All caught up. No pending actions.</p>
+      </div>
+    <% end %>
+  </div>
 <% end %>
