@@ -88,7 +88,7 @@ class PrReviews::AnalysesController < ApplicationController
         send_sse(stream, type: "status", text: "Parsing results...")
 
         result = service.send(:parse_response, raw_output)
-        Rails.cache.write(cache_key, result, expires_in: 7.days)
+        Rails.cache.write(cache_key, result)
         service.send(:save_to_pr_review, repo, pr_number, pr, head_sha, result)
 
         cc_command = service.claude_code_command(

@@ -24,7 +24,7 @@ class PrAnalysisService
     response = @claude.analyze(prompt, max_tokens: 4000)
     result = parse_response(response)
 
-    Rails.cache.write(cache_key, result, expires_in: 7.days)
+    Rails.cache.write(cache_key, result)
     save_to_pr_review(repo, pr_number, pr, head_sha, result)
     result
   end
