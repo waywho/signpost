@@ -9,17 +9,12 @@
 
   <% case analysis.status %>
   <% when "pending", "running" %>
-    <div data-controller="analysis-polling"
-         data-analysis-polling-url-value="<%= slack_thread_codebase_analysis_path(analysis.slack_thread, analysis) %>"
-         data-analysis-polling-interval-value="5000">
-      <turbo-frame id="codebase_analysis_frame_<%= analysis.id %>">
-        <div class="flex items-center gap-half p-3" style="color: var(--color-text-subtle)">
-          <i class="ph ph-spinner" style="animation: spin 1s linear infinite; display: inline-block"></i>
-          <span class="text-sm">
-            <%= analysis.running? ? "Claude is investigating #{analysis.repo_name}…" : "Queued for analysis…" %>
-          </span>
-        </div>
-      </turbo-frame>
+    <%= turbo_stream_from analysis %>
+    <div class="flex items-center gap-half p-3" style="color: var(--color-text-subtle)">
+      <i class="ph ph-spinner" style="animation: spin 1s linear infinite; display: inline-block"></i>
+      <span class="text-sm">
+        <%= analysis.running? ? "Claude is investigating #{analysis.repo_name}…" : "Queued for analysis…" %>
+      </span>
     </div>
 
   <% when "completed" %>
