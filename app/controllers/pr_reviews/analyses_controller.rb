@@ -72,7 +72,7 @@ class PrReviews::AnalysesController < ApplicationController
 
         backend = Setting.get("global", "ai_backend", default: "cli")
         if backend == "cli"
-          Open3.popen3("claude", "-p", "-", "--output-format", "text", "--max-turns", "1") do |stdin, stdout, stderr, wait_thr|
+          Open3.popen3("claude", "-p", "-", "--output-format", "text", "--max-turns", "3") do |stdin, stdout, stderr, wait_thr|
             stdin.write(prompt)
             stdin.close
 

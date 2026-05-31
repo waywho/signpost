@@ -42,7 +42,7 @@ class PrAnalysisJob < ApplicationJob
 
     if backend == "cli"
       require "open3"
-      Open3.popen3("claude", "-p", "-", "--output-format", "text", "--max-turns", "1") do |stdin, stdout, _stderr, _wait_thr|
+      Open3.popen3("claude", "-p", "-", "--output-format", "text", "--max-turns", "3") do |stdin, stdout, _stderr, _wait_thr|
         stdin.write(prepared[:prompt])
         stdin.close
 
