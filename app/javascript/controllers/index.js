@@ -25,9 +25,6 @@ application.register("hello", HelloController)
 import PasswordRevealController from "./password_reveal_controller"
 application.register("password-reveal", PasswordRevealController)
 
-import PrAnalysisStreamController from "./pr_analysis_stream_controller"
-application.register("pr-analysis-stream", PrAnalysisStreamController)
-
 import PrFilterController from "./pr_filter_controller"
 application.register("pr-filter", PrFilterController)
 
