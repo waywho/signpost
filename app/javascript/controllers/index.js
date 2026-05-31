@@ -2,61 +2,7 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "controllers/application"
 
-import AnalysisStreamController from "./analysis_stream_controller"
-application.register("analysis-stream", AnalysisStreamController)
-
-import AutoSubmitController from "./auto_submit_controller"
-application.register("auto-submit", AutoSubmitController)
-
-import BulkSelectController from "./bulk_select_controller"
-application.register("bulk-select", BulkSelectController)
-
-import DailyLogController from "./daily_log_controller"
-application.register("daily-log", DailyLogController)
-
-import FlashController from "./flash_controller"
-application.register("flash", FlashController)
-
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
-
-import PasswordRevealController from "./password_reveal_controller"
-application.register("password-reveal", PasswordRevealController)
-
-import PrFilterController from "./pr_filter_controller"
-application.register("pr-filter", PrFilterController)
-
-import RepoFilterController from "./repo_filter_controller"
-application.register("repo-filter", RepoFilterController)
-
-import RepoPathsController from "./repo_paths_controller"
-application.register("repo-paths", RepoPathsController)
-
-import SearchableSelectController from "./searchable_select_controller"
-application.register("searchable-select", SearchableSelectController)
-
-import SettingsNavController from "./settings_nav_controller"
-application.register("settings-nav", SettingsNavController)
-
-import SkillsController from "./skills_controller"
-application.register("skills", SkillsController)
-
-import TabsController from "./tabs_controller"
-application.register("tabs", TabsController)
-
-import ThreadFilterController from "./thread_filter_controller"
-application.register("thread-filter", ThreadFilterController)
-
-import ThreadFormController from "./thread_form_controller"
-application.register("thread-form", ThreadFormController)
-
-import ThreadMessagesController from "./thread_messages_controller"
-application.register("thread-messages", ThreadMessagesController)
-
-import TicketOptionController from "./ticket_option_controller"
-application.register("ticket-option", TicketOptionController)
-
-import ToggleClassController from "./toggle_class_controller"
-application.register("toggle-class", ToggleClassController)
+import { eagerLoadControllersFrom } from '@hotwired/stimulus-loading';
+eagerLoadControllersFrom('controllers', application);
