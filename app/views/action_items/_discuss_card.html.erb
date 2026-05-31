@@ -20,4 +20,9 @@
   </div>
   <p class="font-bold text-sm"><%= item.slack_topic.title %></p>
   <p class="text-xs" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary %></p>
+  <% if item.slack_thread %>
+    <%= link_to slack_thread_path(item.slack_thread), class: "text-xs", style: "color: var(--color-text-subtle)" do %>
+      <i class="ph ph-chat-dots"></i> <%= item.slack_thread.title.presence || "Thread" %>
+    <% end %>
+  <% end %>
 </div>

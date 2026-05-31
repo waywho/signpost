@@ -16,6 +16,11 @@
       <p class="text-sm mbe-3" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary %></p>
 
       <div class="flex items-center gap text-xs mbe-3" style="color: var(--color-text-subtle)">
+        <% if item.slack_thread %>
+          <%= link_to slack_thread_path(item.slack_thread), class: "flex items-center gap-half", style: "color: var(--color-text-subtle)" do %>
+            <i class="ph ph-chat-dots"></i> <%= item.slack_thread.title.presence || item.slack_thread.slack_channel_name %>
+          <% end %>
+        <% end %>
         <% if item.suggested_developer %>
           <span><i class="ph ph-user"></i> <%= item.suggested_developer.name %></span>
           <% if item.suggestion_reason.present? %>
