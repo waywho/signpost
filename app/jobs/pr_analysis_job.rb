@@ -88,69 +88,27 @@ class PrAnalysisJob < ApplicationJob
   end
 
   def broadcast_complete(result, cc_command)
-    pr_review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
-    reanalyze_path = pr_review ? "/pr_reviews/#{pr_review.id}/analysis" : nil
-
     analysis_html = ApplicationController.render(
       partial: "pr_reviews/analysis",
       locals: { analysis: result, cc_command:, repo: @repo, pr_number: @pr_number }
     )
 
-    reanalyze_button = if reanalyze_path
-      <<~BTN
-        <form action="#{reanalyze_path}" method="post" class="mbs-4">
-          <input type="hidden" name="authenticity_token" value="">
-          <button type="submit" class="btn btn--borderless">
-            <i class="ph ph-arrow-clockwise"></i> Re-analyze
-          </button>
-        </form>
-      BTN
-    else
-      ""
-    end
-
     Turbo::StreamsChannel.broadcast_replace_to(
       @stream_name,
       target: "pr_analysis_container",
-      html: <<~HTML
-        <div id="pr_analysis_container">
-          #{analysis_html}
-          #{reanalyze_button}
-        </div>
-      HTML
+      html: "<div id=\"pr_analysis_container\">#{analysis_html}</div>"
     )
   end
 
   def broadcast_error(message)
-    pr_review = PrReview.find_by(repo: @repo, pr_number: @pr_number)
-    reanalyze_path = pr_review ? "/pr_reviews/#{pr_review.id}/analysis" : nil
-
-    reanalyze_button = if reanalyze_path
-      <<~BTN
-        <form action="#{reanalyze_path}" method="post" class="mbs-4">
-          <input type="hidden" name="authenticity_token" value="">
-          <button type="submit" class="btn btn--borderless">
-            <i class="ph ph-arrow-clockwise"></i> Re-analyze
-          </button>
-        </form>
-      BTN
-    else
-      <<~BTN
-        <a href="/pr_reviews/analysis/new?repo=#{ERB::Util.url_encode(@repo)}&pr_number=#{@pr_number}" class="btn btn--borderless mbs-4">
-          <i class="ph ph-arrow-clockwise"></i> Try again
-        </a>
-      BTN
-    end
-
     Turbo::StreamsChannel.broadcast_replace_to(
       @stream_name,
       target: "pr_analysis_container",
       html: <<~HTML
         <div id="pr_analysis_container">
-          <div class="alert alert--negative mbe-4">
+          <div class="alert alert--negative">
             <p class="text-sm"><i class="ph ph-warning"></i> Analysis failed: #{ERB::Util.html_escape(message)}</p>
           </div>
-          #{reanalyze_button}
         </div>
       HTML
     )

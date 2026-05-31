@@ -45,18 +45,6 @@
 <div id="pr_analysis_container">
   <% if @analysis %>
     <%= render "pr_reviews/analysis", analysis: @analysis, cc_command: @cc_command, repo: @pr_review.repo, pr_number: @pr_review.pr_number %>
-
-    <div class="mbs-4">
-      <% if @job_running %>
-        <button class="btn btn--borderless" disabled>
-          <i class="ph ph-spinner" style="animation: spin 1s linear infinite"></i> Re-analyzing…
-        </button>
-      <% else %>
-        <%= button_to pr_review_analysis_path(@pr_review), method: :post, class: "btn btn--borderless" do %>
-          <i class="ph ph-arrow-clockwise"></i> Re-analyze
-        <% end %>
-      <% end %>
-    </div>
   <% elsif @job_running %>
     <div id="pr_analysis_status" class="card text-center p-4" data-controller="analysis-stream">
       <div style="font-size: var(--text-4xl); color: var(--color-primary); animation: spin 1s linear infinite; margin-block-end: var(--size-4)">
@@ -73,6 +61,20 @@
     </div>
   <% end %>
 </div>
+
+<% if @claude_configured && @github_configured %>
+  <div class="mbs-4">
+    <% if @job_running %>
+      <button class="btn btn--borderless" disabled>
+        <i class="ph ph-spinner" style="animation: spin 1s linear infinite"></i> Re-analyzing…
+      </button>
+    <% else %>
+      <%= button_to pr_review_analysis_path(@pr_review), method: :post, class: "btn btn--borderless" do %>
+        <i class="ph ph-arrow-clockwise"></i> Re-analyze
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
 
 <style>
   @keyframes spin { to { transform: rotate(360deg); } }
