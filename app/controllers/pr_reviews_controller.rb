@@ -12,9 +12,10 @@ class PrReviewsController < ApplicationController
     if @pr_queue&.any?
       pr_keys = @pr_queue.map { |pr| [pr[:repo], pr[:number]] }
       @analyzed_prs = PrReview.where(repo: pr_keys.map(&:first), pr_number: pr_keys.map(&:last))
-                              .pluck(:repo, :pr_number).to_set
+                              .pluck(:repo, :pr_number, :id)
+                              .to_h { |repo, pr_number, id| [[repo, pr_number], id] }
     else
-      @analyzed_prs = Set.new
+      @analyzed_prs = {}
     end
 
     @pr_reviews = PrReview.recent

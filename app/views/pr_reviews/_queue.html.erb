@@ -50,10 +50,10 @@
                 <% if pr[:draft] %> · draft<% end %>
               </span>
             </div>
-            <% already_analyzed = analyzed_prs.include?([pr[:repo], pr[:number]]) %>
+            <% pr_review_id = analyzed_prs[[pr[:repo], pr[:number]]] %>
             <div id="pr_queue_actions_<%= pr[:repo].tr('/', '_') %>_<%= pr[:number] %>" class="flex items-center gap-half" style="flex-shrink: 0">
-              <% if already_analyzed %>
-                <%= link_to new_pr_reviews_analysis_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
+              <% if pr_review_id %>
+                <%= link_to pr_review_path(pr_review_id),
                       class: "text-sm flex items-center gap-half", style: "color: var(--color-positive)" do %>
                   <i class="ph ph-check-circle"></i> Analyzed
                 <% end %>
