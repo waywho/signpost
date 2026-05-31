@@ -58,8 +58,8 @@ class PrAnalysisJobTest < ActiveJob::TestCase
     original_cc = PrAnalysisService.instance_method(:claude_code_command)
     PrAnalysisService.define_method(:claude_code_command) { |*_| "claude -p test" }
 
-    # Should not raise — no streaming needed
     PrAnalysisJob.perform_now(repo: @repo, pr_number: @pr_number)
+    refute Rails.cache.exist?("pr_analysis_running:#{@repo}:#{@pr_number}"), "running key should be cleared"
   ensure
     PrAnalysisService.define_method(:prepare, original_prepare)
     PrAnalysisService.define_method(:claude_code_command, original_cc)
