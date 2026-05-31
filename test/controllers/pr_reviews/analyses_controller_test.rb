@@ -60,17 +60,12 @@ class PrReviews::AnalysesControllerTest < ActionDispatch::IntegrationTest
     Rails.cache = ActiveSupport::Cache::NullStore.new
   end
 
-  test "create re-analyzes existing pr_review" do
+  test "create enqueues job and redirects" do
     pr_review = create(:pr_review)
-    mock = Object.new
-    mock.define_singleton_method(:analyze) { |**_| { summary: "test", recommendation: "approve" } }
-    mock.define_singleton_method(:claude_code_command) { |*_| "claude -p test" }
-    original_new = PrAnalysisService.method(:new)
-    PrAnalysisService.define_singleton_method(:new) { |**_| mock }
 
-    post pr_review_analysis_path(pr_review), as: :turbo_stream
-    assert_response :success
-  ensure
-    PrAnalysisService.define_singleton_method(:new, original_new)
+    assert_enqueued_with(job: PrAnalysisJob) do
+      post pr_review_analysis_path(pr_review)
+    end
+    assert_redirected_to pr_review_path(pr_review)
   end
 end

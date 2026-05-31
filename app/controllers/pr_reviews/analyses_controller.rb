@@ -106,25 +106,10 @@ class PrReviews::AnalysesController < ApplicationController
     end
   end
 
-  # Re-analyze existing PrReview
   def create
     @pr_review = PrReview.find(params[:pr_review_id])
-    service = PrAnalysisService.new
-    @analysis = service.analyze(repo: @pr_review.repo, pr_number: @pr_review.pr_number)
-    @cc_command = service.claude_code_command(
-      @pr_review,
-      (@analysis[:risk_areas] || []).map { |r| r[:file] }.compact
-    )
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to @pr_review }
-    end
-  rescue => e
-    @error = e.message
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to @pr_review, alert: "Analysis failed: #{e.message}" }
-    end
+    PrAnalysisJob.perform_later(repo: @pr_review.repo, pr_number: @pr_review.pr_number)
+    redirect_to @pr_review, notice: "Re-analysis started."
   end
 
   private
