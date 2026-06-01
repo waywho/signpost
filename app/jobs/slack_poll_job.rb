@@ -90,7 +90,7 @@ class SlackPollJob < ApplicationJob
       message = item["message"]
       next unless message
       channel_id = message["channel"] || item.dig("channel", "id") || item["channel"]
-      next unless channel_id
+      next unless channel_id && watched_ids.include?(channel_id)
       next unless message["reactions"]&.any? { |r| r["name"] == emoji }
 
       thread_ts = message["thread_ts"] || message["ts"]
