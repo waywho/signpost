@@ -1,5 +1,7 @@
 class Delegation < ApplicationRecord
   belongs_to :developer, optional: true
+  has_many :action_items, dependent: :nullify
+  has_many :codebase_analyses, dependent: :nullify
 
   enum :urgency, { critical: 0, high: 1, medium: 2, low: 3 }
   enum :status, { delegated: 0, in_progress: 1, done: 2, blocked: 3 }, default: :delegated
