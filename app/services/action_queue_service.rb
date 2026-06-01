@@ -1,13 +1,15 @@
 class ActionQueueService
-  def initialize(ticket_draft_service: nil, assignee_suggestion_service: nil)
+  def initialize(ticket_draft_service: nil, assignee_suggestion_service: nil, noise_filter_service: nil)
     @drafter = ticket_draft_service || TicketDraftService.new
     @suggester = assignee_suggestion_service || AssigneeSuggestionService.new
+    @noise_filter = noise_filter_service || NoiseFilterService.new
   end
 
   def process(topic)
     return if ActionItem.exists?(slack_topic_id: topic.id)
     return unless topic.status == "open"
     return unless topic.action_recommendation.in?(ActionItem.action_types.keys)
+    return if @noise_filter.noise?("#{topic.title} #{topic.summary}")
 
     action_type = topic.action_recommendation
     attrs = {
