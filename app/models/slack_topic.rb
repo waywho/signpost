@@ -3,6 +3,7 @@ class SlackTopic < ApplicationRecord
   has_neighbors :embedding
   has_many :slack_topic_messages, dependent: :destroy
   has_many :slack_messages, through: :slack_topic_messages
+  has_many :action_items, dependent: :nullify
 
   enum :category, { bug: 0, feature: 1, question: 2, incident: 3, architecture: 4, process: 5, other: 6 }
   enum :urgency, { critical: 0, high: 1, medium: 2, low: 3 }

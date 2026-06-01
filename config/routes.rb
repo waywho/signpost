@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     resource :acknowledgement, only: [:create], module: :slack_threads
     resource :dismissal, only: [:create], module: :slack_threads
     resource :delegation, only: [:create], module: :slack_threads
+    resource :topic_merge, only: [:create], module: :slack_topics, controller: :merges
     resources :slack_topics, only: [] do
       resource :delegation, only: [:create], module: :slack_topics
     end

@@ -48,11 +48,27 @@
 <%# Topics %>
 <% if @topics.any? %>
   <div class="mbe-4">
-    <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">
-      <i class="ph ph-list-checks"></i> Topics (<%= @topics.size %>)
-    </h2>
-    <% @topics.each do |topic| %>
-      <%= render "topic", topic: topic %>
+    <div class="flex items-center justify-between mbe-2">
+      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle)">
+        <i class="ph ph-list-checks"></i> Topics (<%= @topics.size %>)
+      </h2>
+    </div>
+    <% if @topics.size > 1 %>
+      <%= form_with url: slack_thread_topic_merge_path(@slack_thread), method: :post, class: "mbe-2" do |f| %>
+        <% @topics.each do |topic| %>
+          <div class="flex items-start gap-half mbe-2">
+            <input type="checkbox" name="topic_ids[]" value="<%= topic.id %>" class="input" style="margin-block-start: 0.25rem; flex-shrink: 0">
+            <div style="flex: 1">
+              <%= render "topic", topic: topic %>
+            </div>
+          </div>
+        <% end %>
+        <%= f.submit "Merge Selected Topics", class: "btn btn--borderless text-xs" %>
+      <% end %>
+    <% else %>
+      <% @topics.each do |topic| %>
+        <%= render "topic", topic: topic %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

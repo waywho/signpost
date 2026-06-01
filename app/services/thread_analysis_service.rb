@@ -31,7 +31,15 @@ class ThreadAnalysisService
 
   def analyze_with_claude(content)
     prompt = <<~PROMPT
-      Analyze this Slack thread for a tech lead. Identify the overall topic AND any distinct sub-issues that may be mixed together (e.g., two different bugs discussed in one thread).
+      Analyze this Slack thread for a tech lead. Identify distinct, actionable topics.
+
+      CRITICAL RULES for topic extraction:
+      - Only create SEPARATE topics when they have genuinely different root causes, different owners, or need different actions.
+      - Related aspects of the SAME issue (e.g. "bug exists" + "bug affects users" + "fix for bug") are ONE topic, not three.
+      - Symptoms and causes of the same problem are ONE topic.
+      - A discussion about how to fix something and the bug itself are ONE topic.
+      - When in doubt, MERGE into fewer topics. One well-described topic is better than three overlapping ones.
+      - Prefer 1-2 topics per thread. Only extract 3+ if the thread genuinely covers unrelated issues.
 
       Thread:
       #{content.truncate(4000)}
@@ -55,7 +63,7 @@ class ThreadAnalysisService
       }
 
       related_message_indices are 0-based indices into the message list above.
-      Always extract at least one topic. If the thread has one clear topic, return one. If multiple issues are mixed, extract each separately.
+      Always extract at least one topic. If the thread has one clear topic, return one.
     PROMPT
 
     raw = @claude.analyze(prompt, max_tokens: 1000)
@@ -74,7 +82,7 @@ class ThreadAnalysisService
       topic_embedding = @embedder.embed(td[:summary])
 
       matched = existing_topics.find do |et|
-        et.embedding && cosine_similarity(et.embedding, topic_embedding) > 0.9
+        et.embedding && cosine_similarity(et.embedding, topic_embedding) > 0.85
       end
 
       topic = if matched
