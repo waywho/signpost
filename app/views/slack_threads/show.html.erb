@@ -6,6 +6,8 @@
   <% end %>
 </div>
 
+<%= turbo_stream_from @slack_thread %>
+
 <%# Action bar %>
 <%= render "action_bar", thread: @slack_thread %>
 
