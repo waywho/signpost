@@ -4,7 +4,11 @@ class ActionItems::ActionsController < ApplicationController
 
     case @item.action_type
     when "create_ticket", "delegate"
-      developer = params[:developer_id].present? ? Developer.find(params[:developer_id]) : @item.suggested_developer
+      developer = if params[:developer_id].present?
+        Developer.find(params[:developer_id])
+      elsif !params.key?(:developer_id)
+        @item.suggested_developer
+      end
       ticket_url = resolve_ticket_url
 
       delegation = Delegation.create!(
