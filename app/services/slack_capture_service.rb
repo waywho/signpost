@@ -9,9 +9,11 @@ class SlackCaptureService
     replies = @slack.conversations_replies(channel: channel_id, ts: thread_ts, limit: 200)
     return nil unless replies.messages
 
-    # Skip threads started by the lead (my own threads)
-    first_message = replies.messages.first
-    return nil if first_message&.dig("user") == lead_slack_id
+    # Skip threads started by the lead (my own threads) — unless explicitly captured
+    unless capture_reason.to_s.in?(%w[brain_emoji manual])
+      first_message = replies.messages.first
+      return nil if first_message&.dig("user") == lead_slack_id
+    end
 
     # Filter out noise messages before any DB writes or embeddings
     real_messages = replies.messages.reject { |m| skip_noise?(m) || m["text"].blank? }
