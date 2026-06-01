@@ -2,21 +2,9 @@
   <div class="flex gap" style="align-items: flex-start">
     <%# Left: info %>
     <div class="flex-1" style="min-inline-size: 0">
-      <div class="flex items-center gap-half mbe-2">
-        <%= urgency_badge(item.slack_topic.urgency) %>
-
-        <span class="font-bold text-sm flex-1"><%= item.slack_topic.title %></span>
-        <% if item.slack_thread.slack_url.present? %>
-          <%= link_to item.slack_thread.slack_url, target: "_blank", class: "text-xs", style: "color: var(--color-text-subtle)" do %>
-            <i class="ph ph-arrow-square-out"></i> Slack
-          <% end %>
-        <% end %>
-      </div>
-
-      <p class="text-sm mbe-3" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary %></p>
-
       <div class="flex items-center gap text-xs mbe-3" style="color: var(--color-text-subtle)">
         <% if item.slack_thread %>
+          <span><i class="ph ph-hash"></i> <%= item.slack_thread.slack_channel_name %></span>
           <%= link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "flex items-center gap-half", style: "color: var(--color-text-subtle)", data: { turbo_frame: "_top" } do %>
             <i class="ph ph-chat-dots"></i> <%= item.slack_thread.title.presence || item.slack_thread.slack_channel_name %>
           <% end %>
@@ -31,6 +19,18 @@
           <span><i class="ph ph-git-branch"></i> <%= item.suggested_repo %></span>
         <% end %>
       </div>
+      <div class="flex items-center gap-half mbe-2">
+        <%= urgency_badge(item.slack_topic.urgency) %>
+
+        <span class="font-bold text-sm flex-1"><%= item.slack_topic.title %></span>
+        <% if item.slack_thread.slack_url.present? %>
+          <%= link_to item.slack_thread.slack_url, target: "_blank", class: "text-xs", style: "color: var(--color-text-subtle)" do %>
+            <i class="ph ph-arrow-square-out"></i> Slack
+          <% end %>
+        <% end %>
+      </div>
+
+      <p class="text-sm mbe-3" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary %></p>
 
       <% if item.related_items.present? && item.related_items.any? %>
         <div class="mbe-3">
