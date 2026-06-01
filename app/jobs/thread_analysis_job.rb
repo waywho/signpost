@@ -3,7 +3,6 @@ class ThreadAnalysisJob < ApplicationJob
 
   def perform(slack_thread_id)
     thread = SlackThread.find(slack_thread_id)
-    return unless thread.pending_reanalysis?
 
     threshold = Setting.get("global", "reanalysis_message_threshold", default: 3).to_i
     quiet_minutes = Setting.get("global", "reanalysis_quiet_minutes", default: 30).to_i

@@ -15,10 +15,7 @@ class SlackCaptureService
     return nil unless replies.messages
 
     # Skip threads started by the lead (my own threads) — unless explicitly captured
-    unless capture_reason.to_s.in?(%w[brain_emoji manual])
-      first_message = replies.messages.first
-      return nil if first_message&.dig("user") == lead_slack_id
-    end
+    return nil if replies.messages.first&.dig("user") == lead_slack_id && %w[brain_emoji manual].exclude?(capture_reason.to_s)
 
     # Filter out noise messages before any DB writes or embeddings
     real_messages = replies.messages.reject { |m| skip_noise?(m) || m["text"].blank? }
