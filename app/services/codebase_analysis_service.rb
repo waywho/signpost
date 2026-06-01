@@ -65,9 +65,9 @@ class CodebaseAnalysisService
   def run_claude(prompt, directory:)
     require "open3"
     stdout, stderr, status = Open3.capture3(
-      "claude", "--directory", directory, "-p", "-",
+      "claude", "-p", "-",
       "--output-format", "text", "--max-turns", "10",
-      stdin_data: prompt
+      stdin_data: prompt, chdir: directory
     )
     raise "Claude CLI failed: #{(stderr.presence || stdout).truncate(500)}" unless status.success?
     stdout.strip
