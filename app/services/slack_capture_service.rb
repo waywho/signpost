@@ -6,7 +6,12 @@ class SlackCaptureService
   end
 
   def capture(channel_id:, thread_ts:, capture_reason:)
-    replies = @slack.conversations_replies(channel: channel_id, ts: thread_ts, limit: 200)
+    replies = begin
+      @slack.conversations_replies(channel: channel_id, ts: thread_ts, limit: 200)
+    rescue Slack::Web::Api::Errors::SlackError => e
+      Rails.logger.error("SlackCaptureService failed for #{channel_id}/#{thread_ts}: #{e.message}")
+      return nil
+    end
     return nil unless replies.messages
 
     # Skip threads started by the lead (my own threads) — unless explicitly captured
