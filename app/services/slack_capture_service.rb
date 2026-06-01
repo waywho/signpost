@@ -10,9 +10,8 @@ class SlackCaptureService
     return nil unless replies.messages
 
     # Skip threads started by the lead (my own threads)
-    my_slack_id = Setting.get("global", "slack_user_id")
     first_message = replies.messages.first
-    return nil if my_slack_id.present? && first_message&.dig("user") == my_slack_id
+    return nil if first_message&.dig("user") == lead_slack_id
 
     # Filter out noise messages before any DB writes or embeddings
     real_messages = replies.messages.reject { |m| skip_noise?(m) || m["text"].blank? }
@@ -77,6 +76,19 @@ class SlackCaptureService
     return true if message["bot_id"].present? || message["bot_profile"].present?
     return true if message["text"].to_s.match?(/requested your review on|review requested/i)
     false
+  end
+
+  def lead_slack_id
+    cached = Setting.get("global", "slack_user_id")
+    return cached if cached.present?
+
+    result = @slack.auth_test
+    user_id = result["user_id"]
+    Setting.set("global", "slack_user_id", user_id) if user_id.present?
+    user_id
+  rescue => e
+    Rails.logger.error("Failed to fetch lead Slack ID: #{e.message}")
+    nil
   end
 
   def resolve_user_name(user_id)
