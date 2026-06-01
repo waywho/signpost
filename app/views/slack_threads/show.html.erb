@@ -20,6 +20,9 @@
   <div class="flex items-center gap-half mbe-2">
     <i class="ph <%= category_icon(@slack_thread.category) %>" style="font-size: var(--text-xl); color: var(--color-primary)"></i>
     <h1 class="font-bold text-2xl" style="flex: 1"><%= @slack_thread.title.presence || "Untitled" %></h1>
+    <%= button_to slack_thread_retriage_path(@slack_thread), method: :post, class: "btn btn--borderless text-xs" do %>
+      <i class="ph ph-arrow-clockwise"></i> Re-triage
+    <% end %>
     <span class="badge <%= status_badge_variant(@slack_thread.status) %>"><%= @slack_thread.status %></span>
     <% if @slack_thread.category.present? %>
       <span class="badge"><%= @slack_thread.category %></span>

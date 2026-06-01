@@ -41,6 +41,13 @@ class SlackThreadsController < ApplicationController
     @slack_thread = SlackThread.new(attrs)
     @slack_thread.captured_at ||= Time.current
     if @slack_thread.save
+      if @slack_thread.slack_channel_id.present? && @slack_thread.slack_thread_ts.present?
+        SlackCaptureJob.perform_later(
+          channel_id: @slack_thread.slack_channel_id,
+          thread_ts: @slack_thread.slack_thread_ts,
+          capture_reason: "manual"
+        )
+      end
       redirect_to @slack_thread, notice: "Thread logged."
     else
       render :new, status: :unprocessable_entity
