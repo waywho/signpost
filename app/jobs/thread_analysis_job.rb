@@ -13,6 +13,7 @@ class ThreadAnalysisJob < ApplicationJob
 
     return if new_count < threshold && minutes_since < quiet_minutes
 
+    thread.update!(pending_reanalysis: true)
     ThreadAnalysisService.new.analyze(thread)
     Turbo::StreamsChannel.broadcast_refresh_to(thread)
   end

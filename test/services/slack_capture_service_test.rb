@@ -42,7 +42,6 @@ class SlackCaptureServiceTest < ActiveSupport::TestCase
     assert_equal "eng", thread.slack_channel_name
     assert_equal "brain_emoji", thread.capture_reason
     assert_equal 2, thread.slack_messages.count
-    assert thread.pending_reanalysis?
   end
 
   test "skips duplicate messages" do

@@ -1,6 +1,6 @@
 class SlackCaptureService
   def initialize(slack_client: nil, embedding_service: nil, noise_filter_service: nil)
-    @slack = slack_client || Slack::Web::Client.new(token: EncryptedSetting.get("credentials", "slack_bot_token"))
+    @slack = slack_client || Slack::Web::Client.new(token: EncryptedSetting.get("credentials", "slack_user_token") || EncryptedSetting.get("credentials", "slack_bot_token"))
     @embedder = embedding_service || EmbeddingService.new
     @noise_filter = noise_filter_service || NoiseFilterService.new
   end
@@ -42,7 +42,6 @@ class SlackCaptureService
     end
 
     if new_count > 0
-      thread.update!(pending_reanalysis: true)
       ThreadAnalysisJob.perform_later(thread.id)
     end
 
