@@ -223,6 +223,23 @@
               <input type="number" name="poll_interval_minutes" value="<%= Setting.get('global', 'poll_interval_minutes', default: 15) %>" class="input">
             </div>
           </div>
+          <div class="flex gap">
+            <div style="flex: 1">
+              <label class="text-sm font-bold mbe-1" style="display: block">Your Slack User ID</label>
+              <% slack_user_id = Setting.get("global", "slack_user_id") %>
+              <% if slack_user_id.present? %>
+                <div class="flex items-center gap-half">
+                  <input type="text" value="<%= slack_user_id %>" class="input" readonly style="color: var(--color-text-subtle)">
+                  <span class="text-xs" style="color: var(--color-positive)"><i class="ph ph-check-circle"></i> Auto-detected</span>
+                </div>
+                <p class="text-xs mbs-1" style="color: var(--color-text-subtle)">Threads you start are skipped during capture.</p>
+              <% else %>
+                <div class="flex items-center gap-half">
+                  <span class="text-xs" style="color: var(--color-text-subtle)"><i class="ph ph-info"></i> Auto-detected on first capture run</span>
+                </div>
+              <% end %>
+            </div>
+          </div>
           <%= f.submit "Save Capture Settings", class: "btn btn--primary", style: "align-self: flex-start" %>
         <% end %>
 
