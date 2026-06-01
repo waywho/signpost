@@ -2,9 +2,8 @@ class SlackThreads::TriagesController < ApplicationController
   def create
     @slack_thread = SlackThread.find(params[:slack_thread_id])
 
-    # Clear existing triage data
     @slack_thread.slack_topics.destroy_all
-    @slack_thread.update!(title: nil, summary: nil, category: nil, keywords: [], last_analyzed_at: nil, pending_reanalysis: true)
+    @slack_thread.update!(pending_reanalysis: true)
 
     if @slack_thread.slack_messages.any?
       ThreadAnalysisJob.perform_later(@slack_thread.id)
