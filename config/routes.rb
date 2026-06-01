@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     resource :analysis, only: [:create], module: :pr_reviews
   end
   resources :slack_threads, only: %i[index show new create] do
-    resource :retriage, only: [:create], module: :slack_threads
+    resource :triage, only: [:create], module: :slack_threads
     resource :acknowledgement, only: [:create], module: :slack_threads
     resource :dismissal, only: [:create], module: :slack_threads
     resource :delegation, only: [:create], module: :slack_threads

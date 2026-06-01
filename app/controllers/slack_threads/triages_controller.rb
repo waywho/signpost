@@ -1,4 +1,4 @@
-class SlackThreads::RetriagesController < ApplicationController
+class SlackThreads::TriagesController < ApplicationController
   def create
     @slack_thread = SlackThread.find(params[:slack_thread_id])
 
