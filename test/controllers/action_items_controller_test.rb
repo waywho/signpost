@@ -15,11 +15,27 @@ class ActionItemsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "dismissed", @topic.reload.status
   end
 
+  test "dismissing last open topic archives the thread" do
+    patch action_item_path(@item), params: { status: "dismissed" }
+    assert_equal "archived", @thread.reload.status
+  end
+
+  test "dismissing does not archive thread when other open topics remain" do
+    create(:slack_topic, slack_thread: @thread, status: "open", urgency: "medium")
+    patch action_item_path(@item), params: { status: "dismissed" }
+    assert_not_equal "archived", @thread.reload.status
+  end
+
   test "update to resolved marks item resolved and topic actioned" do
     patch action_item_path(@item), params: { status: "resolved" }
     assert_redirected_to root_path
     assert_equal "resolved", @item.reload.status
     assert_equal "actioned", @topic.reload.status
+  end
+
+  test "resolving last open topic archives the thread" do
+    patch action_item_path(@item), params: { status: "resolved" }
+    assert_equal "archived", @thread.reload.status
   end
 
   test "update to pending restores item and reopens topic" do

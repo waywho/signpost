@@ -12,6 +12,7 @@ class ActionItemsController < ApplicationController
     @item.update!(status:, actioned_at: Time.current)
     topic_status = TOPIC_STATUS_MAP.fetch(status, "actioned")
     @item.slack_topic.update!(status: topic_status)
+    archive_thread_if_no_open_topics
 
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.remove("action_item_#{@item.id}") }
@@ -25,5 +26,11 @@ class ActionItemsController < ApplicationController
 
   def set_item
     @item = ActionItem.find(params[:id])
+  end
+
+  def archive_thread_if_no_open_topics
+    thread = @item.slack_thread
+    return if thread.archived?
+    thread.update!(status: "archived") unless thread.slack_topics.open.exists?
   end
 end
