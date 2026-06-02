@@ -8,6 +8,6 @@ class SlackTopics::DelegationsController < ApplicationController
       slack_thread_ts: @slack_thread.slack_thread_ts,
       urgency: @topic.urgency,
       issue_type: @topic.category
-    })
+    }, slack_topic_id: @topic.id)
   end
 end

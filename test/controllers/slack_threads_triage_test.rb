@@ -31,7 +31,7 @@ class SlackThreadsTriageTest < ActionDispatch::IntegrationTest
       slack_thread_ts: @thread.slack_thread_ts,
       urgency: "high",
       issue_type: "bug"
-    })
+    }, slack_topic_id: topic.id)
   end
 
   test "acknowledge marks thread triaged" do

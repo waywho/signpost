@@ -57,6 +57,18 @@ class SlackCaptureServiceTest < ActiveSupport::TestCase
     end
   end
 
+  test "skips thread when first message is a PR review request" do
+    def @mock_slack.conversations_replies(channel:, ts:, limit:)
+      OpenStruct.new(messages: [
+        { "ts" => "70.1", "text" => "someone requested your review on PR #42", "user" => "U1" },
+        { "ts" => "70.2", "text" => "looks good, approved", "user" => "U2" }
+      ])
+    end
+
+    result = @service.capture(channel_id: "CPR1", thread_ts: "70.0", capture_reason: "mention")
+    assert_nil result
+  end
+
   test "skips noise messages" do
     def @mock_noise.noise?(text) = true
 

@@ -1,0 +1,10 @@
+<dialog class="offcanvas" data-offcanvas-target="dialog" data-action="cancel->offcanvas#close click->offcanvas#backdropClick">
+  <div class="offcanvas__header">
+    <button type="button" class="btn btn--icon btn--borderless" data-action="offcanvas#close" aria-label="Close">
+      <i class="ph ph-x"></i>
+    </button>
+  </div>
+  <div class="offcanvas__body">
+    <%= turbo_frame_tag "offcanvas", target: "_top", data: { offcanvas_target: "frame" } %>
+  </div>
+</dialog>

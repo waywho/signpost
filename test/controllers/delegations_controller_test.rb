@@ -32,6 +32,21 @@ class DelegationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to delegation_path(Delegation.last)
   end
 
+  test "should action source topic and action items when slack_topic_id provided" do
+    thread = create(:slack_thread)
+    topic = create(:slack_topic, slack_thread: thread, status: "open", urgency: "high")
+    item = create(:action_item, slack_topic: topic, slack_thread: thread,
+                  draft_title: "Fix", draft_body: "Details")
+
+    post delegations_path, params: {
+      delegation: { summary: "Delegated task", urgency: "high", status: "delegated" },
+      slack_topic_id: topic.id
+    }
+
+    assert_equal "actioned", topic.reload.status
+    assert_equal "actioned", item.reload.status
+  end
+
   test "should not create without summary" do
     assert_no_difference("Delegation.count") do
       post delegations_path, params: { delegation: { summary: "" } }

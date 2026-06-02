@@ -25,7 +25,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="<%= content_for(:body_class).presence || 'header-layout' %>">
+  <body class="<%= content_for(:body_class).presence || 'header-layout' %>" data-controller="offcanvas">
     <header id="header">
       <div class="container flex items-center justify-between">
         <%= link_to root_path, class: "flex items-center gap-half font-bold text-lg" do %>
@@ -60,5 +60,7 @@
         </div>
       </main>
     <% end %>
+
+    <%= render "shared/offcanvas" %>
   </body>
 </html>

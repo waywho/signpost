@@ -23,6 +23,13 @@ class SlackThreadsControllerTest < ActionDispatch::IntegrationTest
   test "should get show" do
     get slack_thread_path(@thread)
     assert_response :success
+    assert_select "a", text: /All Threads/
+  end
+
+  test "show wraps content in offcanvas turbo frame when requested" do
+    get slack_thread_path(@thread), headers: { "Turbo-Frame" => "offcanvas" }
+    assert_response :success
+    assert_select "turbo-frame#offcanvas"
   end
 
   test "should get new" do

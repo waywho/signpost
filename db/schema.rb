@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_31_093938) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_02_101325) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -285,6 +285,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_31_093938) do
     t.integer "action_recommendation"
     t.integer "category"
     t.datetime "created_at", null: false
+    t.boolean "drafting", default: false, null: false
     t.vector "embedding", limit: 1536
     t.uuid "slack_thread_id", null: false
     t.integer "status", null: false

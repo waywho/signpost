@@ -25,6 +25,7 @@ class DelegationsController < ApplicationController
     @delegation = Delegation.new(delegation_params)
     @delegation.delegated_at ||= Time.current
     if @delegation.save
+      action_source_topic
       redirect_to @delegation, notice: "Delegation created."
     else
       @developers = Developer.by_name
@@ -54,6 +55,14 @@ class DelegationsController < ApplicationController
 
   def set_delegation
     @delegation = Delegation.find(params[:id])
+  end
+
+  def action_source_topic
+    return unless params[:slack_topic_id].present?
+    topic = SlackTopic.find_by(id: params[:slack_topic_id])
+    return unless topic&.open?
+    topic.update!(status: "actioned")
+    topic.action_items.pending.update_all(status: "actioned", actioned_at: Time.current)
   end
 
   def delegation_params

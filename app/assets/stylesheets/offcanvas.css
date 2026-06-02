@@ -1,0 +1,54 @@
+/* Offcanvas — right-side slide-in panel using native <dialog> */
+
+.offcanvas {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  inline-size: min(40rem, 90vw);
+  max-inline-size: none;
+  max-block-size: none;
+  block-size: 100dvh;
+  overflow-y: auto;
+  background: var(--color-bg);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.offcanvas[open] {
+  transform: translateX(0);
+}
+
+/* Prevent transition on initial page load */
+.offcanvas:not([open]) {
+  transition: none;
+}
+
+.offcanvas::backdrop {
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.25s ease;
+}
+
+.offcanvas[open]::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.offcanvas__header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: var(--size-2) var(--size-4);
+  background: var(--color-bg);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.offcanvas__body {
+  padding: var(--size-4);
+}

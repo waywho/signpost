@@ -17,6 +17,9 @@ class SlackCaptureService
     # Skip threads started by the lead (my own threads) — unless explicitly captured
     return nil if replies.messages.first&.dig("user") == lead_slack_id && %w[brain_emoji manual].exclude?(capture_reason.to_s)
 
+    # Skip PR review threads — first message determines thread purpose
+    return nil if pr_review_thread?(replies.messages.first)
+
     # Filter out noise messages before any DB writes or embeddings
     real_messages = replies.messages.reject { |m| skip_noise?(m) || m["text"].blank? }
     return nil if real_messages.empty?
@@ -79,6 +82,11 @@ class SlackCaptureService
     return true if message["bot_id"].present? || message["bot_profile"].present?
     return true if message["text"].to_s.match?(/requested your review on|review requested/i)
     false
+  end
+
+  def pr_review_thread?(message)
+    return false unless message
+    message["text"].to_s.match?(/requested your review on|review requested/i)
   end
 
   def lead_slack_id

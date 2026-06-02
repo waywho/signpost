@@ -11,6 +11,10 @@ class SlackThreads::AcknowledgementsController < ApplicationController
       Rails.logger.error("Acknowledge failed: #{e.message}")
     end
     @slack_thread.update!(status: "triaged")
+    @slack_thread.slack_topics.open.each do |topic|
+      topic.update!(status: "actioned")
+      topic.action_items.pending.update_all(status: "actioned", actioned_at: Time.current)
+    end
     redirect_to slack_threads_path, notice: "Acknowledged."
   end
 end

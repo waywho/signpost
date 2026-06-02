@@ -1,4 +1,7 @@
 <%= form_with model: delegation, class: "flex flex-col gap" do |f| %>
+  <% if params[:slack_topic_id].present? %>
+    <input type="hidden" name="slack_topic_id" value="<%= params[:slack_topic_id] %>">
+  <% end %>
   <% if delegation.errors.any? %>
     <div class="alert alert--negative">
       <ul class="text-sm"><% delegation.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %></ul>
