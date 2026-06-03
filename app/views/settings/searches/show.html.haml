@@ -6,5 +6,5 @@
     = form_with url: settings_search_path, method: :patch, class: "flex items-end gap" do |f|
       .flex-1
         %label.text-sm.font-bold.mbe-1.block Default Similarity Threshold
-        %input.input{type: "number", name: "search_default_threshold", value: @search_default_threshold, step: "0.05", min: "0", max: "1"}/
+        = f.number_field :search_default_threshold, value: @search_default_threshold, step: "0.05", min: "0", max: "1"
       = f.submit "Save", class: "btn btn--primary"
