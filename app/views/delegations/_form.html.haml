@@ -1,6 +1,6 @@
 = form_with model: delegation, class: "flex flex-col gap" do |f|
   - if params[:slack_topic_id].present?
-    %input{:name => "slack_topic_id", :type => "hidden", :value => "#{params[:slack_topic_id]}"}/
+    = hidden_field_tag :slack_topic_id, params[:slack_topic_id]
   - if delegation.errors.any?
     .alert.alert--negative
       %ul.text-sm
