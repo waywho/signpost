@@ -7,18 +7,18 @@
     <div class="card flex items-center justify-between">
       <div class="flex items-center gap">
         <% if check[:status] == :ok %>
-          <i class="ph ph-check-circle" style="color: var(--color-positive); font-size: var(--text-xl)"></i>
+          <i class="ph ph-check-circle text-positive text-xl"></i>
         <% else %>
-          <i class="ph ph-warning-circle" style="color: var(--color-negative); font-size: var(--text-xl)"></i>
+          <i class="ph ph-warning-circle text-negative text-xl"></i>
         <% end %>
         <span class="font-medium capitalize"><%= name.to_s.tr('_', ' ') %></span>
       </div>
-      <span class="text-sm" style="color: var(--color-text-subtle)"><%= check[:detail] %></span>
+      <span class="text-sm text-subtle"><%= check[:detail] %></span>
     </div>
   <% end %>
 </div>
 
-<p class="text-sm" style="color: var(--color-text-subtle)">
+<p class="text-sm text-subtle">
   <i class="ph ph-clock"></i>
   Checked at <%= Time.current.strftime("%H:%M:%S") %>
 </p>

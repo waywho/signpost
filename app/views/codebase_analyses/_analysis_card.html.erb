@@ -1,6 +1,6 @@
 <div id="codebase_analysis_<%= analysis.id %>" class="card mbe-3">
   <div class="flex items-center gap-half mbe-2">
-    <i class="ph ph-magnifying-glass-plus" style="color: var(--color-primary)"></i>
+    <i class="ph ph-magnifying-glass-plus text-accent"></i>
     <span class="font-bold text-sm flex-1">Analysis: <%= analysis.repo_name %></span>
     <span class="badge <%= analysis.completed? ? 'badge--positive' : analysis.failed? ? 'badge--negative' : 'badge--secondary' %>">
       <%= analysis.status %>
@@ -10,8 +10,8 @@
   <% case analysis.status %>
   <% when "pending", "running" %>
     <%= turbo_stream_from analysis %>
-    <div class="flex items-center gap-half p-3" style="color: var(--color-text-subtle)">
-      <i class="ph ph-spinner" style="animation: spin 1s linear infinite; display: inline-block"></i>
+    <div class="flex items-center gap-half p-3 text-subtle">
+      <i class="ph ph-spinner animate-spin inline-block"></i>
       <span class="text-sm">
         <%= analysis.running? ? "Claude is investigating #{analysis.repo_name}…" : "Queued for analysis…" %>
       </span>
@@ -20,30 +20,30 @@
   <% when "completed" %>
     <% if analysis.analysis.present? %>
       <details class="mbe-3">
-        <summary class="text-xs font-bold" style="color: var(--color-text-subtle); cursor: pointer">
+        <summary class="text-xs font-bold text-subtle cursor-pointer">
           <i class="ph ph-article"></i> Full Analysis
         </summary>
-        <div class="text-sm mbs-2 p-3" style="white-space: pre-wrap; background: var(--color-secondary); border-radius: var(--rounded-lg); max-block-size: 24rem; overflow-y: auto"><%= analysis.analysis %></div>
+        <div class="text-sm mbs-2 p-3 whitespace-pre-wrap bg-secondary rounded-lg max-bs-96"><%= analysis.analysis %></div>
       </details>
     <% end %>
 
     <% if analysis.draft_title.present? %>
       <details open class="mbe-3">
-        <summary class="text-xs font-bold" style="color: var(--color-text-subtle); cursor: pointer">
+        <summary class="text-xs font-bold text-subtle cursor-pointer">
           <i class="ph ph-file-text"></i> Draft: <%= analysis.draft_title %>
         </summary>
-        <div class="text-sm mbs-2 p-3" style="white-space: pre-wrap; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= analysis.draft_body %></div>
+        <div class="text-sm mbs-2 p-3 whitespace-pre-wrap bg-secondary rounded-lg"><%= analysis.draft_body %></div>
       </details>
     <% end %>
 
     <% if analysis.github_issue_url.present? %>
-      <div class="flex items-center gap-half mbe-3 text-xs" style="color: var(--color-positive)">
+      <div class="flex items-center gap-half mbe-3 text-xs text-positive">
         <i class="ph ph-check-circle"></i>
         <%= link_to analysis.github_issue_url, analysis.github_issue_url, target: "_blank" %>
       </div>
     <% end %>
 
-    <div class="flex items-center gap-half" style="flex-wrap: wrap">
+    <div class="flex items-center gap-half flex-wrap">
       <%# Create Issue %>
       <% unless analysis.github_issue_url.present? %>
         <%= form_with url: slack_thread_codebase_analysis_issue_path(analysis.slack_thread, analysis),
@@ -83,7 +83,7 @@
     </div>
 
   <% when "failed" %>
-    <div class="text-sm mbe-3" style="color: var(--color-negative)">
+    <div class="text-sm mbe-3 text-negative">
       <i class="ph ph-warning"></i> <%= analysis.error_message %>
     </div>
     <div class="flex items-center gap-half">

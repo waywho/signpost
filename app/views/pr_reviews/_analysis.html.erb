@@ -1,7 +1,7 @@
 <div class="mbs-4">
   <%# Receiving-review reminder %>
-  <div class="mbe-4 p-3" style="background: var(--color-secondary); border-radius: var(--rounded-lg)">
-    <p class="text-xs" style="color: var(--color-text-subtle)">
+  <div class="mbe-4 p-3 bg-secondary rounded-lg">
+    <p class="text-xs text-subtle">
       <i class="ph ph-info"></i>
       This is AI analysis — verify before acting. Check suggestions against your codebase. Push back on anything that doesn't fit.
     </p>
@@ -14,7 +14,7 @@
     </div>
     <p class="text-sm"><%= analysis[:recommendation_reason] %></p>
     <% if analysis[:summary].present? %>
-      <p class="text-sm mbs-2" style="color: var(--color-text-subtle)"><%= analysis[:summary] %></p>
+      <p class="text-sm mbs-2 text-subtle"><%= analysis[:summary] %></p>
     <% end %>
   </div>
 
@@ -24,8 +24,8 @@
       <% analysis[:critical_flags].each do |flag| %>
         <div class="card mbe-2" style="border-color: var(--color-negative)">
           <div class="flex items-center gap-half">
-            <i class="ph ph-warning-circle" style="color: var(--color-negative)"></i>
-            <span class="font-bold text-sm" style="color: var(--color-negative)"><%= flag[:title] %></span>
+            <i class="ph ph-warning-circle text-negative"></i>
+            <span class="font-bold text-sm text-negative"><%= flag[:title] %></span>
             <span class="badge badge--negative"><%= flag[:severity] %></span>
           </div>
           <p class="text-sm mbs-1"><%= flag[:detail] %></p>
@@ -37,7 +37,7 @@
   <%# Solves ticket %>
   <% if analysis[:solves_ticket].present? %>
     <div class="card mbe-4">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Solves Ticket?</h3>
+      <h3 class="font-bold text-sm mbe-2 text-subtle">Solves Ticket?</h3>
       <p class="text-sm"><strong><%= analysis[:solves_ticket][:result] %></strong> — <%= analysis[:solves_ticket][:explanation] %></p>
     </div>
   <% end %>
@@ -45,8 +45,8 @@
   <%# Before review tips %>
   <% if analysis[:before_review_tips]&.any? %>
     <div class="card mbe-4">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-compass"></i> Focus Areas</h3>
-      <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
+      <h3 class="font-bold text-sm mbe-2 text-subtle"><i class="ph ph-compass"></i> Focus Areas</h3>
+      <ul class="flex flex-col gap-half p-0">
         <% analysis[:before_review_tips].each do |tip| %><li class="text-sm">• <%= tip %></li><% end %>
       </ul>
     </div>
@@ -55,8 +55,8 @@
   <%# Strengths %>
   <% if analysis[:strengths]&.any? %>
     <div class="card mbe-4">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-positive)"><i class="ph ph-check-circle"></i> Strengths</h3>
-      <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
+      <h3 class="font-bold text-sm mbe-2 text-positive"><i class="ph ph-check-circle"></i> Strengths</h3>
+      <ul class="flex flex-col gap-half p-0">
         <% analysis[:strengths].each do |s| %><li class="text-sm">• <%= s %></li><% end %>
       </ul>
     </div>
@@ -70,18 +70,18 @@
     <div class="card mbe-4">
       <h3 class="font-bold text-sm mbe-2" style="color: <%= sev_color %>"><%= severity.capitalize %> Issues (<%= items.size %>)</h3>
       <% items.each do |item| %>
-        <div style="border-block-end: 1px solid var(--color-border); padding-block: var(--size-2)">
-          <div class="text-sm font-bold" style="font-family: monospace">
+        <div class="border-be-main pb-2">
+          <div class="text-sm font-bold font-mono">
             <% if defined?(repo) && defined?(pr_number) && item[:file].present? %>
               <% gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(item[:file].to_s)}" %>
-              <%= link_to "#{item[:file]}#{":#{item[:line]}" if item[:line].present?}", gh_url, target: "_blank", style: "text-decoration: none; color: var(--color-primary)" %>
+              <%= link_to "#{item[:file]}#{":#{item[:line]}" if item[:line].present?}", gh_url, target: "_blank", class: "text-accent", style: "text-decoration: none" %>
             <% else %>
               <%= item[:file] %><% if item[:line].present? %>:<%= item[:line] %><% end %>
             <% end %>
           </div>
           <p class="text-sm"><%= item[:issue] %></p>
-          <p class="text-xs" style="color: var(--color-text-subtle)"><strong>Why:</strong> <%= item[:why] %></p>
-          <p class="text-xs" style="color: var(--color-text-subtle)"><strong>Fix:</strong> <%= item[:fix] %></p>
+          <p class="text-xs text-subtle"><strong>Why:</strong> <%= item[:why] %></p>
+          <p class="text-xs text-subtle"><strong>Fix:</strong> <%= item[:fix] %></p>
         </div>
       <% end %>
     </div>
@@ -91,13 +91,13 @@
   <% { "Risk Areas" => analysis[:risk_areas], "Missing Tests" => analysis[:missing_tests], "Performance Concerns" => analysis[:performance_concerns], "Security Issues" => analysis[:security_issues] }.each do |title, items| %>
     <% next unless items&.any? %>
     <div class="card mbe-4">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><%= title %></h3>
-      <ul class="flex flex-col gap-half" style="list-style: none; padding: 0">
+      <h3 class="font-bold text-sm mbe-2 text-subtle"><%= title %></h3>
+      <ul class="flex flex-col gap-half p-0">
         <% items.each do |item| %>
           <li class="text-sm">•
             <% if item.is_a?(Hash) && item[:file].present? && defined?(repo) && defined?(pr_number) %>
               <% gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(item[:file].to_s)}" %>
-              <%= link_to item[:file], gh_url, target: "_blank", style: "font-family: monospace; color: var(--color-primary)" %> (<%= item[:severity] %>): <%= item[:reason] %>
+              <%= link_to item[:file], gh_url, target: "_blank", class: "font-mono text-accent" %> (<%= item[:severity] %>): <%= item[:reason] %>
             <% elsif item.is_a?(Hash) %>
               <%= "#{item[:file]} (#{item[:severity]}): #{item[:reason]}" %>
             <% else %>
@@ -112,19 +112,19 @@
   <%# Inline tips %>
   <% if analysis[:inline_tips]&.any? %>
     <div class="card mbe-4">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-lightbulb"></i> Per-File Tips</h3>
+      <h3 class="font-bold text-sm mbe-2 text-subtle"><i class="ph ph-lightbulb"></i> Per-File Tips</h3>
       <% analysis[:inline_tips].each do |tip| %>
-        <div style="border-block-end: 1px solid var(--color-border); padding-block: var(--size-2)">
-          <div class="text-sm font-bold" style="font-family: monospace">
+        <div class="border-be-main pb-2">
+          <div class="text-sm font-bold font-mono">
             <% if tip[:file].present? && defined?(repo) && defined?(pr_number) %>
               <% gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(tip[:file].to_s)}" %>
-              <%= link_to tip[:file], gh_url, target: "_blank", style: "color: var(--color-primary)" %>
+              <%= link_to tip[:file], gh_url, target: "_blank", class: "text-accent" %>
             <% else %>
               <%= tip[:file] %>
             <% end %>
           </div>
           <p class="text-sm"><%= tip[:tip] %></p>
-          <p class="text-xs" style="color: var(--color-text-subtle)"><em>Why:</em> <%= tip[:why] %></p>
+          <p class="text-xs text-subtle"><em>Why:</em> <%= tip[:why] %></p>
         </div>
       <% end %>
     </div>
@@ -133,21 +133,21 @@
   <%# Draft comment %>
   <% if analysis[:draft_comment].present? %>
     <div class="card mbe-4">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-chat-text"></i> Draft Comment</h3>
-      <pre class="text-sm p-3" style="white-space: pre-wrap; font-family: inherit; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= analysis[:draft_comment] %></pre>
+      <h3 class="font-bold text-sm mbe-2 text-subtle"><i class="ph ph-chat-text"></i> Draft Comment</h3>
+      <pre class="text-sm p-3 whitespace-pre-wrap bg-secondary rounded-lg" style="font-family: inherit"><%= analysis[:draft_comment] %></pre>
     </div>
   <% end %>
 
   <%# After checklist %>
   <% if analysis[:after_checklist]&.any? %>
     <div class="card mbe-4">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-check-square"></i> Pre-Submit Checklist</h3>
+      <h3 class="font-bold text-sm mbe-2 text-subtle"><i class="ph ph-check-square"></i> Pre-Submit Checklist</h3>
       <% analysis[:after_checklist].each do |item| %>
-        <div class="flex gap" style="padding-block: var(--size-1); border-block-end: 1px solid var(--color-border)">
-          <input type="checkbox" style="flex-shrink: 0; margin-block-start: 0.125rem">
+        <div class="flex gap pb-1 border-be-main">
+          <input type="checkbox" class="flex-item-no-shrink" style="margin-block-start: 0.125rem">
           <div>
             <p class="text-sm"><%= item[:item] %></p>
-            <p class="text-xs" style="color: var(--color-text-subtle)"><%= item[:why] %></p>
+            <p class="text-xs text-subtle"><%= item[:why] %></p>
           </div>
         </div>
       <% end %>
@@ -157,9 +157,9 @@
   <%# Claude Code command %>
   <% if cc_command.present? %>
     <div class="card">
-      <h3 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-terminal"></i> Deep Review (Claude Code)</h3>
-      <p class="text-xs mbe-2" style="color: var(--color-text-subtle)">Run in your terminal for deeper analysis using local codebase + CLAUDE.md</p>
-      <pre class="text-xs p-3" style="white-space: pre-wrap; font-family: monospace; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= cc_command %></pre>
+      <h3 class="font-bold text-sm mbe-2 text-subtle"><i class="ph ph-terminal"></i> Deep Review (Claude Code)</h3>
+      <p class="text-xs mbe-2 text-subtle">Run in your terminal for deeper analysis using local codebase + CLAUDE.md</p>
+      <pre class="text-xs p-3 whitespace-pre-wrap font-mono bg-secondary rounded-lg"><%= cc_command %></pre>
     </div>
   <% end %>
 </div>

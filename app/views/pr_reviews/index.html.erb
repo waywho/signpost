@@ -8,11 +8,11 @@
 
 <%= form_with url: pr_reviews_path, method: :get, class: "flex items-center gap mbe-4",
       data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |f| %>
-  <%= f.text_field :repo, value: params[:repo], placeholder: "Filter by repo…", class: "input", style: "max-inline-size: 16rem" %>
+  <%= f.text_field :repo, value: params[:repo], placeholder: "Filter by repo…", class: "input max-i-3xs" %>
   <%= f.select :recommendation, [["All recommendations", ""], ["Approve", "approve"], ["Request Changes", "request_changes"], ["Needs Discussion", "needs_discussion"]], { selected: params[:recommendation] }, class: "input" %>
   <%= f.select :risk_level, [["All risk levels", ""], ["Low", "low"], ["Medium", "medium"], ["High", "high"], ["Critical", "critical"]], { selected: params[:risk_level] }, class: "input" %>
   <% if params[:repo].present? || params[:recommendation].present? || params[:risk_level].present? %>
-    <%= link_to "Clear", pr_reviews_path, class: "text-sm", style: "color: var(--color-text-subtle)" %>
+    <%= link_to "Clear", pr_reviews_path, class: "text-sm text-subtle" %>
   <% end %>
 <% end %>
 
@@ -20,9 +20,9 @@
   <div class="flex flex-col gap">
     <% @pr_reviews.each do |pr| %>
       <%= link_to pr_review_path(pr), class: "card flex items-center gap", style: "text-decoration: none" do %>
-        <div class="flex flex-col flex-1" style="min-inline-size: 0">
+        <div class="flex flex-col flex-1 min-i-0">
           <span class="font-bold text-sm">#<%= pr.pr_number %> <%= pr.pr_title %></span>
-          <span class="text-xs" style="color: var(--color-text-subtle)"><%= pr.repo %> · <%= pr.pr_author %> · <%= pr.reviewed_at&.strftime("%b %-d") %></span>
+          <span class="text-xs text-subtle"><%= pr.repo %> · <%= pr.pr_author %> · <%= pr.reviewed_at&.strftime("%b %-d") %></span>
         </div>
         <% if pr.recommendation.present? %>
           <span class="badge <%= recommendation_badge_variant(pr.recommendation) %>"><%= pr.recommendation.tr("_", " ") %></span>
@@ -34,8 +34,8 @@
     <% end %>
   </div>
 <% else %>
-  <div class="card text-center" style="color: var(--color-text-subtle)">
-    <i class="ph ph-git-pull-request mbe-4" style="font-size: var(--text-4xl); display: block"></i>
+  <div class="card text-center text-subtle">
+    <i class="ph ph-git-pull-request mbe-4 text-4xl block"></i>
     <p>No reviews found.</p>
   </div>
 <% end %>

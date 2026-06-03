@@ -15,8 +15,8 @@
     </span>
   <% end %>
   <% if topic.drafting? %>
-    <div class="flex items-center gap-half mbs-2 p-2" style="color: var(--color-text-subtle)">
-      <i class="ph ph-spinner" style="animation: spin 1s linear infinite; display: inline-block"></i>
+    <div class="flex items-center gap-half mbs-2 p-2 text-subtle">
+      <i class="ph ph-spinner animate-spin inline-block"></i>
       <span class="text-sm">Drafting ticket…</span>
     </div>
   <% elsif topic.status != "open" %>
@@ -25,23 +25,23 @@
     </span>
     <% if defined?(delegation) && delegation.present? %>
       <div class="mbs-2">
-        <%= link_to delegation_path(delegation), class: "text-sm", style: "color: var(--color-primary)" do %>
+        <%= link_to delegation_path(delegation), class: "text-sm text-accent" do %>
           <i class="ph ph-ticket"></i> View drafted ticket
         <% end %>
       </div>
     <% end %>
   <% else %>
     <div class="flex items-center gap mbs-2">
-      <%= button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "text-sm", style: "color: var(--color-primary)" do %>
+      <%= button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "text-sm text-accent" do %>
         <i class="ph ph-ticket"></i> Draft Ticket
       <% end %>
       <%= link_to new_delegation_path(thread_id: topic.slack_thread.id, slack_topic_id: topic.id), class: "btn btn--primary", data: { turbo: false } do %>
         <i class="ph ph-arrow-bend-up-right"></i> Delegate
       <% end %>
-      <%= button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "actioned" }, class: "text-sm", style: "color: var(--color-text-subtle)" do %>
+      <%= button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "actioned" }, class: "text-sm text-subtle" do %>
         <i class="ph ph-check"></i> Resolve
       <% end %>
-      <%= button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "dismissed" }, class: "text-sm", style: "color: var(--color-text-subtle)" do %>
+      <%= button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "dismissed" }, class: "text-sm text-subtle" do %>
         <i class="ph ph-x"></i> Dismiss
       <% end %>
     </div>

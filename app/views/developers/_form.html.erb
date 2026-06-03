@@ -2,7 +2,7 @@
   <% if developer.errors.any? %>
     <div class="alert alert--negative">
       <p class="font-bold"><%= pluralize(developer.errors.count, "error") %> prevented saving:</p>
-      <ul class="text-sm" style="padding-inline-start: var(--size-4)">
+      <ul class="text-sm pis-4">
         <% developer.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
         <% end %>
@@ -11,71 +11,71 @@
   <% end %>
 
   <div>
-    <%= f.label :name, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <%= f.label :name, class: "text-sm font-bold mbe-1 block" %>
     <%= f.text_field :name, class: "input", required: true %>
   </div>
 
   <div class="flex gap">
-    <div style="flex: 1">
-      <%= f.label :role, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <div class="flex-1">
+      <%= f.label :role, class: "text-sm font-bold mbe-1 block" %>
       <%= f.text_field :role, class: "input" %>
     </div>
-    <div style="flex: 1">
-      <%= f.label :level, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <div class="flex-1">
+      <%= f.label :level, class: "text-sm font-bold mbe-1 block" %>
       <%= f.select :level, [["", ""], ["Junior", "junior"], ["Mid", "mid"], ["Senior", "senior"], ["Staff", "staff"]], {}, class: "input" %>
     </div>
   </div>
 
   <div class="flex gap">
-    <div style="flex: 1">
-      <%= f.label :github_handle, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <div class="flex-1">
+      <%= f.label :github_handle, class: "text-sm font-bold mbe-1 block" %>
       <%= f.text_field :github_handle, class: "input", placeholder: "@handle" %>
     </div>
-    <div style="flex: 1">
-      <%= f.label :slack_handle, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <div class="flex-1">
+      <%= f.label :slack_handle, class: "text-sm font-bold mbe-1 block" %>
       <%= f.text_field :slack_handle, class: "input", placeholder: "@handle" %>
     </div>
   </div>
 
   <div class="flex gap">
     <div style="flex: 0 0 6rem">
-      <%= f.label :color, class: "text-sm font-bold mbe-1", style: "display: block" %>
+      <%= f.label :color, class: "text-sm font-bold mbe-1 block" %>
       <%= f.color_field :color, class: "input" %>
     </div>
-    <div style="flex: 1">
-      <%= f.label :joined_team, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <div class="flex-1">
+      <%= f.label :joined_team, class: "text-sm font-bold mbe-1 block" %>
       <%= f.date_field :joined_team, class: "input" %>
     </div>
   </div>
 
   <div>
-    <%= f.label :strengths, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <%= f.label :strengths, class: "text-sm font-bold mbe-1 block" %>
     <%= f.text_area :strengths, class: "input", rows: 3 %>
   </div>
 
   <div>
-    <%= f.label :growth_areas, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <%= f.label :growth_areas, class: "text-sm font-bold mbe-1 block" %>
     <%= f.text_area :growth_areas, class: "input", rows: 3 %>
   </div>
 
   <div>
-    <%= f.label :career_goals, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <%= f.label :career_goals, class: "text-sm font-bold mbe-1 block" %>
     <%= f.text_area :career_goals, class: "input", rows: 3 %>
   </div>
 
   <div>
-    <%= f.label :private_notes, class: "text-sm font-bold mbe-1", style: "display: block" %>
+    <%= f.label :private_notes, class: "text-sm font-bold mbe-1 block" %>
     <%= f.text_area :private_notes, class: "input", rows: 3, placeholder: "Private notes (not shared)" %>
   </div>
 
   <%# Skills %>
   <div data-controller="skills">
-    <label class="text-sm font-bold mbe-2" style="display: block">Skills</label>
+    <label class="text-sm font-bold mbe-2 block">Skills</label>
     <input type="hidden" name="developer[skills]" value="<%= (developer.skills || []).to_json %>" data-skills-target="hiddenField">
     <div class="mbe-2" data-skills-target="list"></div>
     <div class="flex items-center gap-half">
-      <input type="text" placeholder="Add skill…" class="input flex-1 text-sm" data-skills-target="nameInput"
-             data-action="keydown.enter->skills#add" style="max-inline-size: 16rem">
+      <input type="text" placeholder="Add skill…" class="input flex-1 text-sm max-i-3xs" data-skills-target="nameInput"
+             data-action="keydown.enter->skills#add">
       <button type="button" class="btn" data-action="skills#add">
         <i class="ph ph-plus"></i> Add
       </button>

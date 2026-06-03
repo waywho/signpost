@@ -1,7 +1,7 @@
 <% content_for(:title, "#{@slack_thread.title.presence || 'Thread'} — Tech Lead OS") %>
 
 <div class="mbe-4">
-  <%= link_to slack_threads_path, class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)", data: {turbo_frame: "_top"} do %>
+  <%= link_to slack_threads_path, class: "flex items-center gap-half text-sm text-subtle", data: {turbo_frame: "_top"} do %>
     <i class="ph ph-caret-left"></i> All Threads
   <% end %>
 </div>

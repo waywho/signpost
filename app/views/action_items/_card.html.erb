@@ -1,11 +1,11 @@
 <div id="action_item_<%= item.id %>" class="card mbe-3">
-  <div class="flex gap" style="align-items: flex-start">
+  <div class="flex gap items-start">
     <%# Left: info %>
-    <div class="flex-1" style="min-inline-size: 0">
-      <div class="flex items-center gap text-xs mbe-3" style="color: var(--color-text-subtle)">
+    <div class="flex-1 min-i-0">
+      <div class="flex items-center gap text-xs mbe-3 text-subtle">
         <% if item.slack_thread %>
           <span><i class="ph ph-hash"></i> <%= item.slack_thread.slack_channel_name %></span>
-          <%= link_to slack_thread_path(item.slack_thread), class: "flex items-center gap-half", style: "color: var(--color-text-subtle)",
+          <%= link_to slack_thread_path(item.slack_thread), class: "flex items-center gap-half text-subtle",
                 data: { action: "offcanvas#open", offcanvas_url_param: slack_thread_path(item.slack_thread) } do %>
             <i class="ph ph-chat-dots"></i> <%= item.slack_thread.title.presence || item.slack_thread.slack_channel_name %>
           <% end %>
@@ -25,19 +25,19 @@
 
         <span class="font-bold text-sm flex-1"><%= item.slack_topic.title %></span>
         <% if item.slack_thread.slack_url.present? %>
-          <%= link_to item.slack_thread.slack_url, target: "_blank", class: "text-xs", style: "color: var(--color-text-subtle)" do %>
+          <%= link_to item.slack_thread.slack_url, target: "_blank", class: "text-xs text-subtle" do %>
             <i class="ph ph-arrow-square-out"></i> Slack
           <% end %>
         <% end %>
       </div>
 
-      <p class="text-sm mbe-3" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary %></p>
+      <p class="text-sm mbe-3 text-subtle"><%= item.slack_topic.summary %></p>
 
       <% if item.related_items.present? && item.related_items.any? %>
         <div class="mbe-3">
           <span class="badge">Related:</span>
           <% item.related_items.each do |related| %>
-            <div class="text-xs mbs-1" style="color: var(--color-text-subtle)">
+            <div class="text-xs mbs-1 text-subtle">
               <% if related["thread_id"] %>
                 <%= link_to slack_thread_path(related["thread_id"]), style: "text-decoration: none" do %>
                   <%= related["title"] || "Thread" %> (<%= ((related["similarity"] || 0) * 100).round %>% match)
@@ -52,16 +52,16 @@
 
       <% if item.draft_title.present? %>
         <details class="mbe-3">
-          <summary class="text-xs font-bold" style="color: var(--color-text-subtle); cursor: pointer">
+          <summary class="text-xs font-bold text-subtle cursor-pointer">
             <i class="ph ph-file-text"></i> Draft: <%= item.draft_title %>
           </summary>
-          <div class="text-sm mbs-2 p-3" style="white-space: pre-wrap; background: var(--color-secondary); border-radius: var(--rounded-lg)"><%= item.draft_body %></div>
+          <div class="text-sm mbs-2 p-3 whitespace-pre-wrap bg-secondary rounded-lg"><%= item.draft_body %></div>
         </details>
       <% end %>
     </div>
 
     <%# Right: actions %>
-    <div style="min-inline-size: 16rem; max-inline-size: 18rem">
+    <div class="min-i-64 max-i-2xs">
       <%= form_with url: action_item_action_path(item), method: :post, id: "act_form_#{item.id}",
             class: "flex flex-col gap-half",
             data: { controller: "ticket-option" } do |f| %>

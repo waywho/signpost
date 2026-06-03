@@ -2,7 +2,7 @@
 
 <div class="flex items-center justify-between mbe-6">
   <h1 class="font-bold text-2xl">Daily Lead Briefing</h1>
-  <span class="text-sm" style="color: var(--color-text-subtle)"><%= Date.current.strftime("%A, %B %-d") %></span>
+  <span class="text-sm text-subtle"><%= Date.current.strftime("%A, %B %-d") %></span>
 </div>
 
 <%= turbo_frame_tag "dashboard_action_queue", src: dashboard_action_queue_path do %>

@@ -3,7 +3,7 @@
     <div class="mbe-6">
       <div class="flex items-center justify-between mbe-4">
         <h2 class="font-bold flex items-center gap-half">
-          <i class="ph ph-lightbulb" style="color: var(--color-primary)"></i> Insights
+          <i class="ph ph-lightbulb text-accent"></i> Insights
         </h2>
         <%= render "dashboard/section_refresh", url: dashboard_insights_path, frame: "dashboard_insights" %>
       </div>
@@ -23,8 +23,8 @@
                       else "#f97316"
                       end
             %>
-            <div class="flex items-center gap" style="padding: var(--size-2) var(--size-3); border-radius: var(--rounded-lg); background: <%= bg %>">
-              <i class="ph <%= alert[:icon] %>" style="color: <%= color %>; flex-shrink: 0"></i>
+            <div class="flex items-center gap pb-2 pi-3 rounded-lg" style="background: <%= bg %>">
+              <i class="ph <%= alert[:icon] %> flex-item-no-shrink" style="color: <%= color %>"></i>
               <span class="text-sm" style="color: <%= color %>"><%= alert[:message] %></span>
             </div>
           <% end %>
@@ -33,7 +33,7 @@
 
       <% if @patterns.any? %>
         <div class="card">
-          <h3 class="font-bold text-xs mbe-2" style="color: var(--color-text-subtle)">
+          <h3 class="font-bold text-xs mbe-2 text-subtle">
             <i class="ph ph-chart-line-up"></i> Patterns This Week
           </h3>
           <div class="flex flex-col gap-half">
@@ -54,7 +54,7 @@
                        end
               %>
               <div class="flex items-center gap text-sm">
-                <i class="ph <%= icon %>" style="color: <%= color %>; flex-shrink: 0"></i>
+                <i class="ph <%= icon %> flex-item-no-shrink" style="color: <%= color %>"></i>
                 <span><%= p["message"] %></span>
               </div>
             <% end %>

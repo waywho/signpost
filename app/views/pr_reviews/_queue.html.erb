@@ -1,5 +1,5 @@
 <% if pr_queue.nil? %>
-  <div class="card mbe-6" style="color: var(--color-text-subtle)">
+  <div class="card mbe-6 text-subtle">
     <p class="text-sm"><i class="ph ph-info"></i> Set <code>github_pat</code> in encrypted settings to see your PR queue.</p>
   </div>
 <% elsif pr_queue.any? %>
@@ -7,60 +7,60 @@
   <%= turbo_stream_from "pr_analysis_results" %>
   <div class="card mbe-6" data-controller="bulk-select pr-filter">
     <h2 class="font-bold flex items-center gap-half mbe-4">
-      <i class="ph ph-git-pull-request" style="color: var(--color-primary)"></i>
+      <i class="ph ph-git-pull-request text-accent"></i>
       Awaiting Your Review
-      <span class="text-sm font-normal" style="color: var(--color-text-subtle)">(<%= pr_queue.size %>)</span>
+      <span class="text-sm font-normal text-subtle">(<%= pr_queue.size %>)</span>
     </h2>
 
     <%# Repo tabs + search %>
-    <div class="flex items-center gap mbe-4" style="flex-wrap: wrap">
+    <div class="flex items-center gap mbe-4 flex-wrap">
       <div class="flex items-center gap-half">
         <button type="button" class="badge" data-pr-filter-target="repoTab" data-repo="" data-action="pr-filter#filterRepo" aria-current="page">All</button>
         <% repos.each do |repo| %>
           <button type="button" class="badge" data-pr-filter-target="repoTab" data-repo="<%= repo %>" data-action="pr-filter#filterRepo"><%= repo.split('/').last %></button>
         <% end %>
       </div>
-      <input type="search" placeholder="Search PRs…" class="input text-xs" style="max-inline-size: 14rem"
+      <input type="search" placeholder="Search PRs…" class="input text-xs max-i-56"
              data-pr-filter-target="searchInput" data-action="input->pr-filter#search">
     </div>
 
     <%= form_with url: pr_reviews_ignore_path, method: :post do |f| %>
       <div class="flex items-center gap-half mbe-2" data-bulk-select-target="actions" hidden>
-        <span class="text-xs" style="color: var(--color-text-subtle)" data-count></span>
+        <span class="text-xs text-subtle" data-count></span>
         <%= f.submit "Ignore Selected", class: "btn btn--borderless text-xs" %>
       </div>
-      <div class="flex items-center gap-half mbe-2" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)">
-        <label class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
+      <div class="flex items-center gap-half mbe-2 border-be-main pbe-2">
+        <label class="flex items-center gap-half text-xs text-subtle">
           <input type="checkbox" class="input" data-bulk-select-target="selectAll" data-action="bulk-select#toggleAll">
           Select all
         </label>
       </div>
       <div class="flex flex-col gap-half">
         <% pr_queue.each do |pr| %>
-          <div class="flex items-center gap" style="border-block-end: 1px solid var(--color-border); padding-block-end: var(--size-2)"
+          <div class="flex items-center gap border-be-main pbe-2"
                data-pr-filter-target="item" data-repo="<%= pr[:repo] %>" data-title="<%= pr[:title] %>">
             <input type="checkbox" name="urls[]" value="<%= pr[:url] %>" class="input"
-                   data-bulk-select-target="checkbox" data-action="bulk-select#toggle" style="flex-shrink: 0">
-            <div class="flex flex-col flex-1" style="min-inline-size: 0">
+                   data-bulk-select-target="checkbox" data-action="bulk-select#toggle" class="flex-item-no-shrink">
+            <div class="flex flex-col flex-1 min-i-0">
               <span class="font-bold text-sm">
                 <%= link_to "##{pr[:number]} #{pr[:title]}", pr[:url], target: "_blank", style: "text-decoration: none" %>
               </span>
-              <span class="text-xs" style="color: var(--color-text-subtle)">
+              <span class="text-xs text-subtle">
                 <%= pr[:repo] %> · <%= pr[:author] %> · <%= time_ago_in_words(pr[:created_at]) %> ago
                 <% if pr[:draft] %> · draft<% end %>
               </span>
             </div>
             <% pr_review_id = analyzed_prs[[pr[:repo], pr[:number]]] %>
-            <div id="pr_queue_actions_<%= pr[:repo].tr('/', '_') %>_<%= pr[:number] %>" class="flex items-center gap-half" style="flex-shrink: 0">
+            <div id="pr_queue_actions_<%= pr[:repo].tr('/', '_') %>_<%= pr[:number] %>" class="flex items-center gap-half flex-item-no-shrink">
               <% if pr_review_id %>
                 <%= link_to pr_review_path(pr_review_id),
-                      class: "text-sm flex items-center gap-half", style: "color: var(--color-positive)" do %>
+                      class: "text-sm flex items-center gap-half text-positive" do %>
                   <i class="ph ph-check-circle"></i> Analyzed
                 <% end %>
               <% elsif claude_configured %>
                 <%= button_to pr_reviews_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]),
                       method: :post, form: { style: "display: inline" },
-                      class: "text-sm", style: "color: var(--color-primary)" do %>
+                      class: "text-sm text-accent" do %>
                   <i class="ph ph-brain"></i> Analyze
                 <% end %>
                 <%= button_to pr_reviews_analysis_job_path(repo: pr[:repo], pr_number: pr[:number]),
@@ -78,7 +78,7 @@
       </div>
 
       <div class="flex items-center gap-half mbs-4" data-bulk-select-target="actions" hidden>
-        <span class="text-xs" style="color: var(--color-text-subtle)" data-count></span>
+        <span class="text-xs text-subtle" data-count></span>
         <%= f.submit "Ignore Selected", class: "btn btn--borderless text-xs" %>
       </div>
     <% end %>

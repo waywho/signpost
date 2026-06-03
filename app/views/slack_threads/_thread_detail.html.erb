@@ -12,8 +12,8 @@
 <%# Thread header %>
 <div class="card mbe-4">
   <div class="flex items-center gap-half mbe-2">
-    <i class="ph <%= category_icon(slack_thread.category) %>" style="font-size: var(--text-xl); color: var(--color-primary)"></i>
-    <h1 class="font-bold text-2xl" style="flex: 1"><%= slack_thread.title.presence || "Untitled" %></h1>
+    <i class="ph <%= category_icon(slack_thread.category) %> text-xl text-accent"></i>
+    <h1 class="font-bold text-2xl flex-1"><%= slack_thread.title.presence || "Untitled" %></h1>
     <%= button_to slack_thread_triage_path(slack_thread), method: :post, class: "btn btn--borderless text-xs" do %>
       <i class="ph ph-arrow-clockwise"></i> Triage
     <% end %>
@@ -22,12 +22,12 @@
       <span class="badge"><%= slack_thread.category %></span>
     <% end %>
   </div>
-  <div class="flex items-center gap text-sm" style="color: var(--color-text-subtle)">
+  <div class="flex items-center gap text-sm text-subtle">
     <% if slack_thread.slack_channel_name.present? %><span><i class="ph ph-hash"></i> <%= slack_thread.slack_channel_name %></span><% end %>
     <% if slack_thread.captured_at %><span><i class="ph ph-clock"></i> <%= slack_thread.captured_at.strftime("%B %-d, %Y") %></span><% end %>
     <% if slack_thread.capture_reason.present? %><span><i class="ph ph-lightning"></i> <%= slack_thread.capture_reason.tr("_", " ") %></span><% end %>
     <% if slack_thread.slack_url.present? %>
-      <%= link_to slack_thread.slack_url, target: "_blank", style: "color: var(--color-primary)" do %>
+      <%= link_to slack_thread.slack_url, target: "_blank", class: "text-accent" do %>
         <i class="ph ph-arrow-square-out"></i> Open in Slack
       <% end %>
     <% end %>
@@ -37,7 +37,7 @@
 <%# Summary %>
 <% if slack_thread.summary.present? %>
   <div class="card mbe-4">
-    <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Summary</h2>
+    <h2 class="font-bold text-sm mbe-2 text-subtle">Summary</h2>
     <p class="text-sm"><%= slack_thread.summary %></p>
   </div>
 <% end %>
@@ -46,7 +46,7 @@
 <% if topics.any? %>
   <div class="mbe-4">
     <div class="flex items-center justify-between mbe-2">
-      <h2 class="font-bold text-sm" style="color: var(--color-text-subtle)">
+      <h2 class="font-bold text-sm text-subtle">
         <i class="ph ph-list-checks"></i> Topics (<%= topics.size %>)
       </h2>
     </div>
@@ -54,8 +54,8 @@
       <%= form_with url: slack_thread_topic_merge_path(slack_thread), method: :post, class: "mbe-2" do |f| %>
         <% topics.each do |topic| %>
           <div class="flex items-start gap-half mbe-2">
-            <input type="checkbox" name="topic_ids[]" value="<%= topic.id %>" class="input" style="margin-block-start: 0.25rem; flex-shrink: 0">
-            <div style="flex: 1">
+            <input type="checkbox" name="topic_ids[]" value="<%= topic.id %>" class="input mbs-1 flex-item-no-shrink">
+            <div class="flex-1">
               <%= render "topic", topic: %>
             </div>
           </div>
@@ -73,17 +73,17 @@
 <%# Participants + Keywords %>
 <div class="flex gap mbe-4">
   <% if slack_thread.participants.present? %>
-    <div class="card" style="flex: 1">
-      <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-users"></i> Participants</h2>
-      <div class="flex items-center gap-half" style="flex-wrap: wrap">
+    <div class="card flex-1">
+      <h2 class="font-bold text-sm mbe-2 text-subtle"><i class="ph ph-users"></i> Participants</h2>
+      <div class="flex items-center gap-half flex-wrap">
         <% slack_thread.participants.each do |p| %><span class="text-xs" style="background: var(--color-secondary); padding: 0.125rem 0.5rem; border-radius: var(--rounded-full)"><%= p %></span><% end %>
       </div>
     </div>
   <% end %>
   <% if slack_thread.keywords.present? %>
-    <div class="card" style="flex: 1">
-      <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)"><i class="ph ph-tag"></i> Keywords</h2>
-      <div class="flex items-center gap-half" style="flex-wrap: wrap">
+    <div class="card flex-1">
+      <h2 class="font-bold text-sm mbe-2 text-subtle"><i class="ph ph-tag"></i> Keywords</h2>
+      <div class="flex items-center gap-half flex-wrap">
         <% slack_thread.keywords.each do |kw| %><%= link_to kw, slack_threads_path(q: kw), class: "text-xs", style: "background: var(--color-secondary); padding: 0.125rem 0.5rem; border-radius: var(--rounded-full)" %><% end %>
       </div>
     </div>
@@ -93,41 +93,41 @@
 <%# Messages from SlackMessage model %>
 <% if messages.any? %>
   <div class="card" data-controller="thread-messages">
-    <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+    <h2 class="font-bold text-sm mbe-4 text-subtle">
       <i class="ph ph-chat-dots"></i> Messages (<%= messages.size %>)
     </h2>
     <% messages.first(5).each do |msg| %>
-      <div class="flex gap" style="padding-block: var(--size-2); border-block-start: 1px solid var(--color-border)">
-        <div style="flex-shrink: 0; inline-size: 2rem; block-size: 2rem; background: var(--color-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center">
+      <div class="flex gap pb-2 border-bs-main">
+        <div class="icon-circle">
           <i class="ph ph-user text-xs"></i>
         </div>
-        <div style="flex: 1; min-inline-size: 0">
+        <div class="flex-1 min-i-0">
           <div class="flex items-center gap-half mbe-1">
             <span class="font-bold text-sm"><%= msg.user_name || msg.user_id || "Unknown" %></span>
-            <% if msg.message_ts_at %><span class="text-xs" style="color: var(--color-text-subtle)"><%= msg.message_ts_at.strftime("%-m/%-d %H:%M") %></span><% end %>
+            <% if msg.message_ts_at %><span class="text-xs text-subtle"><%= msg.message_ts_at.strftime("%-m/%-d %H:%M") %></span><% end %>
           </div>
-          <p class="text-sm" style="white-space: pre-wrap; word-break: break-word"><%= msg.content %></p>
+          <p class="text-sm whitespace-pre-wrap break-words"><%= msg.content %></p>
         </div>
       </div>
     <% end %>
     <% if messages.size > 5 %>
-      <div data-thread-messages-target="overflow" style="display: none">
+      <div data-thread-messages-target="overflow" class="hidden">
         <% messages.drop(5).each do |msg| %>
-          <div class="flex gap" style="padding-block: var(--size-2); border-block-start: 1px solid var(--color-border)">
-            <div style="flex-shrink: 0; inline-size: 2rem; block-size: 2rem; background: var(--color-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center">
+          <div class="flex gap pb-2 border-bs-main">
+            <div class="icon-circle">
               <i class="ph ph-user text-xs"></i>
             </div>
-            <div style="flex: 1; min-inline-size: 0">
+            <div class="flex-1 min-i-0">
               <div class="flex items-center gap-half mbe-1">
                 <span class="font-bold text-sm"><%= msg.user_name || msg.user_id || "Unknown" %></span>
-                <% if msg.message_ts_at %><span class="text-xs" style="color: var(--color-text-subtle)"><%= msg.message_ts_at.strftime("%-m/%-d %H:%M") %></span><% end %>
+                <% if msg.message_ts_at %><span class="text-xs text-subtle"><%= msg.message_ts_at.strftime("%-m/%-d %H:%M") %></span><% end %>
               </div>
-              <p class="text-sm" style="white-space: pre-wrap; word-break: break-word"><%= msg.content %></p>
+              <p class="text-sm whitespace-pre-wrap break-words"><%= msg.content %></p>
             </div>
           </div>
         <% end %>
       </div>
-      <button class="text-sm mbs-2" style="color: var(--color-primary)" data-action="click->thread-messages#showAll" data-thread-messages-target="toggle">
+      <button class="text-sm mbs-2 text-accent" data-action="click->thread-messages#showAll" data-thread-messages-target="toggle">
         Show <%= messages.size - 5 %> more
       </button>
     <% end %>
@@ -135,19 +135,19 @@
 <% elsif slack_thread.raw_messages.present? %>
   <%# Fallback to raw_messages JSONB for manually logged threads %>
   <div class="card" data-controller="thread-messages">
-    <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+    <h2 class="font-bold text-sm mbe-4 text-subtle">
       <i class="ph ph-chat-dots"></i> Messages (<%= slack_thread.raw_messages.size %>)
     </h2>
     <% slack_thread.raw_messages.first(5).each do |msg| %>
       <%= render "message", msg: msg %>
     <% end %>
     <% if slack_thread.raw_messages.size > 5 %>
-      <div data-thread-messages-target="overflow" style="display: none">
+      <div data-thread-messages-target="overflow" class="hidden">
         <% slack_thread.raw_messages.drop(5).each do |msg| %>
           <%= render "message", msg: msg %>
         <% end %>
       </div>
-      <button class="text-sm mbs-2" style="color: var(--color-primary)" data-action="click->thread-messages#showAll" data-thread-messages-target="toggle">
+      <button class="text-sm mbs-2 text-accent" data-action="click->thread-messages#showAll" data-thread-messages-target="toggle">
         Show <%= slack_thread.raw_messages.size - 5 %> more
       </button>
     <% end %>

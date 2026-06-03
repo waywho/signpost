@@ -19,9 +19,9 @@
     </div>
   </div>
   <p class="font-bold text-sm"><%= item.slack_topic.title %></p>
-  <p class="text-xs" style="color: var(--color-text-subtle)"><%= item.slack_topic.summary %></p>
+  <p class="text-xs text-subtle"><%= item.slack_topic.summary %></p>
   <% if item.slack_thread %>
-    <%= link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "text-xs", style: "color: var(--color-text-subtle)", data: { turbo_frame: "_top" } do %>
+    <%= link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "text-xs text-subtle", data: { turbo_frame: "_top" } do %>
       <i class="ph ph-chat-dots"></i> <%= item.slack_thread.title.presence || "Thread" %>
     <% end %>
   <% end %>

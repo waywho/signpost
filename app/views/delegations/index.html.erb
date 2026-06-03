@@ -10,7 +10,7 @@
 <div class="flex items-center gap-half mbe-4">
   <% [["All active", nil], ["Delegated", "delegated"], ["In Progress", "in_progress"], ["Blocked", "blocked"], ["Done", "done"]].each do |label, status| %>
     <% active = params[:status] == status || (status.nil? && params[:status].blank?) %>
-    <%= link_to label, delegations_path(status: status), class: "text-sm #{active ? 'font-bold' : ''}", style: active ? '' : 'color: var(--color-text-subtle)' %>
+    <%= link_to label, delegations_path(status: status), class: "text-sm #{active ? 'font-bold' : 'text-subtle'}" %>
   <% end %>
 </div>
 
@@ -19,11 +19,11 @@
     <% @delegations.each do |d| %>
       <%= link_to delegation_path(d), class: "card flex items-center gap", style: "text-decoration: none" do %>
         <% if d.urgency.present? %>
-          <span class="badge <%= urgency_badge_variant(d.urgency) %>" style="min-inline-size: 4rem"><%= d.urgency %></span>
+          <span class="badge <%= urgency_badge_variant(d.urgency) %> min-i-16"><%= d.urgency %></span>
         <% end %>
-        <div class="flex flex-col flex-1" style="min-inline-size: 0">
+        <div class="flex flex-col flex-1 min-i-0">
           <span class="font-bold text-sm"><%= d.summary.truncate(60) %></span>
-          <span class="text-xs" style="color: var(--color-text-subtle)"><%= d.developer&.name || d.developer_name || "Unassigned" %></span>
+          <span class="text-xs text-subtle"><%= d.developer&.name || d.developer_name || "Unassigned" %></span>
         </div>
         <%
           delegation_badge = case d.status
@@ -38,8 +38,8 @@
     <% end %>
   </div>
 <% else %>
-  <div class="card text-center" style="color: var(--color-text-subtle)">
-    <i class="ph ph-clipboard mbe-4" style="font-size: var(--text-4xl); display: block"></i>
+  <div class="card text-center text-subtle">
+    <i class="ph ph-clipboard mbe-4 text-4xl block"></i>
     <p>No delegations found.</p>
   </div>
 <% end %>

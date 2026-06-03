@@ -1,7 +1,7 @@
 <% content_for(:title, "#{@delegation.summary.truncate(30)} — Delegations — Tech Lead OS") %>
 
 <div class="mbe-4">
-  <%= link_to delegations_path, class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)" do %>
+  <%= link_to delegations_path, class: "flex items-center gap-half text-sm text-subtle" do %>
     <i class="ph ph-caret-left"></i> Delegations
   <% end %>
 </div>
@@ -21,7 +21,7 @@
     <% { "Developer" => @delegation.developer&.name || @delegation.developer_name, "Urgency" => @delegation.urgency, "Status" => @delegation.status&.tr("_", " "), "Issue Type" => @delegation.issue_type, "Delegated" => @delegation.delegated_at&.strftime("%B %-d, %Y"), "Resolved" => @delegation.resolved_at&.strftime("%B %-d, %Y") }.each do |label, value| %>
       <% next unless value.present? %>
       <div class="flex items-center gap">
-        <dt class="text-sm font-bold" style="min-inline-size: 6rem"><%= label %></dt>
+        <dt class="text-sm font-bold min-i-24"><%= label %></dt>
         <dd class="text-sm"><%= value %></dd>
       </div>
     <% end %>
@@ -30,8 +30,8 @@
 
 <% if @delegation.handoff_message.present? %>
   <div class="card mbe-4">
-    <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Handoff Message</h2>
-    <p class="text-sm" style="white-space: pre-wrap"><%= @delegation.handoff_message %></p>
+    <h2 class="font-bold text-sm mbe-2 text-subtle">Handoff Message</h2>
+    <p class="text-sm whitespace-pre-wrap"><%= @delegation.handoff_message %></p>
   </div>
 <% end %>
 
@@ -44,7 +44,7 @@
 
 <% if @delegation.github_issue_url.blank? && @github_configured && @github_repos.any? %>
   <div class="card mbe-4">
-    <span class="text-sm font-bold mbe-2" style="display: block">
+    <span class="text-sm font-bold mbe-2 block">
       <i class="ph ph-github-logo"></i> Create GitHub Issue
     </span>
     <%= form_with url: delegation_issue_path(@delegation), method: :post, class: "flex items-center gap" do |f| %>
@@ -56,7 +56,7 @@
 <% end %>
 
 <div class="card">
-  <span class="text-sm font-bold mbe-2" style="display: block">Update Status</span>
+  <span class="text-sm font-bold mbe-2 block">Update Status</span>
   <div class="flex items-center gap-half">
     <% %w[delegated in_progress done blocked].each do |s| %>
       <% if s == @delegation.status %>

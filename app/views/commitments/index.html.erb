@@ -6,7 +6,7 @@
 </div>
 
 <% if @overdue.any? %>
-  <h2 class="font-bold text-sm mbe-2" style="color: var(--color-negative)">
+  <h2 class="font-bold text-sm mbe-2 text-negative">
     <i class="ph ph-warning-circle"></i> Overdue
   </h2>
   <div class="flex flex-col gap mbe-6">
@@ -17,7 +17,7 @@
 <% end %>
 
 <% if @due_soon.any? %>
-  <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">
+  <h2 class="font-bold text-sm mbe-2 text-subtle">
     <i class="ph ph-clock"></i> Due Soon
   </h2>
   <div class="flex flex-col gap mbe-6">
@@ -28,7 +28,7 @@
 <% end %>
 
 <% if @no_date.any? %>
-  <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">
+  <h2 class="font-bold text-sm mbe-2 text-subtle">
     <i class="ph ph-list-bullets"></i> No Due Date
   </h2>
   <div class="flex flex-col gap mbe-6">
@@ -39,22 +39,22 @@
 <% end %>
 
 <% if @overdue.empty? && @due_soon.empty? && @no_date.empty? %>
-  <div class="card text-center" style="color: var(--color-text-subtle)">
-    <i class="ph ph-check-circle mbe-4" style="font-size: var(--text-4xl); display: block; color: var(--color-positive)"></i>
+  <div class="card text-center text-subtle">
+    <i class="ph ph-check-circle mbe-4 text-4xl block text-positive"></i>
     <p>No pending commitments.</p>
   </div>
 <% end %>
 
 <% if @done_recent.any? %>
   <details class="mbs-4">
-    <summary class="text-sm font-bold" style="color: var(--color-text-subtle); cursor: pointer">
+    <summary class="text-sm font-bold text-subtle cursor-pointer">
       <i class="ph ph-check-square"></i> Done (last 10)
     </summary>
     <div class="flex flex-col gap mbs-2">
       <% @done_recent.each do |c| %>
-        <div class="card flex items-center gap" style="opacity: 0.5">
-          <i class="ph ph-check-circle" style="color: var(--color-positive)"></i>
-          <span class="text-sm" style="text-decoration: line-through; flex: 1"><%= c.text %></span>
+        <div class="card flex items-center gap opacity-50">
+          <i class="ph ph-check-circle text-positive"></i>
+          <span class="text-sm line-through flex-1"><%= c.text %></span>
         </div>
       <% end %>
     </div>

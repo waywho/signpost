@@ -10,7 +10,7 @@
     <div class="flex items-center justify-between mbe-6">
       <h1 class="font-bold text-2xl"><%= @developer.name %></h1>
       <div class="flex items-center gap-half">
-        <%= link_to edit_developer_path(@developer), class: "text-sm", style: "color: var(--color-text-subtle)" do %>
+        <%= link_to edit_developer_path(@developer), class: "text-sm text-subtle" do %>
           <i class="ph ph-pencil"></i> Edit
         <% end %>
         <%= button_to developer_path(@developer), method: :delete, class: "btn btn--negative btn--borderless text-sm",
@@ -26,7 +26,7 @@
         <% { "Role" => @developer.role, "Level" => @developer.level, "GitHub" => @developer.github_handle, "Slack" => @developer.slack_handle, "Joined" => @developer.joined_team&.strftime("%B %Y") }.each do |label, value| %>
           <% next unless value.present? %>
           <div class="flex items-center gap">
-            <dt class="text-sm font-bold" style="min-inline-size: 6rem"><%= label %></dt>
+            <dt class="text-sm font-bold min-i-24"><%= label %></dt>
             <dd class="text-sm"><%= value %></dd>
           </div>
         <% end %>
@@ -35,28 +35,28 @@
 
     <% if @developer.strengths.present? %>
       <div class="card mbe-4">
-        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Strengths</h2>
+        <h2 class="font-bold text-sm mbe-2 text-subtle">Strengths</h2>
         <p class="text-sm"><%= @developer.strengths %></p>
       </div>
     <% end %>
 
     <% if @developer.growth_areas.present? %>
       <div class="card mbe-4">
-        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Growth Areas</h2>
+        <h2 class="font-bold text-sm mbe-2 text-subtle">Growth Areas</h2>
         <p class="text-sm"><%= @developer.growth_areas %></p>
       </div>
     <% end %>
 
     <% if @developer.career_goals.present? %>
       <div class="card mbe-4">
-        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Career Goals</h2>
+        <h2 class="font-bold text-sm mbe-2 text-subtle">Career Goals</h2>
         <p class="text-sm"><%= @developer.career_goals %></p>
       </div>
     <% end %>
 
     <% if @developer.skills.present? && @developer.skills.any? %>
       <div class="card mbe-4">
-        <h2 class="font-bold text-sm mbe-2" style="color: var(--color-text-subtle)">Skills</h2>
+        <h2 class="font-bold text-sm mbe-2 text-subtle">Skills</h2>
         <div class="flex flex-col gap-half">
           <% @developer.skills.each do |skill| %>
             <% skill = skill.is_a?(Hash) ? skill : {} %>
@@ -65,7 +65,7 @@
               <div class="flex gap-half">
                 <% rating = (skill["rating"] || skill[:rating] || 0).to_i %>
                 <% 5.times do |i| %>
-                  <i class="ph <%= i < rating ? 'ph-star-fill' : 'ph-star' %>" style="color: <%= i < rating ? 'var(--color-primary)' : 'var(--color-border)' %>"></i>
+                  <i class="ph <%= i < rating ? 'ph-star-fill' : 'ph-star' %> <%= i < rating ? 'text-accent' : 'text-border' %>"></i>
                 <% end %>
               </div>
             </div>
@@ -78,7 +78,7 @@
 
     <%# Notes section %>
     <div class="card mbe-4">
-      <h2 class="font-bold text-sm mbe-4" style="color: var(--color-text-subtle)">
+      <h2 class="font-bold text-sm mbe-4 text-subtle">
         <i class="ph ph-note"></i> Observations
       </h2>
 
@@ -104,7 +104,7 @@
           <%= button_to developer_prep_path(@developer), method: :post, class: "btn btn--primary", data: { turbo_frame: "oneone_prep" } do %>
             <i class="ph ph-brain"></i> Prep 1:1
           <% end %>
-          <p class="text-xs mbs-2" style="color: var(--color-text-subtle)">
+          <p class="text-xs mbs-2 text-subtle">
             Generate talking points from recent notes, activity, and last 1:1.
           </p>
         </div>
@@ -114,10 +114,10 @@
     <%# 1:1 Sessions section %>
     <div class="card">
       <div class="flex items-center justify-between mbe-4">
-        <h2 class="font-bold text-sm" style="color: var(--color-text-subtle)">
+        <h2 class="font-bold text-sm text-subtle">
           <i class="ph ph-chats"></i> 1:1 Sessions
         </h2>
-        <%= link_to new_developer_oneone_session_path(@developer), class: "text-sm", style: "color: var(--color-primary)" do %>
+        <%= link_to new_developer_oneone_session_path(@developer), class: "text-sm text-accent" do %>
           <i class="ph ph-plus"></i> Log 1:1
         <% end %>
       </div>
@@ -129,15 +129,15 @@
               <div class="flex flex-col flex-1">
                 <span class="font-medium text-sm"><%= session.session_date.strftime("%B %-d, %Y") %></span>
                 <% if session.summary.present? %>
-                  <span class="text-xs overflow-ellipsis" style="color: var(--color-text-subtle)"><%= session.summary.truncate(80) %></span>
+                  <span class="text-xs overflow-ellipsis text-subtle"><%= session.summary.truncate(80) %></span>
                 <% end %>
               </div>
-              <i class="ph ph-caret-right" style="color: var(--color-text-subtle)"></i>
+              <i class="ph ph-caret-right text-subtle"></i>
             <% end %>
           <% end %>
         </div>
       <% else %>
-        <p class="text-sm text-center" style="color: var(--color-text-subtle)">No 1:1 sessions yet.</p>
+        <p class="text-sm text-center text-subtle">No 1:1 sessions yet.</p>
       <% end %>
     </div>
   </div>

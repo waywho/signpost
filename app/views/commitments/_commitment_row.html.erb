@@ -1,17 +1,17 @@
 <%= turbo_frame_tag dom_id(commitment) do %>
   <div class="card flex items-center gap">
     <%= button_to commitment_completion_path(commitment), method: :post, class: "btn btn--positive btn--icon btn--borderless flex-item-no-shrink" do %>
-      <i class="ph ph-circle" style="font-size: var(--text-xl)"></i>
+      <i class="ph ph-circle text-xl"></i>
     <% end %>
     <div class="flex flex-col flex-1">
       <span class="font-bold text-sm"><%= commitment.text %></span>
-      <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
+      <div class="flex items-center gap-half text-xs text-subtle">
         <% if commitment.stakeholder.present? %>
           <span><i class="ph ph-user"></i> <%= commitment.stakeholder %></span>
         <% end %>
         <% if commitment.due_date.present? %>
           <% overdue = commitment.due_date < Date.current %>
-          <span style="<%= overdue ? 'color: var(--color-negative)' : '' %>">
+          <span class="<%= 'text-negative' if overdue %>">
             <i class="ph ph-<%= overdue ? 'warning' : 'calendar' %>"></i>
             <%= commitment.due_date.strftime("%-m/%-d") %>
           </span>

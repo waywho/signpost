@@ -1,8 +1,8 @@
 <% content_for(:title, "Log 1:1 — #{@developer.name} — Tech Lead OS") %>
 
-<div class="container mbs-6" style="max-inline-size: 40rem">
+<div class="container mbs-6 max-i-form">
   <div class="mbe-4">
-    <%= link_to developer_path(@developer), class: "flex items-center gap-half text-sm", style: "color: var(--color-text-subtle)" do %>
+    <%= link_to developer_path(@developer), class: "flex items-center gap-half text-sm text-subtle" do %>
       <i class="ph ph-caret-left"></i> <%= @developer.name %>
     <% end %>
   </div>
@@ -22,24 +22,24 @@
       <% end %>
 
       <div>
-        <%= f.label :session_date, class: "text-sm font-bold mbe-1", style: "display: block" %>
+        <%= f.label :session_date, class: "text-sm font-bold mbe-1 block" %>
         <%= f.date_field :session_date, class: "input", required: true %>
       </div>
 
       <% %i[discussed wins challenges growth action_items].each do |field| %>
         <div>
-          <%= f.label field, field.to_s.humanize, class: "text-sm font-bold mbe-1", style: "display: block" %>
+          <%= f.label field, field.to_s.humanize, class: "text-sm font-bold mbe-1 block" %>
           <%= f.text_area field, class: "input", rows: 3 %>
         </div>
       <% end %>
 
       <div>
-        <%= f.label :private_notes, class: "text-sm font-bold mbe-1", style: "display: block" %>
+        <%= f.label :private_notes, class: "text-sm font-bold mbe-1 block" %>
         <%= f.text_area :private_notes, class: "input", rows: 3, placeholder: "Private — not shared with the developer" %>
       </div>
 
       <div>
-        <%= f.label :summary, class: "text-sm font-bold mbe-1", style: "display: block" %>
+        <%= f.label :summary, class: "text-sm font-bold mbe-1 block" %>
         <%= f.text_area :summary, class: "input", rows: 2 %>
       </div>
 

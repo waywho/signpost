@@ -2,18 +2,18 @@
   <div class="card">
     <div class="flex items-center justify-between mbe-4">
       <h2 class="font-bold flex items-center gap-half">
-        <i class="ph ph-handshake" style="color: var(--color-primary)"></i> Commitments
+        <i class="ph ph-handshake text-accent"></i> Commitments
       </h2>
       <div class="flex items-center gap-half">
         <%= render "dashboard/section_refresh", url: dashboard_commitments_path, frame: "dashboard_commitments" %>
-        <%= link_to "View all →", commitments_path, class: "text-xs", style: "color: var(--color-text-subtle)" %>
+        <%= link_to "View all →", commitments_path, class: "text-xs text-subtle" %>
       </div>
     </div>
     <% if @overdue.any? %>
       <p class="badge badge--negative mbe-2"><i class="ph ph-warning-circle"></i> Overdue</p>
       <ul class="flex flex-col gap-half mbe-3">
         <% @overdue.each do |c| %>
-          <li class="flex items-center justify-between text-sm" style="color: var(--color-negative)">
+          <li class="flex items-center justify-between text-sm text-negative">
             <span><%= c.text.truncate(50) %></span>
             <span class="text-xs"><%= c.due_date&.strftime("%-m/%-d") %></span>
           </li>
@@ -26,13 +26,13 @@
         <% @due.each do |c| %>
           <li class="flex items-center justify-between text-sm">
             <span><%= c.text.truncate(50) %></span>
-            <span class="text-xs" style="color: var(--color-text-subtle)"><%= c.due_date&.strftime("%-m/%-d") %><%= " · #{c.stakeholder}" if c.stakeholder.present? %></span>
+            <span class="text-xs text-subtle"><%= c.due_date&.strftime("%-m/%-d") %><%= " · #{c.stakeholder}" if c.stakeholder.present? %></span>
           </li>
         <% end %>
       </ul>
     <% end %>
     <% if @overdue.empty? && @due.empty? %>
-      <p class="text-sm text-center" style="color: var(--color-text-subtle)">No commitments due soon.</p>
+      <p class="text-sm text-center text-subtle">No commitments due soon.</p>
     <% end %>
   </div>
 <% end %>

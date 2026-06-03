@@ -1,6 +1,6 @@
 <% if thread.status.in?(%w[new_thread triaged]) %>
   <div class="card flex items-center gap mbe-4">
-    <span class="text-sm font-bold" style="flex: 1">
+    <span class="text-sm font-bold flex-1">
       <i class="ph ph-tray"></i> Triage
     </span>
     <%= button_to slack_thread_acknowledgement_path(thread), method: :post, class: "btn btn--primary" do %>

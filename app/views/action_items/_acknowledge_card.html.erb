@@ -1,11 +1,11 @@
-<div id="action_item_<%= item.id %>" class="flex items-center justify-between pb-1" style="border-block-end: 1px solid var(--color-border)">
-  <div class="flex flex-col" style="min-inline-size: 0">
+<div id="action_item_<%= item.id %>" class="flex items-center justify-between pb-1 border-be-main">
+  <div class="flex flex-col min-i-0">
     <div class="flex items-center gap-half">
       <span class="badge badge--secondary text-xs"><%= item.slack_topic.slack_thread&.slack_channel_name %></span>
       <span class="text-sm font-bold"><%= item.slack_topic.title %></span>
     </div>
     <% if item.slack_thread %>
-      <%= link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "text-xs", style: "color: var(--color-text-subtle)", data: { turbo_frame: "_top" } do %>
+      <%= link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "text-xs text-subtle", data: { turbo_frame: "_top" } do %>
         <i class="ph ph-chat-dots"></i> <%= item.slack_thread.title.presence || "Thread" %>
       <% end %>
     <% end %>

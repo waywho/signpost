@@ -1,14 +1,14 @@
-<div class="flex gap" style="padding-block: var(--size-2); border-block-start: 1px solid var(--color-border)">
-  <div style="flex-shrink: 0; inline-size: 2rem; block-size: 2rem; background: var(--color-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center">
+<div class="flex gap pb-2 border-bs-main">
+  <div class="icon-circle">
     <i class="ph ph-user text-xs"></i>
   </div>
-  <div style="flex: 1; min-inline-size: 0">
+  <div class="flex-1 min-i-0">
     <div class="flex items-center gap-half mbe-1">
       <span class="font-bold text-sm"><%= msg["user"] || msg["username"] || "Unknown" %></span>
       <% if msg["ts"].present? %>
-        <span class="text-xs" style="color: var(--color-text-subtle)"><%= Time.at(msg["ts"].to_f).strftime("%-m/%-d %H:%M") rescue msg["ts"] %></span>
+        <span class="text-xs text-subtle"><%= Time.at(msg["ts"].to_f).strftime("%-m/%-d %H:%M") rescue msg["ts"] %></span>
       <% end %>
     </div>
-    <p class="text-sm" style="white-space: pre-wrap; word-break: break-word"><%= msg["text"] %></p>
+    <p class="text-sm whitespace-pre-wrap break-words"><%= msg["text"] %></p>
   </div>
 </div>

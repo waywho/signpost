@@ -34,19 +34,28 @@
 * Display & visibility
 *****************************************************************/
 .hidden { display: none; }
+.block { display: block; }
+.inline-block { display: inline-block; }
 
 /****************************************************************
 * Text color — accent/brand
 *****************************************************************/
 .text-accent { color: var(--color-primary); }
+.text-subtle { color: var(--color-text-subtle); }
+.text-positive { color: var(--color-positive); }
+.text-negative { color: var(--color-negative); }
 .text-border { color: var(--color-border); }
 
 /****************************************************************
 * Typography
 *****************************************************************/
 .font-mono { font-family: var(--default-mono-font-family, ui-monospace, monospace); }
+.text-xl { font-size: var(--text-xl); }
+.text-4xl { font-size: var(--text-4xl); }
 .whitespace-pre-wrap { white-space: pre-wrap; }
+.break-words { word-break: break-word; }
 .line-through { text-decoration: line-through; }
+.leading-relaxed { line-height: 1.6; }
 
 /****************************************************************
 * Cursor
@@ -57,6 +66,7 @@
 * Flex
 *****************************************************************/
 .flex-2 { flex: 2; }
+.flex-item-no-shrink { flex-shrink: 0; }
 
 /****************************************************************
 * Sizing
@@ -65,7 +75,9 @@
 .max-i-2xl { max-inline-size: var(--max-i-2xl); }  /* 42rem */
 .max-i-3xs { max-inline-size: var(--max-i-3xs); }  /* 16rem */
 .max-i-2xs { max-inline-size: var(--max-i-2xs); }  /* 18rem */
+.max-i-56 { max-inline-size: var(--size-56); }      /* 14rem */
 .max-i-form { max-inline-size: 40rem; }
+.min-i-0 { min-inline-size: 0; }
 .min-i-16 { min-inline-size: var(--size-16); }      /* 4rem */
 .min-i-20 { min-inline-size: var(--size-20); }      /* 5rem */
 .min-i-24 { min-inline-size: var(--size-24); }      /* 6rem */
@@ -74,12 +86,41 @@
 .max-bs-80 { max-block-size: var(--size-80); overflow-y: auto; }   /* 20rem */
 .max-bs-96 { max-block-size: var(--size-96); overflow-y: auto; }   /* 24rem */
 .max-bs-120 { max-block-size: 30rem; overflow-y: auto; }
+.b-full { block-size: 100%; }
+.overflow-y-auto { overflow-y: auto; }
+
+/****************************************************************
+* Spacing — padding
+*****************************************************************/
+.p-0 { padding: 0; }
+.pb-1 { padding-block: var(--size-1); }
+.pb-2 { padding-block: var(--size-2); }
+.pbe-1 { padding-block-end: var(--size-1); }
+.pbe-2 { padding-block-end: var(--size-2); }
+.pis-4 { padding-inline-start: var(--size-4); }
+
+/****************************************************************
+* Position
+*****************************************************************/
+.sticky { position: sticky; }
+
+/****************************************************************
+* Opacity
+*****************************************************************/
+.opacity-50 { opacity: 0.5; }
 
 /****************************************************************
 * Border
 *****************************************************************/
 .border-be-main { border-block-end: 1px solid var(--color-border); }
 .border-bs-main { border-block-start: 1px solid var(--color-border); }
+.border-dark { border-color: var(--color-border-dark); }
+
+/****************************************************************
+* Border radius
+*****************************************************************/
+.rounded-lg { border-radius: var(--rounded-lg); }
+.rounded-full { border-radius: var(--rounded-full); }
 
 /****************************************************************
 * Background

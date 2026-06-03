@@ -8,7 +8,7 @@
           class: "input flex-1", style: "font-size: var(--text-base)", autofocus: true %>
     <%= f.submit "Search", class: "btn btn--primary" %>
   </div>
-  <div class="flex items-center gap-half text-xs" style="color: var(--color-text-subtle)">
+  <div class="flex items-center gap-half text-xs text-subtle">
     <span>Search across:</span>
     <% %w[thread topic message].each do |level| %>
       <label class="flex items-center gap-half">
@@ -27,7 +27,7 @@
 <% end %>
 
 <% if @query.present? %>
-  <p class="text-sm mbe-4" style="color: var(--color-text-subtle)">
+  <p class="text-sm mbe-4 text-subtle">
     <%= @results.size %> results for "<%= @query %>"
   </p>
 
@@ -57,7 +57,7 @@
             %>
             <i class="ph <%= type_icon %>" style="color: <%= type_color %>"></i>
             <span class="badge <%= type_badge %>"><%= result[:type].capitalize %></span>
-            <span class="text-xs" style="color: var(--color-text-subtle)">
+            <span class="text-xs text-subtle">
               similarity: <%= (result[:similarity] * 100).round(1) %>%
             </span>
           </div>
@@ -69,9 +69,9 @@
               <span class="font-bold text-sm"><%= thread[:title] || "Untitled thread" %></span>
             <% end %>
             <% if thread[:summary].present? %>
-              <p class="text-sm mbs-1" style="color: var(--color-text-subtle)"><%= thread[:summary].truncate(150) %></p>
+              <p class="text-sm mbs-1 text-subtle"><%= thread[:summary].truncate(150) %></p>
             <% end %>
-            <div class="flex items-center gap-half text-xs mbs-1" style="color: var(--color-text-subtle)">
+            <div class="flex items-center gap-half text-xs mbs-1 text-subtle">
               <% if thread[:category] %><span><%= thread[:category] %></span><% end %>
               <% if thread[:captured_at] %><span><%= thread[:captured_at].to_date %></span><% end %>
             </div>
@@ -81,7 +81,7 @@
             <% thread = result[:thread] %>
             <span class="font-bold text-sm"><%= topic[:title] %></span>
             <p class="text-sm mbs-1"><%= topic[:summary] %></p>
-            <div class="flex items-center gap-half text-xs mbs-1" style="color: var(--color-text-subtle)">
+            <div class="flex items-center gap-half text-xs mbs-1 text-subtle">
               <% if topic[:urgency] %>
                 <span class="badge <%= urgency_badge_variant(topic[:urgency]) %>"><%= topic[:urgency] %></span>
               <% end %>
@@ -97,9 +97,9 @@
             <div class="flex items-center gap-half mbe-1">
               <span class="font-bold text-sm"><%= msg[:user_name] || "Unknown" %></span>
             </div>
-            <p class="text-sm" style="white-space: pre-wrap; word-break: break-word"><%= msg[:content].truncate(200) %></p>
+            <p class="text-sm whitespace-pre-wrap break-words"><%= msg[:content].truncate(200) %></p>
             <% if thread %>
-              <div class="text-xs mbs-1" style="color: var(--color-text-subtle)">
+              <div class="text-xs mbs-1 text-subtle">
                 in <%= link_to thread[:title] || "thread", slack_thread_path(thread[:id]) %>
               </div>
             <% end %>
@@ -108,8 +108,8 @@
       <% end %>
     </div>
   <% elsif @query.present? %>
-    <div class="card text-center" style="color: var(--color-text-subtle)">
-      <i class="ph ph-magnifying-glass mbe-4" style="font-size: var(--text-4xl); display: block"></i>
+    <div class="card text-center text-subtle">
+      <i class="ph ph-magnifying-glass mbe-4 text-4xl block"></i>
       <p>No results found.</p>
     </div>
   <% end %>
