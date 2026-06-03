@@ -15,17 +15,20 @@
       %i.ph.ph-spinner.animate-spin.inline-block
       %span.text-sm Drafting ticket…
   - elsif topic.status != "open"
-    %span.badge.badge--positive.mis-2{data: { tooltip: badge_tooltip(:status) }.compact}
-      %i.ph.ph-check-circle
-      = topic.status
-    - if defined?(delegation) && delegation.present?
-      .mbs-2
-        = link_to delegation_path(delegation), class: "text-sm text-accent" do
+    - linked_delegation = (defined?(delegation) && delegation.present?) ? delegation : topic.delegation
+    - if linked_delegation
+      .flex.items-center.gap-half.mbs-2
+        = link_to delegation_path(linked_delegation), class: "btn btn--borderless text-sm text-accent" do
           %i.ph.ph-ticket
-          View drafted ticket
+          = linked_delegation.summary.truncate(60)
+        %span.badge.badge--positive{data: { tooltip: badge_tooltip(:status) }.compact}= linked_delegation.status.tr("_", " ")
+    - else
+      %span.badge.badge--positive.mis-2{data: { tooltip: badge_tooltip(:status) }.compact}
+        %i.ph.ph-check-circle
+        = topic.status
   - else
     .flex.items-center.gap.mbs-2
-      = button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "text-sm text-accent" do
+      = button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "btn btn--borderless text-sm text-accent" do
         %i.ph.ph-ticket
         Draft Ticket
       = link_to new_delegation_path(thread_id: topic.slack_thread.id, slack_topic_id: topic.id), class: "btn btn--borderless", data: { turbo: false } do

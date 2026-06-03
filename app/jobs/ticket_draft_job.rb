@@ -12,6 +12,7 @@ class TicketDraftJob < ApplicationJob
       handoff_message: draft[:body],
       urgency: topic.urgency,
       issue_type: topic.category,
+      slack_topic: topic,
       slack_channel_id: thread.slack_channel_id,
       slack_thread_ts: thread.slack_thread_ts,
       status: "delegated",

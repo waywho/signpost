@@ -8,7 +8,7 @@
     - if @pr_review.recommendation.present?
       %span{class: "badge #{recommendation_badge_variant(@pr_review.recommendation)}", data: { tooltip: badge_tooltip(:recommendation) }.compact}= @pr_review.recommendation.tr("_", " ")
     - if @pr_review.risk_level.present?
-      %span{class: "badge #{risk_badge_variant(@pr_review.risk_level)}", data: { tooltip: badge_tooltip(:risk_level) }.compact}}
+      %span{class: "badge #{risk_badge_variant(@pr_review.risk_level)}", data: { tooltip: badge_tooltip(:risk_level) }.compact}
         %i.ph.ph-shield-warning
         = @pr_review.risk_level
   .flex.items-center.justify-between.mbe-2

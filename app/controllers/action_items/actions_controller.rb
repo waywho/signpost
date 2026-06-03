@@ -17,6 +17,7 @@ class ActionItems::ActionsController < ApplicationController
         developer_name: developer&.name,
         urgency: @item.slack_topic.urgency,
         issue_type: @item.slack_topic.category,
+        slack_topic: @item.slack_topic,
         github_issue_url: ticket_url,
         slack_channel_id: @item.slack_thread.slack_channel_id,
         slack_thread_ts: @item.slack_thread.slack_thread_ts,

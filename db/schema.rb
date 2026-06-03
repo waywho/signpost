@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_02_101325) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_03_230757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -96,6 +96,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_101325) do
     t.timestamptz "resolved_at"
     t.text "slack_channel_id"
     t.text "slack_thread_ts"
+    t.uuid "slack_topic_id"
     t.text "source_channel"
     t.text "source_user"
     t.integer "status", null: false
@@ -105,6 +106,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_101325) do
     t.index ["delegated_at"], name: "index_delegations_on_delegated_at"
     t.index ["developer_id"], name: "index_delegations_on_developer_id"
     t.index ["issue_type"], name: "index_delegations_on_issue_type"
+    t.index ["slack_topic_id"], name: "index_delegations_on_slack_topic_id"
   end
 
   create_table "developer_notes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -464,6 +466,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_101325) do
   add_foreign_key "codebase_analyses", "delegations"
   add_foreign_key "codebase_analyses", "slack_threads"
   add_foreign_key "delegations", "developers", on_delete: :nullify
+  add_foreign_key "delegations", "slack_topics"
   add_foreign_key "developer_notes", "developers", on_delete: :cascade
   add_foreign_key "oneone_sessions", "developers", on_delete: :cascade
   add_foreign_key "pr_reviews", "developers"

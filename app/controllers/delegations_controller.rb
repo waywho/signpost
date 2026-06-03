@@ -60,7 +60,9 @@ class DelegationsController < ApplicationController
   def action_source_topic
     return unless params[:slack_topic_id].present?
     topic = SlackTopic.find_by(id: params[:slack_topic_id])
-    return unless topic&.open?
+    return unless topic
+    @delegation.update!(slack_topic: topic) if @delegation.slack_topic_id.nil?
+    return unless topic.open?
     topic.update!(status: "actioned")
     topic.action_items.pending.update_all(status: "actioned", actioned_at: Time.current)
   end

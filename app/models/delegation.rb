@@ -1,5 +1,6 @@
 class Delegation < ApplicationRecord
   belongs_to :developer, optional: true
+  belongs_to :slack_topic, optional: true
   has_many :action_items, dependent: :nullify
   has_many :codebase_analyses, dependent: :nullify
 
