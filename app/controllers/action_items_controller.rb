@@ -22,7 +22,7 @@ class ActionItemsController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace("action_item_#{@item.id}",
-          partial: "action_items/error", locals: { item: @item, message: e.message })
+          partial: "action_items/card", locals: { item: @item, error_message: e.message })
       end
       format.html { redirect_to root_path, alert: "Failed: #{e.message}" }
     end

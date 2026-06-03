@@ -28,6 +28,7 @@
             %i.ph.ph-arrow-square-out
             Slack
       %p.text-sm.mbe-3.text-subtle= item.slack_topic.summary
+
       - if item.related_items.present? && item.related_items.any?
         .mbe-3
           %span.badge Related:
@@ -44,6 +45,7 @@
             %i.ph.ph-file-text
             = "Draft: #{item.draft_title}"
           .text-sm.mbs-2.p-3.whitespace-pre-wrap.bg-secondary.rounded-lg= item.draft_body
+      = error_component(@error_message)
     .min-i-64.max-i-2xs
       = form_with url: action_item_action_path(item), method: :post, id: "act_form_#{item.id}", class: "flex flex-col gap-half", data: { controller: "ticket-option" } do |f|
         = f.collection_select :developer_id, developers, :id, :name, { selected: item.suggested_developer_id, include_blank: "— unassigned —" }, class: "input text-xs"
