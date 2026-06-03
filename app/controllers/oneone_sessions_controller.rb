@@ -1,6 +1,6 @@
 class OneoneSessionsController < ApplicationController
   before_action :set_developer
-  before_action :set_session, only: [:show]
+  before_action :set_session, only: [ :show ]
 
   def new
     @oneone_session = @developer.oneone_sessions.build(session_date: Date.today)

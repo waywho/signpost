@@ -6,7 +6,7 @@ class GitHubServiceTest < ActiveSupport::TestCase
     @mock_client = Object.new
     @service = GitHubService.new(client: @mock_client)
     Setting.set("global", "github_username", "testuser")
-    Setting.set("global", "github_repos", ["org/repo"])
+    Setting.set("global", "github_repos", [ "org/repo" ])
   end
 
   test "pr_queue returns PRs via search API" do
@@ -17,9 +17,9 @@ class GitHubServiceTest < ActiveSupport::TestCase
       repository_url: "https://api.github.com/repos/org/repo",
       created_at: 1.hour.ago, updated_at: 30.minutes.ago,
       draft: false, html_url: "https://github.com/org/repo/pull/42",
-      labels: [label]
+      labels: [ label ]
     )
-    search_result = OpenStruct.new(items: [pr])
+    search_result = OpenStruct.new(items: [ pr ])
 
     @mock_client.define_singleton_method(:search_issues) { |query| search_result }
 
@@ -44,11 +44,11 @@ class GitHubServiceTest < ActiveSupport::TestCase
 
   test "developer_activity parses push events" do
     commit = OpenStruct.new(message: "Fix typo\n\nDetails", sha: "abc123")
-    payload = OpenStruct.new(commits: [commit])
+    payload = OpenStruct.new(commits: [ commit ])
     repo = OpenStruct.new(name: "org/repo")
     event = OpenStruct.new(type: "PushEvent", payload: payload, repo: repo, created_at: 1.day.ago)
 
-    @mock_client.define_singleton_method(:user_events) { |handle| [event] }
+    @mock_client.define_singleton_method(:user_events) { |handle| [ event ] }
 
     result = @service.developer_activity("alice")
     assert_equal 1, result.size
@@ -59,8 +59,8 @@ class GitHubServiceTest < ActiveSupport::TestCase
     review_comment = OpenStruct.new(user: OpenStruct.new(login: "alice"), body: "Fix this", path: "app.rb", line: 10)
     issue_comment = OpenStruct.new(user: OpenStruct.new(login: "bob"), body: "Looks good")
 
-    @mock_client.define_singleton_method(:pull_request_comments) { |repo, number| [review_comment] }
-    @mock_client.define_singleton_method(:issue_comments) { |repo, number| [issue_comment] }
+    @mock_client.define_singleton_method(:pull_request_comments) { |repo, number| [ review_comment ] }
+    @mock_client.define_singleton_method(:issue_comments) { |repo, number| [ issue_comment ] }
 
     result = @service.pr_comments("org/repo", 42)
     assert_equal 2, result.size

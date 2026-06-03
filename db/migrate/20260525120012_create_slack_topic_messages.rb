@@ -6,6 +6,6 @@ class CreateSlackTopicMessages < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :slack_topic_messages, [:slack_topic_id, :slack_message_id], unique: true, name: "idx_topic_messages_unique"
+    add_index :slack_topic_messages, [ :slack_topic_id, :slack_message_id ], unique: true, name: "idx_topic_messages_unique"
   end
 end

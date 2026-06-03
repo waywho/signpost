@@ -98,13 +98,13 @@ class ActionQueueService
 
   def compute_priority(topic)
     base = case topic.urgency
-           when "critical" then 0
-           when "high" then 10
-           when "medium" then 20
-           when "low" then 30
-           else 25
-           end
+    when "critical" then 0
+    when "high" then 10
+    when "medium" then 20
+    when "low" then 30
+    else 25
+    end
     age_hours = (Time.current - topic.created_at) / 1.hour
-    [base - age_hours.to_i, 0].max
+    [ base - age_hours.to_i, 0 ].max
   end
 end

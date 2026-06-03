@@ -10,7 +10,7 @@ class ActionItem < ApplicationRecord
   validates :priority, presence: true
   validates :slack_topic_id, uniqueness: true
 
-  scope :actionable, -> { pending.where(action_type: [:create_ticket, :delegate]) }
+  scope :actionable, -> { pending.where(action_type: [ :create_ticket, :delegate ]) }
   scope :discussions, -> { pending.where(action_type: :discuss) }
   scope :acknowledgements, -> { pending.where(action_type: :acknowledge) }
   scope :by_priority, -> { order(:priority) }

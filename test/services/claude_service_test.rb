@@ -4,7 +4,7 @@ class ClaudeServiceTest < ActiveSupport::TestCase
   test "analyze via api returns text from response" do
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) do |**_|
-      { "content" => [{ "text" => "analysis result" }] }
+      { "content" => [ { "text" => "analysis result" } ] }
     end
 
     result = ClaudeService.new(client: mock_client).analyze("test prompt")
@@ -31,7 +31,7 @@ class ClaudeServiceTest < ActiveSupport::TestCase
 
   test "explicit client forces api backend" do
     mock_client = Object.new
-    mock_client.define_singleton_method(:messages) { |**_| { "content" => [{ "text" => "ok" }] } }
+    mock_client.define_singleton_method(:messages) { |**_| { "content" => [ { "text" => "ok" } ] } }
 
     service = ClaudeService.new(client: mock_client)
     assert_equal "api", service.send(:backend)

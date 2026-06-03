@@ -39,7 +39,7 @@ class ClaudeService
       parameters: {
         model: model,
         max_tokens: max_tokens,
-        messages: [{ role: "user", content: prompt }]
+        messages: [ { role: "user", content: prompt } ]
       }
     )
     response.dig("content", 0, "text")

@@ -8,10 +8,10 @@ class SettingsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update github settings" do
-    patch settings_path, params: { section: "github", github_username: "testuser", github_repos: ["org/repo1", "org/repo2"] }
+    patch settings_path, params: { section: "github", github_username: "testuser", github_repos: [ "org/repo1", "org/repo2" ] }
     assert_response :redirect
     assert_equal "testuser", Setting.get("global", "github_username")
-    assert_equal ["org/repo1", "org/repo2"], Setting.get("global", "github_repos")
+    assert_equal [ "org/repo1", "org/repo2" ], Setting.get("global", "github_repos")
   end
 
   test "should update slack settings" do

@@ -20,7 +20,7 @@ class SlackSearchServiceTest < ActiveSupport::TestCase
     mock_embedder.define_singleton_method(:embed) { |text| Array.new(1536, 0.1) }
 
     service = SlackSearchService.new(embedding_service: mock_embedder)
-    results = service.search(query: "database", threshold: 0.5, levels: ["message"])
+    results = service.search(query: "database", threshold: 0.5, levels: [ "message" ])
 
     assert results.any?
     assert_equal "message", results.first[:type]

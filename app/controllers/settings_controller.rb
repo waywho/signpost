@@ -126,5 +126,4 @@ class SettingsController < ApplicationController
       Current.setting_cache["encrypted/#{es.scope}/#{es.key}"] = es.value
     end
   end
-
 end

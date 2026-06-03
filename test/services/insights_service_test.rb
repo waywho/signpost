@@ -58,8 +58,8 @@ class InsightsServiceTest < ActiveSupport::TestCase
   end
 
   test "patterns returns cached data" do
-    Setting.set("global", "daily_insights", [{ "message" => "test pattern" }])
-    assert_equal [{ "message" => "test pattern" }], InsightsService.new.patterns
+    Setting.set("global", "daily_insights", [ { "message" => "test pattern" } ])
+    assert_equal [ { "message" => "test pattern" } ], InsightsService.new.patterns
   end
 
   test "find_topic_clusters groups similar topics" do

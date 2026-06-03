@@ -13,7 +13,7 @@ class CreateSlackMessages < ActiveRecord::Migration[8.1]
 
     add_column :slack_messages, :embedding, :vector, limit: 1536
 
-    add_index :slack_messages, [:slack_thread_id, :message_ts], unique: true
+    add_index :slack_messages, [ :slack_thread_id, :message_ts ], unique: true
     add_index :slack_messages, :mentioned_users, using: :gin
 
     execute "CREATE INDEX index_slack_messages_on_embedding ON slack_messages USING hnsw (embedding vector_cosine_ops)"

@@ -1,5 +1,5 @@
 class Setting < ApplicationRecord
-  self.primary_key = [:scope, :key]
+  self.primary_key = [ :scope, :key ]
 
   validates :scope, :key, :value, presence: true
 
@@ -13,6 +13,6 @@ class Setting < ApplicationRecord
 
   def self.set(scope, key, value)
     Current.setting_cache.delete("#{scope}/#{key}")
-    upsert({ scope:, key:, value:, updated_at: Time.current }, unique_by: [:scope, :key])
+    upsert({ scope:, key:, value:, updated_at: Time.current }, unique_by: [ :scope, :key ])
   end
 end

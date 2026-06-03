@@ -12,6 +12,7 @@ gem "async-websocket", "~> 0.26"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 gem "css-zero"
+gem "haml-rails"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
@@ -57,6 +58,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Convert .erb templates to .haml [https://github.com/dhl/erb2haml]
+  gem "erb2haml", require: false
 end
 
 group :development do
@@ -70,6 +74,6 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]
+gem "factory_bot_rails", "~> 6.5", groups: [ :development, :test ]
 
 gem "icalendar", "~> 2.12"

@@ -8,7 +8,7 @@ class CreateSolidCacheEntries < ActiveRecord::Migration[8.1]
       t.datetime :created_at, null: false
 
       t.index :byte_size
-      t.index [:key_hash, :byte_size]
+      t.index [ :key_hash, :byte_size ]
       t.index :key_hash, unique: true
     end
   end

@@ -11,7 +11,7 @@ class CreateGitHubActivities < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :git_hub_activities, [:github_handle, :occurred_at]
+    add_index :git_hub_activities, [ :github_handle, :occurred_at ]
     add_index :git_hub_activities, :github_event_id, unique: true
     add_check_constraint :git_hub_activities, "event_type IN ('commit', 'pr_opened', 'pr_merged', 'pr_review', 'issue_opened')", name: "git_hub_activities_event_type_check"
   end

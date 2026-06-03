@@ -49,7 +49,7 @@ class SlackCaptureServiceTest < ActiveSupport::TestCase
     existing.slack_messages.create!(message_ts: "99.1", content: "already here", embedding: @embedding)
 
     def @mock_slack.conversations_replies(channel:, ts:, limit:)
-      OpenStruct.new(messages: [{ "ts" => "99.1", "text" => "already here", "user" => "U1" }])
+      OpenStruct.new(messages: [ { "ts" => "99.1", "text" => "already here", "user" => "U1" } ])
     end
 
     assert_no_difference("SlackMessage.count") do
@@ -74,7 +74,7 @@ class SlackCaptureServiceTest < ActiveSupport::TestCase
 
     def @mock_slack.conversations_info(channel:) = OpenStruct.new(channel: OpenStruct.new(name: "eng"))
     def @mock_slack.conversations_replies(channel:, ts:, limit:)
-      OpenStruct.new(messages: [{ "ts" => "50.1", "text" => "deploy v1.0", "user" => "U1" }])
+      OpenStruct.new(messages: [ { "ts" => "50.1", "text" => "deploy v1.0", "user" => "U1" } ])
     end
 
     @service = SlackCaptureService.new(

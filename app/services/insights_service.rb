@@ -66,7 +66,7 @@ class InsightsService
     end
     old = queue.select { |pr| pr[:created_at] < 3.days.ago }
     return [] if old.empty?
-    [{ type: "warning", icon: "ph-git-pull-request", message: "#{old.size} PR#{'s' if old.size > 1} waiting for review > 3 days" }]
+    [ { type: "warning", icon: "ph-git-pull-request", message: "#{old.size} PR#{'s' if old.size > 1} waiting for review > 3 days" } ]
   end
 
   def unresolved_concerns
@@ -103,7 +103,7 @@ class InsightsService
       end
 
       if similar.any?
-        cluster = [topic] + similar
+        cluster = [ topic ] + similar
         cluster.each { |t| used.add(t.id) }
         clustered << {
           topics: cluster.map { |t| { id: t.id, title: t.title, channel: t.slack_thread&.slack_channel_name, urgency: t.urgency, date: t.created_at.to_date.to_s } },

@@ -25,7 +25,7 @@ class CreateSlackThreads < ActiveRecord::Migration[8.1]
     add_column :slack_threads, :embedding, :vector, limit: 1536
 
     add_index :slack_threads, :slack_thread_ts, unique: true
-    add_index :slack_threads, [:slack_channel_id, :slack_thread_ts], unique: true
+    add_index :slack_threads, [ :slack_channel_id, :slack_thread_ts ], unique: true
     add_index :slack_threads, :category
     add_index :slack_threads, :keywords, using: :gin
     add_index :slack_threads, :status

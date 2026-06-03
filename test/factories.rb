@@ -1,5 +1,4 @@
 FactoryBot.define do
-
   factory :action_item do
     association :slack_topic
     slack_thread { slack_topic.slack_thread }

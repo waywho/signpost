@@ -24,7 +24,7 @@ class SlackMessageTest < ActiveSupport::TestCase
   test "chronological orders by message_ts_at" do
     early = SlackMessage.create!(slack_thread: @thread, message_ts: "9.1", content: "a", message_ts_at: 2.hours.ago)
     late = SlackMessage.create!(slack_thread: @thread, message_ts: "9.2", content: "b", message_ts_at: 1.hour.ago)
-    msgs = SlackMessage.where(id: [early.id, late.id]).chronological
+    msgs = SlackMessage.where(id: [ early.id, late.id ]).chronological
     assert_equal "a", msgs.first.content
     assert_equal "b", msgs.last.content
   end

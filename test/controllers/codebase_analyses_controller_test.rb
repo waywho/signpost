@@ -42,5 +42,4 @@ class CodebaseAnalysesControllerTest < ActionDispatch::IntegrationTest
     get slack_thread_codebase_analysis_path(@thread, analysis)
     assert_response :success
   end
-
 end

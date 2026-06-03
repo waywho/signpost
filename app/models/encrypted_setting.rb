@@ -1,5 +1,5 @@
 class EncryptedSetting < ApplicationRecord
-  self.primary_key = [:scope, :key]
+  self.primary_key = [ :scope, :key ]
 
   encrypts :value
 

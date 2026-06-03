@@ -1,5 +1,5 @@
 class DelegationsController < ApplicationController
-  before_action :set_delegation, only: [:show, :edit, :update, :destroy]
+  before_action :set_delegation, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @delegations = Delegation.includes(:developer)

@@ -63,6 +63,12 @@ Use **Phosphor Icons** (CDN). Class format: `ph ph-icon-name`. Example: `<i clas
 
 Browse icons at https://phosphoricons.com.
 
+## Linting
+
+- Linter is **rubocop-rails-omakase**.
+- After changing Ruby files, run `bin/rubocop -A` to auto-fix violations before committing.
+- Run `bin/rubocop` (no `-A`) to report without fixing.
+
 ## Testing
 
 - Use **factory_bot** (not fixtures). Factories in `test/factories.rb`.

@@ -12,7 +12,7 @@ class CalendarServiceTest < ActiveSupport::TestCase
       if e[:attendees]
         e[:attendees].each do |att|
           attendee = Icalendar::Values::CalAddress.new("mailto:#{att[:email]}")
-          attendee.ical_params = { "cn" => [att[:name]] } if att[:name]
+          attendee.ical_params = { "cn" => [ att[:name] ] } if att[:name]
           event.append_attendee(attendee)
         end
       end
@@ -30,11 +30,11 @@ class CalendarServiceTest < ActiveSupport::TestCase
   end
 
   test "today_events parses iCal feed" do
-    feed = build_ical([{
+    feed = build_ical([ {
       title: "Team standup",
       start: Time.current.change(hour: 10),
       end: Time.current.change(hour: 10, min: 30)
-    }])
+    } ])
 
     service = CalendarService.new(ical_url: "https://example.com/cal.ics")
     service.define_singleton_method(:fetch_feed) { feed }
@@ -45,7 +45,7 @@ class CalendarServiceTest < ActiveSupport::TestCase
   end
 
   test "detect_oneone identifies 2-person meetings" do
-    feed = build_ical([{
+    feed = build_ical([ {
       title: "Sync",
       start: Time.current.change(hour: 14),
       end: Time.current.change(hour: 14, min: 30),
@@ -53,7 +53,7 @@ class CalendarServiceTest < ActiveSupport::TestCase
         { email: "me@company.com", name: "Me" },
         { email: "alice@company.com", name: "Alice" }
       ]
-    }])
+    } ])
 
     service = CalendarService.new(ical_url: "https://example.com/cal.ics")
     service.define_singleton_method(:fetch_feed) { feed }
@@ -63,7 +63,7 @@ class CalendarServiceTest < ActiveSupport::TestCase
   end
 
   test "detect_oneone identifies by title" do
-    feed = build_ical([{
+    feed = build_ical([ {
       title: "1:1 with Bob",
       start: Time.current.change(hour: 15),
       end: Time.current.change(hour: 15, min: 30),
@@ -72,7 +72,7 @@ class CalendarServiceTest < ActiveSupport::TestCase
         { email: "bob@company.com" },
         { email: "room@company.com" }
       ]
-    }])
+    } ])
 
     service = CalendarService.new(ical_url: "https://example.com/cal.ics")
     service.define_singleton_method(:fetch_feed) { feed }
@@ -84,7 +84,7 @@ class CalendarServiceTest < ActiveSupport::TestCase
   test "match_developer finds developer by name" do
     create(:developer, name: "Alice Johnson")
 
-    feed = build_ical([{
+    feed = build_ical([ {
       title: "Sync",
       start: Time.current.change(hour: 11),
       end: Time.current.change(hour: 11, min: 30),
@@ -92,7 +92,7 @@ class CalendarServiceTest < ActiveSupport::TestCase
         { email: "me@company.com", name: "Me" },
         { email: "alice.johnson@company.com", name: "Alice Johnson" }
       ]
-    }])
+    } ])
 
     service = CalendarService.new(ical_url: "https://example.com/cal.ics")
     service.define_singleton_method(:fetch_feed) { feed }

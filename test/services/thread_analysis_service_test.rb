@@ -15,10 +15,10 @@ class ThreadAnalysisServiceTest < ActiveSupport::TestCase
       title: "Login bug and API performance",
       summary: "Two issues discussed: login bug and API slowness.",
       category: "incident",
-      keywords: ["login", "api", "performance"],
+      keywords: [ "login", "api", "performance" ],
       topics: [
-        { title: "Login bug", summary: "Users can't log in", category: "bug", urgency: "high", action: "create_ticket", related_message_indices: [0] },
-        { title: "API slowness", summary: "API response time degraded", category: "bug", urgency: "medium", action: "delegate", related_message_indices: [1] }
+        { title: "Login bug", summary: "Users can't log in", category: "bug", urgency: "high", action: "create_ticket", related_message_indices: [ 0 ] },
+        { title: "API slowness", summary: "API response time degraded", category: "bug", urgency: "medium", action: "delegate", related_message_indices: [ 1 ] }
       ]
     }.to_json
 

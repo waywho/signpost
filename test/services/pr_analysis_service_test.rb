@@ -14,16 +14,16 @@ class PrAnalysisServiceTest < ActiveSupport::TestCase
       recommendation_reason: "Clean implementation",
       summary: "Adds feature X",
       critical_flags: [],
-      strengths: ["Good test coverage"],
+      strengths: [ "Good test coverage" ],
       issues: { critical: [], important: [], minor: [] },
       solves_ticket: { result: "yes", explanation: "Matches description" },
       risk_areas: [],
       missing_tests: [],
       performance_concerns: [],
       security_issues: [],
-      before_review_tips: ["Check the migration"],
+      before_review_tips: [ "Check the migration" ],
       inline_tips: [],
-      after_checklist: [{ item: "Run migrations", why: "Schema change" }],
+      after_checklist: [ { item: "Run migrations", why: "Schema change" } ],
       draft_comment: "LGTM"
     }.to_json
 
@@ -56,7 +56,7 @@ class PrAnalysisServiceTest < ActiveSupport::TestCase
   test "claude_code_command generates terminal command" do
     pr_review = OpenStruct.new(pr_number: 42, pr_title: "Fix bug", repo: "org/repo")
     service = PrAnalysisService.new
-    cmd = service.claude_code_command(pr_review, ["app/models/user.rb"])
+    cmd = service.claude_code_command(pr_review, [ "app/models/user.rb" ])
 
     assert_includes cmd, "#42"
     assert_includes cmd, "app/models/user.rb"

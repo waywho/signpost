@@ -6,7 +6,7 @@ class NoiseFilterServiceTest < ActiveSupport::TestCase
   end
 
   test "returns true for noise" do
-    mock_response = { "content" => [{ "text" => "NOISE" }] }
+    mock_response = { "content" => [ { "text" => "NOISE" } ] }
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { |**| mock_response }
 
@@ -14,7 +14,7 @@ class NoiseFilterServiceTest < ActiveSupport::TestCase
   end
 
   test "returns false for non-noise" do
-    mock_response = { "content" => [{ "text" => "KEEP" }] }
+    mock_response = { "content" => [ { "text" => "KEEP" } ] }
     mock_client = Object.new
     mock_client.define_singleton_method(:messages) { |**| mock_response }
 

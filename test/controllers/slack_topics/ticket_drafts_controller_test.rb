@@ -8,7 +8,7 @@ class SlackTopics::TicketDraftsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create enqueues job and sets drafting flag" do
-    assert_enqueued_with(job: TicketDraftJob, args: [@topic.id]) do
+    assert_enqueued_with(job: TicketDraftJob, args: [ @topic.id ]) do
       post slack_thread_slack_topic_ticket_draft_path(@thread, @topic)
     end
 

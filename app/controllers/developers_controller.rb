@@ -1,5 +1,5 @@
 class DevelopersController < ApplicationController
-  before_action :set_developer, only: [:show, :edit, :update, :destroy]
+  before_action :set_developer, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @developers = Developer.by_name.includes(:developer_notes, :oneone_sessions)

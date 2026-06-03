@@ -16,7 +16,7 @@ class AssigneeSuggestionService
   def score_developer(dev, topic)
     score = 0
     active_count = dev.delegations.active.count
-    score += (10 - [active_count, 10].min) * 5
+    score += (10 - [ active_count, 10 ].min) * 5
 
     if dev.growth_areas.present? && topic.category.present?
       score += 30 if dev.growth_areas.downcase.include?(topic.category.downcase)
@@ -25,11 +25,11 @@ class AssigneeSuggestionService
     if dev.career_goals.present? && topic.summary.present?
       goal_words = dev.career_goals.downcase.split(/\W+/)
       topic_words = topic.summary.downcase.split(/\W+/)
-      score += [(goal_words & topic_words).size * 10, 20].min
+      score += [ (goal_words & topic_words).size * 10, 20 ].min
     end
 
     resolved_similar = dev.delegations.where(status: "done").where(issue_type: topic.category).count
-    score += [resolved_similar * 10, 20].min
+    score += [ resolved_similar * 10, 20 ].min
 
     score
   end

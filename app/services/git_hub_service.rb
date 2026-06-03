@@ -135,9 +135,9 @@ class GitHubService
     when "PullRequestEvent"
       action = event.payload.action
       type = case action
-             when "opened" then "pr_opened"
-             when "closed" then event.payload.pull_request.merged ? "pr_merged" : nil
-             end
+      when "opened" then "pr_opened"
+      when "closed" then event.payload.pull_request.merged ? "pr_merged" : nil
+      end
       return unless type
       {
         type: type,
