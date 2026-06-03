@@ -138,6 +138,7 @@ class PrAnalysisService
       - Tips: "Check N+1 on user.posts" — not "You might want to consider checking for N+1 queries"
       - Draft comment: direct, actionable, references specific lines. No "Overall looks good but..."
       - Use 🔴 🟡 🔵 prefixes in issue descriptions for visual scanning
+      - Don't output useless comments if there is nothing to say.
 
       Categorize issues by actual severity. Not everything is Critical.
       Acknowledge what was done well before listing issues.
