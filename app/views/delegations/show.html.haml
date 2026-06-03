@@ -6,10 +6,10 @@
 .flex.items-center.justify-between.mbe-6
   %h1.font-bold.text-2xl= @delegation.summary
   .flex.items-center.gap-half
-    = link_to edit_delegation_path(@delegation), class: "text-sm" do
+    = link_to edit_delegation_path(@delegation), class: "btn btn--borderless text-sm" do
       %i.ph.ph-pencil
       Edit
-    = button_to delegation_path(@delegation), method: :delete, class: "btn btn--negative btn--borderless text-sm", data: { turbo_confirm: "Delete this delegation?" } do
+    = button_to delegation_path(@delegation), method: :delete, class: "btn btn--negative text-sm", data: { turbo_confirm: "Delete this delegation?" } do
       %i.ph.ph-trash
       Delete
 .card.mbe-4
