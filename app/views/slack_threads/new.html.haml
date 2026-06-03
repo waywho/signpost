@@ -39,12 +39,12 @@
         %label.text-sm.font-bold.mbe-1.block
           Keywords
           %span.font-normal.text-subtle (comma-separated)
-        %input.input{:name => "keywords_raw", :placeholder => "postgres, migration", :type => "text", :value => "#{@slack_thread.keywords&.join(', ')}"}/
+        = text_field_tag :keywords_raw, @slack_thread.keywords&.join(", "), class: "input", placeholder: "postgres, migration"
       %div
         %label.text-sm.font-bold.mbe-1.block
           Participants
           %span.font-normal.text-subtle (comma-separated)
-        %input.input{:name => "participants_raw", :placeholder => "@alice, @bob", :type => "text", :value => "#{@slack_thread.participants&.join(', ')}"}/
+        = text_field_tag :participants_raw, @slack_thread.participants&.join(", "), class: "input", placeholder: "@alice, @bob"
       .flex.items-center.gap
         = f.submit "Log Thread", class: "btn btn--primary"
         = link_to "Cancel", slack_threads_path, class: "btn btn--borderless"
