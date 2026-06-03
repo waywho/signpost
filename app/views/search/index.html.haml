@@ -11,7 +11,7 @@
     - %w[thread topic message].each do |level|
       %label.flex.items-center.gap-half
         - checked = params[:levels].blank? || params[:levels]&.include?(level)
-        %input{type: "checkbox", name: "levels[]", value: level, checked: checked}/
+        = check_box_tag "levels[]", level, checked, id: nil
         = "#{level.capitalize}s"
 
 - if @error
