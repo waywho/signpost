@@ -3,41 +3,33 @@
     <div class="flex items-center justify-between mbe-4">
       <h2 class="font-bold flex items-center gap-half">
         <i class="ph ph-tray" style="color: var(--color-primary)"></i> Action Queue
-        <% total = @actionable_items.size + @discussion_items.size + @acknowledge_items.size %>
-        <% if total > 0 %>
-          <span class="text-sm font-normal" style="color: var(--color-negative)">(<%= total %> pending)</span>
-        <% end %>
+        <span class="text-sm font-normal" style="color: var(--color-negative)">(<%= (total = ActionItem.pending.size) %> pending)</span>
       </h2>
       <%= render "dashboard/section_refresh", url: dashboard_action_queue_path, frame: "dashboard_action_queue" %>
     </div>
 
     <%# Actionable: create_ticket + delegate %>
-    <% if @actionable_items.any? %>
-      <% @actionable_items.each do |item| %>
-        <%= render "action_items/card", item: item, developers: @developers_for_select, github_repos: @github_repos %>
-      <% end %>
+    <% @actionable_items.each do |item| %>
+      <%= render "action_items/card", item: item, developers: @developers_for_select, github_repos: @github_repos %>
     <% end %>
 
     <%# Needs Discussion %>
-    <% if @discussion_items.any? %>
-      <h3 class="font-bold text-xs mbe-2 mbs-4" style="color: var(--color-text-subtle)">Needs Discussion</h3>
+    <div>
+      <h3 class="font-bold text-xs mbe-2 mbs-4 only:hidden" style="color: var(--color-text-subtle)">Needs Discussion</h3>
       <% @discussion_items.each do |item| %>
         <%= render "action_items/discuss_card", item: item %>
       <% end %>
-    <% end %>
+    </div>
 
     <%# Acknowledge %>
-    <% if @acknowledge_items.any? %>
-      <h3 class="font-bold text-xs mbe-2 mbs-4" style="color: var(--color-text-subtle)">Acknowledge</h3>
+    <div>
+      <h3 class="font-bold text-xs mbe-2 mbs-4 only:hidden" style="color: var(--color-text-subtle)">Acknowledge</h3>
       <div class="card p-3 mbe-2">
         <% @acknowledge_items.each do |item| %>
           <%= render "action_items/acknowledge_card", item: item %>
         <% end %>
       </div>
-    <% end %>
-
-    <%# Ignored %>
-    <%= render "action_items/ignored_section", ignored_count: @ignored_count, ignored_items: @ignored_items || [] %>
+    </div>
 
     <% if total == 0 %>
       <div class="card text-center" style="color: var(--color-text-subtle)">
