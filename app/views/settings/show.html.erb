@@ -249,7 +249,7 @@
         <% if @watched_channels.any? %>
           <div class="flex flex-col gap-half mbe-4">
             <% @watched_channels.each do |ch| %>
-              <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
+              <div class="flex items-center justify-between pb-1" style="border-block-end: 1px solid var(--color-border)">
                 <div>
                   <span class="font-bold text-sm"><%= ch.channel_name %></span>
                   <span class="text-xs" style="color: var(--color-text-subtle)"><%= ch.channel_id %> · <%= ch.capture_mode %></span>
@@ -298,7 +298,7 @@
         <% if @noise_filters.any? %>
           <div class="flex flex-col gap-half mbe-4">
             <% @noise_filters.each do |nf| %>
-              <div class="flex items-center justify-between py-1" style="border-block-end: 1px solid var(--color-border)">
+              <div class="flex items-center justify-between pb-1" style="border-block-end: 1px solid var(--color-border)">
                 <div>
                   <span class="font-bold text-sm"><%= nf.category %></span>
                   <span class="text-xs" style="color: var(--color-text-subtle)"><%= nf.description %></span>

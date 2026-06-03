@@ -9,30 +9,6 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
-/* Spacing utilities — margin-block-end */
-.mbe-1 { margin-block-end: var(--size-1); }
-.mbe-2 { margin-block-end: var(--size-2); }
-.mbe-3 { margin-block-end: var(--size-3); }
-.mbe-4 { margin-block-end: var(--size-4); }
-.mbe-6 { margin-block-end: var(--size-6); }
-
-/* Spacing utilities — margin-block-start */
-.mbs-1 { margin-block-start: var(--size-1); }
-.mbs-2 { margin-block-start: var(--size-2); }
-.mbs-4 { margin-block-start: var(--size-4); }
-.mbs-6 { margin-block-start: var(--size-6); }
-
-/* Spacing utilities — padding */
-.p-2 { padding: var(--size-2); }
-.p-3 { padding: var(--size-3); }
-.p-4 { padding: var(--size-4); }
-.px-3 { padding-inline: var(--size-3); }
-.py-1 { padding-block: var(--size-1); }
-.py-2 { padding-block: var(--size-2); }
-
-/* Spacing utilities — margin-inline */
-.mis-2 { margin-inline-start: var(--size-2); }
-
 /* Widen container for more usable space */
 .container {
   --container-width: 80rem;
@@ -54,39 +30,125 @@
   }
 }
 
-/* Pseudo-class utilities — empty */
+/****************************************************************
+* Display & visibility
+*****************************************************************/
+.hidden { display: none; }
+
+/****************************************************************
+* Text color — accent/brand
+*****************************************************************/
+.text-accent { color: var(--color-primary); }
+.text-border { color: var(--color-border); }
+
+/****************************************************************
+* Typography
+*****************************************************************/
+.font-mono { font-family: var(--default-mono-font-family, ui-monospace, monospace); }
+.whitespace-pre-wrap { white-space: pre-wrap; }
+.line-through { text-decoration: line-through; }
+
+/****************************************************************
+* Cursor
+*****************************************************************/
+.cursor-pointer { cursor: pointer; }
+
+/****************************************************************
+* Flex
+*****************************************************************/
+.flex-2 { flex: 2; }
+
+/****************************************************************
+* Sizing
+*****************************************************************/
+.max-i-xl { max-inline-size: var(--max-i-xl); }    /* 36rem */
+.max-i-2xl { max-inline-size: var(--max-i-2xl); }  /* 42rem */
+.max-i-3xs { max-inline-size: var(--max-i-3xs); }  /* 16rem */
+.max-i-2xs { max-inline-size: var(--max-i-2xs); }  /* 18rem */
+.max-i-form { max-inline-size: 40rem; }
+.min-i-16 { min-inline-size: var(--size-16); }      /* 4rem */
+.min-i-20 { min-inline-size: var(--size-20); }      /* 5rem */
+.min-i-24 { min-inline-size: var(--size-24); }      /* 6rem */
+.min-i-48 { min-inline-size: var(--size-48); }      /* 12rem */
+.min-i-64 { min-inline-size: var(--size-64); }      /* 16rem */
+.max-bs-80 { max-block-size: var(--size-80); overflow-y: auto; }   /* 20rem */
+.max-bs-96 { max-block-size: var(--size-96); overflow-y: auto; }   /* 24rem */
+.max-bs-120 { max-block-size: 30rem; overflow-y: auto; }
+
+/****************************************************************
+* Border
+*****************************************************************/
+.border-be-main { border-block-end: 1px solid var(--color-border); }
+.border-bs-main { border-block-start: 1px solid var(--color-border); }
+
+/****************************************************************
+* Background
+*****************************************************************/
+.bg-secondary { background-color: var(--color-secondary); }
+
+/****************************************************************
+* Animation
+*****************************************************************/
+.animate-spin { animation: spin 1s linear infinite; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/****************************************************************
+* Component — icon circle
+*****************************************************************/
+.icon-circle {
+  flex-shrink: 0;
+  inline-size: 2rem;
+  block-size: 2rem;
+  background: var(--color-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/****************************************************************
+* Component — status indicator icon (settings)
+*****************************************************************/
+.status-icon { font-size: var(--text-sm); }
+.status-icon--ok { color: var(--color-positive); }
+.status-icon--pending { color: var(--color-text-subtle); }
+
+/****************************************************************
+* Pseudo-class utilities
+*****************************************************************/
+
+/* empty */
 .empty\:hidden:empty { display: none; }
 .empty\:block:empty { display: block; }
 
-/* Pseudo-class utilities — only-child */
+/* only-child */
 .only\:hidden:only-child { display: none; }
 .only\:block:only-child { display: block; }
 .only\:m-0:only-child { margin: 0; }
 
-/* Pseudo-class utilities — first-child */
+/* first-child */
 .first\:hidden:first-child { display: none; }
 .first\:mt-0:first-child { margin-block-start: 0; }
 .first\:pt-0:first-child { padding-block-start: 0; }
 .first\:border-t-0:first-child { border-block-start: 0; }
 
-/* Pseudo-class utilities — last-child */
+/* last-child */
 .last\:hidden:last-child { display: none; }
 .last\:mb-0:last-child { margin-block-end: 0; }
 .last\:pb-0:last-child { padding-block-end: 0; }
 .last\:border-b-0:last-child { border-block-end: 0; }
 
-/* Pseudo-class utilities — hover */
+/* hover */
 .hover\:underline:hover { text-decoration: underline; }
 .hover\:no-underline:hover { text-decoration: none; }
 .hover\:opacity-80:hover { opacity: 0.8; }
 
-/* Pseudo-class utilities — focus-visible */
+/* focus-visible */
 .focus\:outline-none:focus-visible { outline: none; }
 
-/* Pseudo-class utilities — disabled */
+/* disabled */
 .disabled\:opacity-50:disabled { opacity: 0.5; }
 .disabled\:pointer-events-none:disabled { pointer-events: none; }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
