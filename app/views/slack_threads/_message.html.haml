@@ -1,0 +1,9 @@
+.flex.gap.pb-2.border-bs-main
+  .icon-circle
+    %i.ph.ph-user.text-xs
+  .flex-1.min-i-0
+    .flex.items-center.gap-half.mbe-1
+      %span.font-bold.text-sm= msg["user"] || msg["username"] || "Unknown"
+      - if msg["ts"].present?
+        %span.text-xs.text-subtle= Time.at(msg["ts"].to_f).strftime("%-m/%-d %H:%M") rescue msg["ts"]
+    %p.text-sm.whitespace-pre-wrap.break-words= msg["text"]

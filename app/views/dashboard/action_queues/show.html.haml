@@ -1,0 +1,24 @@
+= turbo_frame_tag "dashboard_action_queue" do
+  .mbe-6
+    .flex.items-center.justify-between.mbe-4
+      %h2.font-bold.flex.items-center.gap-half
+        %i.ph.ph-tray.text-accent
+        Action Queue
+        %span.text-sm.font-normal.text-negative
+          (#{(total = ActionItem.pending.size)} pending)
+      = render "dashboard/section_refresh", url: dashboard_action_queue_path, frame: "dashboard_action_queue"
+    - @actionable_items.each do |item|
+      = render "action_items/card", item: item, developers: @developers_for_select, github_repos: @github_repos
+    %div
+      %h3.font-bold.text-xs.mbe-2.mbs-4.only:hidden.text-subtle Needs Discussion
+      - @discussion_items.each do |item|
+        = render "action_items/discuss_card", item: item
+    %div
+      %h3.font-bold.text-xs.mbe-2.mbs-4.only:hidden.text-subtle Acknowledge
+      .card.p-3.mbe-2
+        - @acknowledge_items.each do |item|
+          = render "action_items/acknowledge_card", item: item
+    - if total == 0
+      .card.text-center.text-subtle
+        %i.ph.ph-check-circle.mbe-4.text-4xl.block.text-positive
+        %p.text-sm All caught up. No pending actions.

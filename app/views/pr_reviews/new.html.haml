@@ -1,0 +1,56 @@
+- content_for(:title, "Log PR Review — Tech Lead OS")
+.container.mbs-6.max-i-form
+  .mbe-4
+    = link_to pr_reviews_path, class: "flex items-center gap-half text-sm text-subtle" do
+      %i.ph.ph-caret-left
+      PR Reviews
+  %h1.font-bold.text-2xl.mbe-6 Log a PR Review
+  .card
+    = form_with model: @pr_review, class: "flex flex-col gap" do |f|
+      - if @pr_review.errors.any?
+        .alert.alert--negative
+          %ul.text-sm
+            - @pr_review.errors.full_messages.each do |msg|
+              %li= msg
+      .flex.gap
+        .flex-1
+          = f.label :repo, "Repository", class: "text-sm font-bold mbe-1 block"
+          = f.text_field :repo, class: "input", placeholder: "org/repo", required: true
+        %div{:style => "flex: 0 0 6rem"}
+          = f.label :pr_number, "PR #", class: "text-sm font-bold mbe-1 block"
+          = f.number_field :pr_number, class: "input", required: true
+      %div
+        = f.label :pr_title, "Title", class: "text-sm font-bold mbe-1 block"
+        = f.text_field :pr_title, class: "input"
+      %div
+        = f.label :pr_author, "Author", class: "text-sm font-bold mbe-1 block"
+        = f.text_field :pr_author, class: "input"
+      .flex.gap
+        .flex-1
+          = f.label :recommendation, class: "text-sm font-bold mbe-1 block"
+          = f.select :recommendation, [["—", ""], ["Approve", "approve"], ["Request Changes", "request_changes"], ["Needs Discussion", "needs_discussion"]], {}, class: "input"
+        .flex-1
+          = f.label :risk_level, class: "text-sm font-bold mbe-1 block"
+          = f.select :risk_level, [["—", ""], ["Low", "low"], ["Medium", "medium"], ["High", "high"], ["Critical", "critical"]], {}, class: "input"
+      %div
+        = f.label :summary, class: "text-sm font-bold mbe-1 block"
+        = f.text_area :summary, class: "input", rows: 3
+      %div
+        = f.label :draft_comment, class: "text-sm font-bold mbe-1 block"
+        = f.text_area :draft_comment, class: "input", rows: 3
+      .flex.gap
+        .flex-1
+          = f.label :files_changed, class: "text-sm font-bold mbe-1 block"
+          = f.number_field :files_changed, class: "input"
+        .flex-1
+          = f.label :additions, class: "text-sm font-bold mbe-1 block"
+          = f.number_field :additions, class: "input"
+        .flex-1
+          = f.label :deletions, class: "text-sm font-bold mbe-1 block"
+          = f.number_field :deletions, class: "input"
+      %div
+        = f.label :reviewed_at, class: "text-sm font-bold mbe-1 block"
+        = f.datetime_local_field :reviewed_at, class: "input", value: @pr_review.reviewed_at&.strftime("%Y-%m-%dT%H:%M")
+      .flex.items-center.gap
+        = f.submit "Log Review", class: "btn btn--primary"
+        = link_to "Cancel", pr_reviews_path, class: "btn btn--borderless"

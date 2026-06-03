@@ -1,0 +1,8 @@
+= turbo_frame_tag "pr_analysis_result" do
+  - if @error
+    .alert.alert--negative.mbe-4
+      %p.text-sm
+        %i.ph.ph-warning
+        Analysis failed: #{@error}
+  - elsif @analysis
+    = render "analysis", analysis: @analysis, cc_command: @cc_command

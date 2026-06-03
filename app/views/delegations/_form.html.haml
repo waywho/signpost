@@ -1,0 +1,34 @@
+= form_with model: delegation, class: "flex flex-col gap" do |f|
+  - if params[:slack_topic_id].present?
+    %input{:name => "slack_topic_id", :type => "hidden", :value => "#{params[:slack_topic_id]}"}/
+  - if delegation.errors.any?
+    .alert.alert--negative
+      %ul.text-sm
+        - delegation.errors.full_messages.each do |msg|
+          %li= msg
+  %div
+    = f.label :summary, class: "text-sm font-bold mbe-1 block"
+    = f.text_field :summary, class: "input", required: true
+  .flex.gap
+    .flex-1
+      = f.label :developer_id, "Developer", class: "text-sm font-bold mbe-1 block"
+      = f.collection_select :developer_id, developers, :id, :name, { include_blank: "— select —" }, class: "input"
+    .flex-1
+      = f.label :urgency, class: "text-sm font-bold mbe-1 block"
+      = f.select :urgency, [["", ""], ["Critical", "critical"], ["High", "high"], ["Medium", "medium"], ["Low", "low"]], {}, class: "input"
+  %div
+    = f.label :issue_type, class: "text-sm font-bold mbe-1 block"
+    = f.text_field :issue_type, class: "input", placeholder: "bug, feature, question..."
+  %div
+    = f.label :handoff_message, class: "text-sm font-bold mbe-1 block"
+    = f.text_area :handoff_message, class: "input", rows: 4
+  %div
+    = f.label :github_issue_url, "GitHub Issue URL", class: "text-sm font-bold mbe-1 block"
+    = f.url_field :github_issue_url, class: "input"
+  - if delegation.persisted?
+    %div
+      = f.label :status, class: "text-sm font-bold mbe-1 block"
+      = f.select :status, %w[delegated in_progress done blocked], {}, class: "input"
+  .flex.items-center.gap
+    = f.submit delegation.persisted? ? "Save Changes" : "Create Delegation", class: "btn btn--primary"
+    = link_to "Cancel", delegation.persisted? ? delegation_path(delegation) : delegations_path, class: "btn btn--borderless"

@@ -1,0 +1,45 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title= content_for(:title) || "Tech Lead OS"
+    %meta{:content => "width=device-width,initial-scale=1", :name => "viewport"}/
+    %meta{:content => "yes", :name => "apple-mobile-web-app-capable"}/
+    %meta{:content => "yes", :name => "mobile-web-app-capable"}/
+    = csrf_meta_tags
+    = csp_meta_tag
+    = yield :head
+    %link{:href => "/icon.png", :rel => "icon", :type => "image/png"}/
+    %link{:href => "/icon.svg", :rel => "icon", :type => "image/svg+xml"}/
+    %link{:href => "/icon.png", :rel => "apple-touch-icon"}/
+    %link{:href => "https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2/src/regular/style.css", :rel => "stylesheet"}/
+    = stylesheet_link_tag "css-zero/reset", "data-turbo-track": "reload"
+    = stylesheet_link_tag "css-zero/variables", "data-turbo-track": "reload"
+    = stylesheet_link_tag :app, "data-turbo-track": "reload"
+    = stylesheet_link_tag "css-zero/utilities", "data-turbo-track": "reload"
+    = javascript_importmap_tags
+  %body{:class => "#{content_for(:body_class).presence || 'header-layout'}", "data-controller" => "offcanvas"}
+    %header#header
+      .container.flex.items-center.justify-between
+        = link_to root_path, class: "flex items-center gap-half font-bold text-lg" do
+          %i.ph.ph-brain.text-accent
+          Tech Lead OS
+        %nav.flex.items-center.gap
+          = link_to "Team", developers_path, class: "text-sm"
+          = link_to "Delegations", delegations_path, class: "text-sm"
+          = link_to "Commitments", commitments_path, class: "text-sm"
+          = link_to "PR Reviews", pr_reviews_path, class: "text-sm"
+          = link_to "Threads", slack_threads_path, class: "text-sm"
+          = link_to "Status", status_path, class: "text-sm"
+          = link_to "Search", search_path, class: "text-sm"
+          = link_to "Settings", settings_path, class: "text-sm"
+    - if notice.present?
+      .flash{"data-action" => "animationend->flash#hide", "data-controller" => "flash", :popover => "manual", :role => "alert", :style => "--flash-position: 5rem"}
+        .flash__content= notice
+    - if content_for?(:body_class) && content_for(:body_class).include?("sidebar-layout")
+      = yield
+    - else
+      %main#main
+        .container
+          = yield
+    = render "shared/offcanvas"

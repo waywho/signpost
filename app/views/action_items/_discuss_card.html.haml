@@ -1,0 +1,19 @@
+.card.p-3.mbe-2{:id => "action_item_#{item.id}"}
+  .flex.items-center.justify-between.mbe-1
+    .flex.items-center.gap-half
+      %span.badge.badge--primary.text-xs Discuss
+      %span.badge.badge--secondary.text-xs= item.slack_topic.slack_thread&.slack_channel_name
+    .flex.items-center.gap-half
+      - if item.slack_topic.slack_thread&.slack_url.present?
+        %a.btn.btn--icon.btn--borderless{:href => "#{item.slack_topic.slack_thread.slack_url}", :target => "_blank", :title => "Open in Slack"}
+          %i.ph.ph-chat-teardrop-dots
+      = button_to action_item_path(item), method: :patch, params: { status: "resolved" }, class: "btn btn--icon btn--borderless", title: "Resolved" do
+        %i.ph.ph-check-circle
+      = button_to action_item_path(item), method: :patch, params: { status: "dismissed" }, class: "btn btn--icon btn--borderless", title: "Dismiss" do
+        %i.ph.ph-x
+  %p.font-bold.text-sm= item.slack_topic.title
+  %p.text-xs.text-subtle= item.slack_topic.summary
+  - if item.slack_thread
+    = link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "text-xs text-subtle", data: { turbo_frame: "_top" } do
+      %i.ph.ph-chat-dots
+      = item.slack_thread.title.presence || "Thread"

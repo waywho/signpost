@@ -1,0 +1,43 @@
+- if developer.github_handle.present?
+  .card.mbe-4
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-github-logo
+      GitHub Activity (30 days)
+    - if activities.any?
+      - grouped = activities.group_by { |a| a[:type] }
+      .flex.items-center.gap.text-sm.mbe-4
+        - if grouped["commit"]
+          %span
+            %i.ph.ph-git-commit
+            = grouped["commit"].size
+            commits
+        - if grouped["pr_opened"]
+          %span
+            %i.ph.ph-git-pull-request
+            = grouped["pr_opened"].size
+            PRs
+        - if grouped["pr_merged"]
+          %span
+            %i.ph.ph-git-merge
+            = grouped["pr_merged"].size
+            merged
+        - if grouped["pr_review"]
+          %span
+            %i.ph.ph-code
+            = grouped["pr_review"].size
+            reviews
+      %ul.flex.flex-col.gap-half
+        - activities.first(10).each do |activity|
+          %li.flex.items-center.gap.text-sm.border-be-main.pbe-1
+            - icon = { "commit" => "ph-git-commit", "pr_opened" => "ph-git-pull-request", "pr_merged" => "ph-git-merge", "pr_review" => "ph-code" }[activity[:type]] || "ph-dot"
+            %i{:class => "ph #{icon} text-subtle flex-item-no-shrink"}
+            .flex.flex-col.flex-1.min-i-0
+              - if activity[:url]
+                = link_to activity[:title]&.truncate(60) || activity[:type].humanize, activity[:url], target: "_blank", class: "text-sm", style: "text-decoration: none"
+              - else
+                %span= activity[:title]&.truncate(60) || activity[:type].humanize
+              %span.text-xs.text-subtle
+                = activity[:repo]
+                · #{time_ago_in_words(activity[:occurred_at])} ago
+    - else
+      %p.text-sm.text-center.text-subtle No recent GitHub activity.

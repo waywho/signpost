@@ -1,0 +1,15 @@
+.sidebar-menu
+  .flex.items-center.justify-between.p-2
+    %span.font-bold.text-sm Developers
+    = link_to new_developer_path, class: "text-sm text-accent" do
+      %i.ph.ph-plus
+      Add
+  - developers.each do |dev|
+    = link_to developer_path(dev), class: "sidebar-menu__button btn #{dev == current_dev ? 'active' : ''}", aria: { current: dev == current_dev ? 'page' : nil } do
+      .avatar{:style => "--avatar-size: var(--size-8); background-color: #{dev.color.presence || 'var(--color-border)'}"}
+        %span{:role => "img"}= dev.name.split.map(&:first).first(2).join.upcase
+      .flex.flex-col.flex-1.min-i-0
+        %span.text-sm.font-medium.overflow-ellipsis= dev.name
+        %span.text-xs.text-subtle= dev.role
+      - if dev.developer_notes.any? { |n| n.note_type == "concern" }
+        %i.ph.ph-warning.text-negative.flex-item-no-shrink

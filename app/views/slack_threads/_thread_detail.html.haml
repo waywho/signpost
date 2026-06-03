@@ -1,0 +1,112 @@
+= turbo_stream_from slack_thread
+= render "action_bar", thread: slack_thread
+= render "codebase_analyses/trigger", slack_thread:, repo_paths:
+- analyses.each do |analysis|
+  = render "codebase_analyses/analysis_card", analysis:, developers:, github_repos:
+.card.mbe-4
+  .flex.items-center.gap-half.mbe-2
+    %i{:class => "ph #{category_icon(slack_thread.category)} text-xl text-accent"}
+    %h1.font-bold.text-2xl.flex-1= slack_thread.title.presence || "Untitled"
+    = button_to slack_thread_triage_path(slack_thread), method: :post, class: "btn btn--borderless text-xs" do
+      %i.ph.ph-arrow-clockwise
+      Triage
+    %span{:class => "badge #{status_badge_variant(slack_thread.status)}"}= slack_thread.status
+    - if slack_thread.category.present?
+      %span.badge= slack_thread.category
+  .flex.items-center.gap.text-sm.text-subtle
+    - if slack_thread.slack_channel_name.present?
+      %span
+        %i.ph.ph-hash
+        = slack_thread.slack_channel_name
+    - if slack_thread.captured_at
+      %span
+        %i.ph.ph-clock
+        = slack_thread.captured_at.strftime("%B %-d, %Y")
+    - if slack_thread.capture_reason.present?
+      %span
+        %i.ph.ph-lightning
+        = slack_thread.capture_reason.tr("_", " ")
+    - if slack_thread.slack_url.present?
+      = link_to slack_thread.slack_url, target: "_blank", class: "text-accent" do
+        %i.ph.ph-arrow-square-out
+        Open in Slack
+- if slack_thread.summary.present?
+  .card.mbe-4
+    %h2.font-bold.text-sm.mbe-2.text-subtle Summary
+    %p.text-sm= slack_thread.summary
+- if topics.any?
+  .mbe-4
+    .flex.items-center.justify-between.mbe-2
+      %h2.font-bold.text-sm.text-subtle
+        %i.ph.ph-list-checks
+        Topics (#{topics.size})
+    - if topics.size > 1
+      = form_with url: slack_thread_topic_merge_path(slack_thread), method: :post, class: "mbe-2" do |f|
+        - topics.each do |topic|
+          .flex.items-start.gap-half.mbe-2
+            %input.input.mbs-1.flex-item-no-shrink{:name => "topic_ids[]", :type => "checkbox", :value => "#{topic.id}"}/
+            .flex-1
+              = render "topic", topic:
+        = f.submit "Merge Selected Topics", class: "btn btn--borderless text-xs"
+    - else
+      - topics.each do |topic|
+        = render "topic", topic:
+.flex.gap.mbe-4
+  - if slack_thread.participants.present?
+    .card.flex-1
+      %h2.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-users
+        Participants
+      .flex.items-center.gap-half.flex-wrap
+        - slack_thread.participants.each do |p|
+          %span.text-xs{:style => "background: var(--color-secondary); padding: 0.125rem 0.5rem; border-radius: var(--rounded-full)"}= p
+  - if slack_thread.keywords.present?
+    .card.flex-1
+      %h2.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-tag
+        Keywords
+      .flex.items-center.gap-half.flex-wrap
+        - slack_thread.keywords.each do |kw|
+          = link_to kw, slack_threads_path(q: kw), class: "text-xs", style: "background: var(--color-secondary); padding: 0.125rem 0.5rem; border-radius: var(--rounded-full)"
+- if messages.any?
+  .card{"data-controller" => "thread-messages"}
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-chat-dots
+      Messages (#{messages.size})
+    - messages.first(5).each do |msg|
+      .flex.gap.pb-2.border-bs-main
+        .icon-circle
+          %i.ph.ph-user.text-xs
+        .flex-1.min-i-0
+          .flex.items-center.gap-half.mbe-1
+            %span.font-bold.text-sm= msg.user_name || msg.user_id || "Unknown"
+            - if msg.message_ts_at
+              %span.text-xs.text-subtle= msg.message_ts_at.strftime("%-m/%-d %H:%M")
+          %p.text-sm.whitespace-pre-wrap.break-words= msg.content
+    - if messages.size > 5
+      .hidden{"data-thread-messages-target" => "overflow"}
+        - messages.drop(5).each do |msg|
+          .flex.gap.pb-2.border-bs-main
+            .icon-circle
+              %i.ph.ph-user.text-xs
+            .flex-1.min-i-0
+              .flex.items-center.gap-half.mbe-1
+                %span.font-bold.text-sm= msg.user_name || msg.user_id || "Unknown"
+                - if msg.message_ts_at
+                  %span.text-xs.text-subtle= msg.message_ts_at.strftime("%-m/%-d %H:%M")
+              %p.text-sm.whitespace-pre-wrap.break-words= msg.content
+      %button.text-sm.mbs-2.text-accent{"data-action" => "click->thread-messages#showAll", "data-thread-messages-target" => "toggle"}
+        Show #{messages.size - 5} more
+- elsif slack_thread.raw_messages.present?
+  .card{"data-controller" => "thread-messages"}
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-chat-dots
+      Messages (#{slack_thread.raw_messages.size})
+    - slack_thread.raw_messages.first(5).each do |msg|
+      = render "message", msg: msg
+    - if slack_thread.raw_messages.size > 5
+      .hidden{"data-thread-messages-target" => "overflow"}
+        - slack_thread.raw_messages.drop(5).each do |msg|
+          = render "message", msg: msg
+      %button.text-sm.mbs-2.text-accent{"data-action" => "click->thread-messages#showAll", "data-thread-messages-target" => "toggle"}
+        Show #{slack_thread.raw_messages.size - 5} more

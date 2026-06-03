@@ -1,0 +1,33 @@
+= turbo_frame_tag "dashboard_pr_reviews" do
+  .card
+    .flex.items-center.justify-between.mbe-4
+      %h2.font-bold.flex.items-center.gap-half
+        %i.ph.ph-git-pull-request.text-accent
+        PR Reviews
+        %span.text-sm.font-normal.text-subtle Last 5
+      .flex.items-center.gap-half
+        = render "dashboard/section_refresh", url: dashboard_pr_reviews_path, frame: "dashboard_pr_reviews"
+        = link_to "View all →", pr_reviews_path, class: "text-xs text-subtle"
+    - if @pr_queue&.any?
+      %p.badge.badge--negative.mbe-2
+        %i.ph.ph-warning-circle
+        = @pr_queue.size
+        awaiting your review
+      %ul.flex.flex-col.gap-half.mbe-4
+        - @pr_queue.first(3).each do |pr|
+          %li.flex.items-center.justify-between.text-sm
+            = link_to "##{pr[:number]} #{pr[:title]&.truncate(40)}", pr[:url], target: "_blank", style: "text-decoration: none"
+            %span.text-xs.text-subtle= pr[:repo].split('/').last
+    - if @recent_pr_reviews.any?
+      %ul.flex.flex-col.gap-half
+        - @recent_pr_reviews.each do |pr|
+          %li.border-be-main.pbe-2
+            .flex.items-center.justify-between.text-sm
+              %span.font-bold
+                = pr.repo
+                \##{pr.pr_number}
+              - if pr.recommendation.present?
+                %span{:class => "badge #{recommendation_badge_variant(pr.recommendation)}"}= pr.recommendation.tr("_", " ").downcase.capitalize
+            %span.text-xs.text-subtle= pr.pr_title&.truncate(50)
+    - else
+      %p.text-sm.text-center.text-subtle No PR reviews yet.

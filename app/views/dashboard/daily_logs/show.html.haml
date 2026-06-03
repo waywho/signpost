@@ -1,0 +1,25 @@
+= turbo_frame_tag "dashboard_daily_log" do
+  .card.dashboard-log{"data-controller" => "daily-log"}
+    .flex.items-center.justify-between.mbe-4
+      %h2.font-bold.flex.items-center.gap-half
+        %i.ph.ph-notebook.text-accent
+        Today's Log
+      = render "dashboard/section_refresh", url: dashboard_daily_log_path, frame: "dashboard_daily_log"
+    = form_with model: @daily_log, url: @daily_log.persisted? ? daily_log_path(@daily_log) : daily_logs_path do |f|
+      .flex.gap.items-start
+        .flex.flex-col.gap-half.flex-1
+          %label.text-sm.font-bold EOD Notes
+          = f.text_area :eod_notes, rows: 5, placeholder: "What happened today?", class: "input"
+        .flex.flex-col.gap-half.flex-1
+          %label.text-sm.font-bold Tomorrow's Priorities
+          %ul.flex.flex-col.gap-half{"data-daily-log-target" => "priorityList"}
+            - (@daily_log.tomorrow_priorities.presence || [""]).each_with_index do |p, i|
+              %li.flex.items-center.gap-half
+                %input.input.flex-1.text-sm{:name => "daily_log[tomorrow_priorities][]", :placeholder => "Priority #{i + 1}", :type => "text", :value => p}/
+                %button.text-subtle{"data-action" => "daily-log#removePriority", :type => "button"}
+                  %i.ph.ph-x
+          %button.text-sm.flex.items-center.gap-half.text-accent{"data-action" => "daily-log#addPriority", :type => "button"}
+            %i.ph.ph-plus
+            Add priority
+      .flex.justify-end.mbs-4
+        = f.submit "Save log", class: "btn btn--primary"

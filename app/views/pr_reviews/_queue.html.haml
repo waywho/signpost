@@ -1,0 +1,59 @@
+- if pr_queue.nil?
+  .card.mbe-6.text-subtle
+    %p.text-sm
+      %i.ph.ph-info
+      Set
+      %code github_pat
+      in encrypted settings to see your PR queue.
+- elsif pr_queue.any?
+  - repos = pr_queue.map { |pr| pr[:repo] }.uniq.sort
+  = turbo_stream_from "pr_analysis_results"
+  .card.mbe-6{"data-controller" => "bulk-select pr-filter"}
+    %h2.font-bold.flex.items-center.gap-half.mbe-4
+      %i.ph.ph-git-pull-request.text-accent
+      Awaiting Your Review
+      %span.text-sm.font-normal.text-subtle
+        (#{pr_queue.size})
+    .flex.items-center.gap.mbe-4.flex-wrap
+      .flex.items-center.gap-half
+        %button.badge{"aria-current" => "page", "data-action" => "pr-filter#filterRepo", "data-pr-filter-target" => "repoTab", "data-repo" => "", :type => "button"} All
+        - repos.each do |repo|
+          %button.badge{"data-action" => "pr-filter#filterRepo", "data-pr-filter-target" => "repoTab", "data-repo" => repo, :type => "button"}= repo.split('/').last
+      %input.input.text-xs.max-i-56{"data-action" => "input->pr-filter#search", "data-pr-filter-target" => "searchInput", :placeholder => "Search PRs…", :type => "search"}/
+    = form_with url: pr_reviews_ignore_path, method: :post do |f|
+      .flex.items-center.gap-half.mbe-2{"data-bulk-select-target" => "actions", :hidden => ""}
+        %span.text-xs.text-subtle{"data-count" => ""}
+        = f.submit "Ignore Selected", class: "btn btn--borderless text-xs"
+      .flex.items-center.gap-half.mbe-2.border-be-main.pbe-2
+        %label.flex.items-center.gap-half.text-xs.text-subtle
+          %input.input{"data-action" => "bulk-select#toggleAll", "data-bulk-select-target" => "selectAll", :type => "checkbox"}/
+          Select all
+      .flex.flex-col.gap-half
+        - pr_queue.each do |pr|
+          .flex.items-center.gap.border-be-main.pbe-2{"data-pr-filter-target" => "item", "data-repo" => "#{pr[:repo]}", "data-title" => "#{pr[:title]}"}
+            %input.input{"data-action" => "bulk-select#toggle", "data-bulk-select-target" => "checkbox", :name => "urls[]", :type => "checkbox", :value => "#{pr[:url]}"}/
+            .flex.flex-col.flex-1.min-i-0
+              %span.font-bold.text-sm
+                = link_to "##{pr[:number]} #{pr[:title]}", pr[:url], target: "_blank", style: "text-decoration: none"
+              %span.text-xs.text-subtle
+                = pr[:repo]
+                · #{pr[:author]} · #{time_ago_in_words(pr[:created_at])} ago
+                - if pr[:draft]
+                  · draft
+            - pr_review_id = analyzed_prs[[pr[:repo], pr[:number]]]
+            .flex.items-center.gap-half.flex-item-no-shrink{:id => "pr_queue_actions_#{pr[:repo].tr('/', '_')}_#{pr[:number]}"}
+              - if pr_review_id
+                = link_to pr_review_path(pr_review_id), class: "text-sm flex items-center gap-half text-positive" do
+                  %i.ph.ph-check-circle
+                  Analyzed
+              - elsif claude_configured
+                = button_to pr_reviews_path(repo: pr[:repo], pr_number: pr[:number], pr_title: pr[:title], pr_author: pr[:author]), method: :post, form: { style: "display: inline" }, class: "text-sm text-accent" do
+                  %i.ph.ph-brain
+                  Analyze
+                = button_to pr_reviews_analysis_job_path(repo: pr[:repo], pr_number: pr[:number]), method: :post, form: { style: "display: inline" }, class: "btn btn--icon btn--borderless", title: "Queue background analysis" do
+                  %i.ph.ph-queue
+              = button_to pr_reviews_ignore_path(url: pr[:url]), method: :post, form: { style: "display: inline" }, class: "btn btn--icon btn--borderless", title: "Ignore this PR" do
+                %i.ph.ph-x
+      .flex.items-center.gap-half.mbs-4{"data-bulk-select-target" => "actions", :hidden => ""}
+        %span.text-xs.text-subtle{"data-count" => ""}
+        = f.submit "Ignore Selected", class: "btn btn--borderless text-xs"

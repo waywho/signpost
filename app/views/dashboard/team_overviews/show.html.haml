@@ -1,0 +1,19 @@
+= turbo_frame_tag "dashboard_team_overview" do
+  .card
+    .flex.items-center.justify-between.mbe-4
+      %h2.font-bold.flex.items-center.gap-half
+        %i.ph.ph-users-three.text-accent
+        Team
+        %span.text-sm.font-normal.text-subtle
+          (#{@developers.size})
+      .flex.items-center.gap-half
+        = render "dashboard/section_refresh", url: dashboard_team_overview_path, frame: "dashboard_team_overview"
+        = link_to "View all →", developers_path, class: "text-xs text-subtle"
+    - if @developers.any?
+      %ul.flex.flex-col.gap-half
+        - @developers.each do |dev|
+          %li.flex.items-center.justify-between.text-sm
+            %span.font-bold= dev.name
+            %span.text-subtle= [dev.level, dev.role].compact.join(" · ")
+    - else
+      %p.text-sm.text-center.text-subtle No developers yet.

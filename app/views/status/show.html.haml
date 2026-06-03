@@ -1,0 +1,15 @@
+- content_for(:title, "Status — Tech Lead OS")
+%h1.font-bold.text-2xl System Status
+.flex.flex-col.gap
+  - @checks.each do |name, check|
+    .card.flex.items-center.justify-between
+      .flex.items-center.gap
+        - if check[:status] == :ok
+          %i.ph.ph-check-circle.text-positive.text-xl
+        - else
+          %i.ph.ph-warning-circle.text-negative.text-xl
+        %span.font-medium.capitalize= name.to_s.tr('_', ' ')
+      %span.text-sm.text-subtle= check[:detail]
+%p.text-sm.text-subtle
+  %i.ph.ph-clock
+  Checked at #{Time.current.strftime("%H:%M:%S")}

@@ -1,0 +1,39 @@
+.card.mbe-2{:id => "topic_#{topic.id}"}
+  .flex.items-center.gap-half.mbe-2
+    %span.font-bold.text-sm.flex-1= topic.title
+    - if topic.urgency.present?
+      %span{:class => "badge #{urgency_badge_variant(topic.urgency)}"}= topic.urgency
+    - if topic.category.present?
+      %span.badge= topic.category
+  %p.text-sm.mbe-2= topic.summary
+  - if topic.action_recommendation.present?
+    %span.badge
+      %i.ph.ph-arrow-right
+      = topic.action_recommendation.tr("_", " ")
+  - if topic.drafting?
+    .flex.items-center.gap-half.mbs-2.p-2.text-subtle
+      %i.ph.ph-spinner.animate-spin.inline-block
+      %span.text-sm Drafting ticket…
+  - elsif topic.status != "open"
+    %span.badge.badge--positive.mis-2
+      %i.ph.ph-check-circle
+      = topic.status
+    - if defined?(delegation) && delegation.present?
+      .mbs-2
+        = link_to delegation_path(delegation), class: "text-sm text-accent" do
+          %i.ph.ph-ticket
+          View drafted ticket
+  - else
+    .flex.items-center.gap.mbs-2
+      = button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "text-sm text-accent" do
+        %i.ph.ph-ticket
+        Draft Ticket
+      = link_to new_delegation_path(thread_id: topic.slack_thread.id, slack_topic_id: topic.id), class: "btn btn--primary", data: { turbo: false } do
+        %i.ph.ph-arrow-bend-up-right
+        Delegate
+      = button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "actioned" }, class: "text-sm text-subtle" do
+        %i.ph.ph-check
+        Resolve
+      = button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "dismissed" }, class: "text-sm text-subtle" do
+        %i.ph.ph-x
+        Dismiss

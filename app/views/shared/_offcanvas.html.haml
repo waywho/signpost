@@ -1,0 +1,6 @@
+%dialog.offcanvas{"data-action" => "cancel->offcanvas#close click->offcanvas#backdropClick", "data-offcanvas-target" => "dialog"}
+  .offcanvas__header
+    %button.btn.btn--icon.btn--borderless{"aria-label" => "Close", "data-action" => "offcanvas#close", :type => "button"}
+      %i.ph.ph-x
+  .offcanvas__body
+    = turbo_frame_tag "offcanvas", target: "_top", data: { offcanvas_target: "frame" }

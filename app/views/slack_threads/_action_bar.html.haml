@@ -1,0 +1,18 @@
+- if thread.status.in?(%w[new_thread triaged])
+  .card.flex.items-center.gap.mbe-4
+    %span.text-sm.font-bold.flex-1
+      %i.ph.ph-tray
+      Triage
+    = button_to slack_thread_acknowledgement_path(thread), method: :post, class: "btn btn--primary" do
+      %i.ph.ph-check
+      Acknowledge
+    = link_to new_delegation_path(thread_id: thread.id), class: "btn btn--primary", data: { turbo: false } do
+      %i.ph.ph-arrow-bend-up-right
+      Delegate
+    = button_to slack_thread_dismissal_path(thread), method: :post, class: "btn btn--borderless" do
+      %i.ph.ph-x
+      Dismiss
+    - if thread.slack_url.present?
+      = link_to thread.slack_url, target: "_blank", class: "btn btn--borderless" do
+        %i.ph.ph-arrow-square-out
+        Open in Slack

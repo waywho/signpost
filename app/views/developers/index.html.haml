@@ -1,0 +1,9 @@
+- content_for(:title, "Team — Tech Lead OS")
+- content_for(:body_class, "sidebar-layout")
+#sidebar
+  = render "sidebar", developers: @developers, current_dev: nil
+#main
+  .flex.flex-col.items-center.justify-center.gap.b-full.text-subtle
+    %i.ph.ph-users.text-4xl
+    %p.text-sm Select a developer from the sidebar
+    = link_to "Add Developer", new_developer_path, class: "btn btn--primary"

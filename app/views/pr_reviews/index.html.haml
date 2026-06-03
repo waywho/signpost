@@ -1,0 +1,28 @@
+- content_for(:title, "PR Reviews — Tech Lead OS")
+.flex.items-center.justify-between.mbe-4
+  %h1.font-bold.text-2xl PR Reviews
+= render "queue", pr_queue: @pr_queue, claude_configured: @claude_configured, analyzed_prs: @analyzed_prs
+= form_with url: pr_reviews_path, method: :get, class: "flex items-center gap mbe-4", data: { controller: "auto-submit", action: "change->auto-submit#submit" } do |f|
+  = f.text_field :repo, value: params[:repo], placeholder: "Filter by repo…", class: "input max-i-3xs"
+  = f.select :recommendation, [["All recommendations", ""], ["Approve", "approve"], ["Request Changes", "request_changes"], ["Needs Discussion", "needs_discussion"]], { selected: params[:recommendation] }, class: "input"
+  = f.select :risk_level, [["All risk levels", ""], ["Low", "low"], ["Medium", "medium"], ["High", "high"], ["Critical", "critical"]], { selected: params[:risk_level] }, class: "input"
+  - if params[:repo].present? || params[:recommendation].present? || params[:risk_level].present?
+    = link_to "Clear", pr_reviews_path, class: "text-sm text-subtle"
+- if @pr_reviews.any?
+  .flex.flex-col.gap
+    - @pr_reviews.each do |pr|
+      = link_to pr_review_path(pr), class: "card flex items-center gap", style: "text-decoration: none" do
+        .flex.flex-col.flex-1.min-i-0
+          %span.font-bold.text-sm
+            \##{pr.pr_number} #{pr.pr_title}
+          %span.text-xs.text-subtle
+            = pr.repo
+            · #{pr.pr_author} · #{pr.reviewed_at&.strftime("%b %-d")}
+        - if pr.recommendation.present?
+          %span{:class => "badge #{recommendation_badge_variant(pr.recommendation)}"}= pr.recommendation.tr("_", " ")
+        - if pr.risk_level.present?
+          %span{:class => "badge #{risk_badge_variant(pr.risk_level)}"}= pr.risk_level
+- else
+  .card.text-center.text-subtle
+    %i.ph.ph-git-pull-request.mbe-4.text-4xl.block
+    %p No reviews found.

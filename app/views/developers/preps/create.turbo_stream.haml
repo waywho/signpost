@@ -1,0 +1,11 @@
+= turbo_stream.replace "oneone_prep" do
+  #oneone_prep.card.mbe-4
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-brain
+      1:1 Prep Briefing
+    - if @error
+      %p.text-sm.text-negative
+        %i.ph.ph-warning
+        = @error
+    - else
+      .text-sm.whitespace-pre-wrap.leading-relaxed= @briefing

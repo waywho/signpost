@@ -1,0 +1,60 @@
+.card.mbe-3{:id => "codebase_analysis_#{analysis.id}"}
+  .flex.items-center.gap-half.mbe-2
+    %i.ph.ph-magnifying-glass-plus.text-accent
+    %span.font-bold.text-sm.flex-1
+      Analysis: #{analysis.repo_name}
+    %span{:class => "badge #{analysis.completed? ? 'badge--positive' : analysis.failed? ? 'badge--negative' : 'badge--secondary'}"}
+      = analysis.status
+  - case analysis.status
+  - when "pending", "running"
+    = turbo_stream_from analysis
+    .flex.items-center.gap-half.p-3.text-subtle
+      %i.ph.ph-spinner.animate-spin.inline-block
+      %span.text-sm
+        = analysis.running? ? "Claude is investigating #{analysis.repo_name}…" : "Queued for analysis…"
+  - when "completed"
+    - if analysis.analysis.present?
+      %details.mbe-3
+        %summary.text-xs.font-bold.text-subtle.cursor-pointer
+          %i.ph.ph-article
+          Full Analysis
+        .text-sm.mbs-2.p-3.whitespace-pre-wrap.bg-secondary.rounded-lg.max-bs-96= analysis.analysis
+    - if analysis.draft_title.present?
+      %details.mbe-3{:open => ""}
+        %summary.text-xs.font-bold.text-subtle.cursor-pointer
+          %i.ph.ph-file-text
+          Draft: #{analysis.draft_title}
+        .text-sm.mbs-2.p-3.whitespace-pre-wrap.bg-secondary.rounded-lg= analysis.draft_body
+    - if analysis.github_issue_url.present?
+      .flex.items-center.gap-half.mbe-3.text-xs.text-positive
+        %i.ph.ph-check-circle
+        = link_to analysis.github_issue_url, analysis.github_issue_url, target: "_blank"
+    .flex.items-center.gap-half.flex-wrap
+      - unless analysis.github_issue_url.present?
+        = form_with url: slack_thread_codebase_analysis_issue_path(analysis.slack_thread, analysis), method: :post, class: "flex items-center gap-half" do |f|
+          - if github_repos.any?
+            = f.select :repo, github_repos.map { |r| [r, r] }, { selected: analysis.repo_name }, class: "input text-xs"
+          = f.submit "Create Issue", class: "btn btn--primary text-xs"
+      = form_with url: slack_thread_codebase_analysis_delegation_path(analysis.slack_thread, analysis), method: :post, class: "flex items-center gap-half" do |f|
+        = f.collection_select :developer_id, developers, :id, :name, { include_blank: "— assign —" }, class: "input text-xs"
+        %label.flex.items-center.gap-half.text-xs
+          %input.input{:name => "notify_thread", :type => "checkbox", :value => "1"}/
+          %i.ph.ph-chat-circle
+        = f.submit "Delegate", class: "btn btn--secondary text-xs"
+      = form_with url: slack_thread_codebase_analyses_path(analysis.slack_thread), method: :post, class: "inline-flex" do |f|
+        = f.hidden_field :repo_name, value: analysis.repo_name
+        = f.submit "Re-analyze", class: "btn btn--borderless text-xs"
+      = button_to slack_thread_codebase_analysis_dismissal_path(analysis.slack_thread, analysis), method: :delete, class: "btn btn--borderless text-xs" do
+        %i.ph.ph-x
+        Dismiss
+  - when "failed"
+    .text-sm.mbe-3.text-negative
+      %i.ph.ph-warning
+      = analysis.error_message
+    .flex.items-center.gap-half
+      = form_with url: slack_thread_codebase_analyses_path(analysis.slack_thread), method: :post, class: "inline-flex" do |f|
+        = f.hidden_field :repo_name, value: analysis.repo_name
+        = f.submit "Retry", class: "btn btn--primary text-xs"
+      = button_to slack_thread_codebase_analysis_dismissal_path(analysis.slack_thread, analysis), method: :delete, class: "btn btn--borderless text-xs" do
+        %i.ph.ph-x
+        Dismiss

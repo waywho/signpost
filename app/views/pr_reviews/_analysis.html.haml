@@ -1,0 +1,126 @@
+.mbs-4
+  .mbe-4.p-3.bg-secondary.rounded-lg
+    %p.text-xs.text-subtle
+      %i.ph.ph-info
+      This is AI analysis — verify before acting. Check suggestions against your codebase. Push back on anything that doesn't fit.
+  .card.mbe-4
+    .flex.items-center.gap.mbe-2
+      %span{:class => "badge #{recommendation_badge_variant(analysis[:recommendation])}"}= analysis[:recommendation]&.tr("_", " ")
+    %p.text-sm= analysis[:recommendation_reason]
+    - if analysis[:summary].present?
+      %p.text-sm.mbs-2.text-subtle= analysis[:summary]
+  - if analysis[:critical_flags]&.any?
+    .mbe-4
+      - analysis[:critical_flags].each do |flag|
+        .card.mbe-2{:style => "border-color: var(--color-negative)"}
+          .flex.items-center.gap-half
+            %i.ph.ph-warning-circle.text-negative
+            %span.font-bold.text-sm.text-negative= flag[:title]
+            %span.badge.badge--negative= flag[:severity]
+          %p.text-sm.mbs-1= flag[:detail]
+  - if analysis[:solves_ticket].present?
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2.text-subtle Solves Ticket?
+      %p.text-sm
+        %strong= analysis[:solves_ticket][:result]
+        — #{analysis[:solves_ticket][:explanation]}
+  - if analysis[:before_review_tips]&.any?
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-compass
+        Focus Areas
+      %ul.flex.flex-col.gap-half.p-0
+        - analysis[:before_review_tips].each do |tip|
+          %li.text-sm
+            • #{tip}
+  - if analysis[:strengths]&.any?
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2.text-positive
+        %i.ph.ph-check-circle
+        Strengths
+      %ul.flex.flex-col.gap-half.p-0
+        - analysis[:strengths].each do |s|
+          %li.text-sm
+            • #{s}
+  - %w[critical important minor].each do |severity|
+    - items = analysis.dig(:issues, severity.to_sym)
+    - next unless items&.any?
+    - sev_color = case severity when "critical" then "var(--color-negative)" when "important" then "#f97316" else "var(--color-text-subtle)" end
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2{:style => "color: #{sev_color}"}
+        = severity.capitalize
+        Issues (#{items.size})
+      - items.each do |item|
+        .border-be-main.pb-2
+          .text-sm.font-bold.font-mono
+            - if defined?(repo) && defined?(pr_number) && item[:file].present?
+              - gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(item[:file].to_s)}"
+              = link_to "#{item[:file]}#{":#{item[:line]}" if item[:line].present?}", gh_url, target: "_blank", class: "text-accent", style: "text-decoration: none"
+            - else
+              = item[:file]
+              - if item[:line].present?
+                \:#{item[:line]}
+          %p.text-sm= item[:issue]
+          %p.text-xs.text-subtle
+            %strong Why:
+            = item[:why]
+          %p.text-xs.text-subtle
+            %strong Fix:
+            = item[:fix]
+  - { "Risk Areas" => analysis[:risk_areas], "Missing Tests" => analysis[:missing_tests], "Performance Concerns" => analysis[:performance_concerns], "Security Issues" => analysis[:security_issues] }.each do |title, items|
+    - next unless items&.any?
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2.text-subtle= title
+      %ul.flex.flex-col.gap-half.p-0
+        - items.each do |item|
+          %li.text-sm
+            •
+            - if item.is_a?(Hash) && item[:file].present? && defined?(repo) && defined?(pr_number)
+              - gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(item[:file].to_s)}"
+              = link_to item[:file], gh_url, target: "_blank", class: "font-mono text-accent"
+              (#{item[:severity]}): #{item[:reason]}
+            - elsif item.is_a?(Hash)
+              = "#{item[:file]} (#{item[:severity]}): #{item[:reason]}"
+            - else
+              = item
+  - if analysis[:inline_tips]&.any?
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-lightbulb
+        Per-File Tips
+      - analysis[:inline_tips].each do |tip|
+        .border-be-main.pb-2
+          .text-sm.font-bold.font-mono
+            - if tip[:file].present? && defined?(repo) && defined?(pr_number)
+              - gh_url = "https://github.com/#{repo}/pull/#{pr_number}/files#diff-#{Digest::SHA256.hexdigest(tip[:file].to_s)}"
+              = link_to tip[:file], gh_url, target: "_blank", class: "text-accent"
+            - else
+              = tip[:file]
+          %p.text-sm= tip[:tip]
+          %p.text-xs.text-subtle
+            %em Why:
+            = tip[:why]
+  - if analysis[:draft_comment].present?
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-chat-text
+        Draft Comment
+      %pre.text-sm.p-3.whitespace-pre-wrap.bg-secondary.rounded-lg{:style => "font-family: inherit"}= analysis[:draft_comment]
+  - if analysis[:after_checklist]&.any?
+    .card.mbe-4
+      %h3.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-check-square
+        Pre-Submit Checklist
+      - analysis[:after_checklist].each do |item|
+        .flex.gap.pb-1.border-be-main
+          %input.flex-item-no-shrink{:style => "margin-block-start: 0.125rem", :type => "checkbox"}/
+          %div
+            %p.text-sm= item[:item]
+            %p.text-xs.text-subtle= item[:why]
+  - if cc_command.present?
+    .card
+      %h3.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-terminal
+        Deep Review (Claude Code)
+      %p.text-xs.mbe-2.text-subtle Run in your terminal for deeper analysis using local codebase + CLAUDE.md
+      %pre.text-xs.p-3.whitespace-pre-wrap.font-mono.bg-secondary.rounded-lg= cc_command

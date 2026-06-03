@@ -1,0 +1,7 @@
+- content_for(:title, "#{@slack_thread.title.presence || 'Thread'} — Tech Lead OS")
+.mbe-4
+  = link_to slack_threads_path, class: "flex items-center gap-half text-sm text-subtle", data: {turbo_frame: "_top"} do
+    %i.ph.ph-caret-left
+    All Threads
+= turbo_frame_tag "offcanvas" do
+  = render "thread_detail", slack_thread: @slack_thread, topics: @topics, messages: @messages, analyses: @analyses, repo_paths: @repo_paths, developers: @developers, github_repos: @github_repos

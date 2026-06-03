@@ -1,0 +1,9 @@
+- if repo_paths.any?
+  .card.mbe-4
+    .flex.items-center.gap
+      %span.text-sm.font-bold.flex-1
+        %i.ph.ph-magnifying-glass-plus
+        Codebase Analysis
+      = form_with url: slack_thread_codebase_analyses_path(slack_thread), method: :post, class: "flex items-center gap-half" do |f|
+        = f.select :repo_name, repo_paths.keys, {}, class: "input text-sm"
+        = f.submit "Analyze", class: "btn btn--primary"

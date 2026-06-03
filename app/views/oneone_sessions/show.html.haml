@@ -1,0 +1,28 @@
+- content_for(:title, "1:1 #{@oneone_session.session_date.strftime('%B %-d')} — #{@developer.name} — Tech Lead OS")
+.container.mbs-6.max-i-form
+  .mbe-4
+    = link_to developer_path(@developer), class: "flex items-center gap-half text-sm text-subtle" do
+      %i.ph.ph-caret-left
+      = @developer.name
+  %h1.font-bold.text-2xl.mbe-6
+    1:1 — #{@oneone_session.session_date.strftime("%B %-d, %Y")}
+  - %w[discussed wins challenges growth action_items].each do |field|
+    - value = @oneone_session.send(field)
+    - next unless value.present?
+    .card.mbe-4
+      %h2.font-bold.text-sm.mbe-2.text-subtle= field.humanize
+      %p.text-sm.whitespace-pre-wrap= value
+  - if @oneone_session.private_notes.present?
+    .card.mbe-4.border-dark
+      %h2.font-bold.text-sm.mbe-2.text-subtle
+        %i.ph.ph-lock
+        Private Notes
+      %p.text-sm.whitespace-pre-wrap= @oneone_session.private_notes
+  - if @oneone_session.summary.present?
+    .card.mbe-4
+      %h2.font-bold.text-sm.mbe-2.text-subtle Summary
+      %p.text-sm= @oneone_session.summary
+  .flex.items-center.gap
+    = link_to developer_path(@developer), class: "text-sm text-subtle" do
+      %i.ph.ph-arrow-left
+      Back to #{@developer.name}

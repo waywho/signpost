@@ -1,0 +1,46 @@
+- content_for(:title, "#{@delegation.summary.truncate(30)} — Delegations — Tech Lead OS")
+.mbe-4
+  = link_to delegations_path, class: "flex items-center gap-half text-sm text-subtle" do
+    %i.ph.ph-caret-left
+    Delegations
+.flex.items-center.justify-between.mbe-6
+  %h1.font-bold.text-2xl= @delegation.summary
+  .flex.items-center.gap-half
+    = link_to edit_delegation_path(@delegation), class: "text-sm" do
+      %i.ph.ph-pencil
+      Edit
+    = button_to delegation_path(@delegation), method: :delete, class: "btn btn--negative btn--borderless text-sm", data: { turbo_confirm: "Delete this delegation?" } do
+      %i.ph.ph-trash
+      Delete
+.card.mbe-4
+  %dl.flex.flex-col.gap-half
+    - { "Developer" => @delegation.developer&.name || @delegation.developer_name, "Urgency" => @delegation.urgency, "Status" => @delegation.status&.tr("_", " "), "Issue Type" => @delegation.issue_type, "Delegated" => @delegation.delegated_at&.strftime("%B %-d, %Y"), "Resolved" => @delegation.resolved_at&.strftime("%B %-d, %Y") }.each do |label, value|
+      - next unless value.present?
+      .flex.items-center.gap
+        %dt.text-sm.font-bold.min-i-24= label
+        %dd.text-sm= value
+- if @delegation.handoff_message.present?
+  .card.mbe-4
+    %h2.font-bold.text-sm.mbe-2.text-subtle Handoff Message
+    %p.text-sm.whitespace-pre-wrap= @delegation.handoff_message
+- if @delegation.github_issue_url.present?
+  %p.text-sm.mbe-4
+    %i.ph.ph-github-logo
+    = link_to @delegation.github_issue_url, @delegation.github_issue_url, target: "_blank"
+- if @delegation.github_issue_url.blank? && @github_configured && @github_repos.any?
+  .card.mbe-4
+    %span.text-sm.font-bold.mbe-2.block
+      %i.ph.ph-github-logo
+      Create GitHub Issue
+    = form_with url: delegation_issue_path(@delegation), method: :post, class: "flex items-center gap" do |f|
+      = f.select :repo, @github_repos.map { |r| [r, r] }, { include_blank: "— select repo —" }, class: "input"
+      = f.submit "Create Issue", class: "btn btn--primary"
+.card
+  %span.text-sm.font-bold.mbe-2.block Update Status
+  .flex.items-center.gap-half
+    - %w[delegated in_progress done blocked].each do |s|
+      - if s == @delegation.status
+        %span.btn.font-bold= s.tr("_", " ")
+      - else
+        = button_to delegation_path(@delegation), method: :patch, params: { delegation: { status: s } }, class: "btn btn--borderless text-sm" do
+          = s.tr("_", " ")

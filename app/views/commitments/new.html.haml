@@ -1,0 +1,26 @@
+- content_for(:title, "New Commitment — Tech Lead OS")
+.container.mbs-6.max-i-form
+  %h1.font-bold.text-2xl.mbe-6 New Commitment
+  .card
+    = form_with model: @commitment, class: "flex flex-col gap" do |f|
+      - if @commitment.errors.any?
+        .alert.alert--negative
+          %ul.text-sm
+            - @commitment.errors.full_messages.each do |msg|
+              %li= msg
+      %div
+        = f.label :text, "What did you commit to?", class: "text-sm font-bold mbe-1 block"
+        = f.text_area :text, class: "input", rows: 3, required: true
+      .flex.gap
+        .flex-1
+          = f.label :stakeholder, class: "text-sm font-bold mbe-1 block"
+          = f.text_field :stakeholder, class: "input", placeholder: "Who did you promise this to?"
+        .flex-1
+          = f.label :due_date, class: "text-sm font-bold mbe-1 block"
+          = f.date_field :due_date, class: "input"
+      %div
+        = f.label :source, class: "text-sm font-bold mbe-1 block"
+        = f.select :source, [["", ""], ["Manual", "manual"], ["Slack", "slack"], ["Meeting", "meeting"]], {}, class: "input"
+      .flex.items-center.gap
+        = f.submit "Add Commitment", class: "btn btn--primary"
+        = link_to "Cancel", commitments_path, class: "btn btn--borderless"

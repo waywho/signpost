@@ -1,0 +1,33 @@
+= turbo_frame_tag "dashboard_calendar" do
+  - if @today_events.present?
+    .card
+      .flex.items-center.justify-between.mbe-4
+        %h2.font-bold.flex.items-center.gap-half
+          %i.ph.ph-calendar.text-accent
+          Today's Schedule
+          %span.text-sm.font-normal.text-subtle
+            (#{@today_events.size})
+        = render "dashboard/section_refresh", url: dashboard_calendar_path, frame: "dashboard_calendar"
+      .flex.flex-col.gap-half
+        - @today_events.each do |event|
+          .flex.items-center.gap.pb-2.border-be-main
+            .text-xs.text-subtle.min-i-20.flex-item-no-shrink
+              = event[:start_time].strftime("%-I:%M %p")
+            .flex.flex-col.flex-1.min-i-0
+              %span{:class => "font-bold text-sm #{'text-accent' if event[:is_oneone]}"}
+                = event[:title]
+              - if event[:matched_developer]
+                %span.text-xs.text-subtle
+                  %i.ph.ph-user
+                  = event[:matched_developer].name
+                  - if event[:matched_developer].role.present?
+                    · #{event[:matched_developer].role}
+            - if event[:is_oneone] && event[:matched_developer] && event[:start_time] > Time.current
+              = link_to developer_path(event[:matched_developer]), class: "text-xs text-accent flex-item-no-shrink" do
+                %i.ph.ph-brain
+                Prep
+  - elsif @today_events.nil?
+  - else
+    .card.text-center.text-subtle
+      %i.ph.ph-calendar-blank.mbe-2.text-2xl.block
+      %p.text-sm No events today.

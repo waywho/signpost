@@ -1,0 +1,6 @@
+- content_for(:title, "Edit #{@developer.name} — Tech Lead OS")
+.container.mbs-6.max-i-form
+  %h1.font-bold.text-2xl.mbe-6
+    Edit #{@developer.name}
+  .card
+    = render "form", developer: @developer

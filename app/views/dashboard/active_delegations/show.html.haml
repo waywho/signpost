@@ -1,0 +1,26 @@
+= turbo_frame_tag "dashboard_active_delegations" do
+  .card
+    .flex.items-center.justify-between.mbe-4
+      %h2.font-bold.flex.items-center.gap-half
+        %i.ph.ph-arrows-split.text-accent
+        Delegations
+        %span.text-sm.font-normal.text-subtle
+          (#{@delegations.size} active)
+      .flex.items-center.gap-half
+        = render "dashboard/section_refresh", url: dashboard_active_delegations_path, frame: "dashboard_active_delegations"
+        = link_to "View all →", delegations_path, class: "text-xs text-subtle"
+    - if @delegations.any?
+      %ul.flex.flex-col.gap-half
+        - @delegations.each do |d|
+          %li.border-be-main.pbe-2
+            .flex.items-center.justify-between
+              %span.text-sm.font-bold= d.summary.truncate(50)
+              - if d.urgency.in?(%w[critical high])
+                %span{:class => "badge #{urgency_badge_variant(d.urgency)}"}= d.urgency
+            .text-xs.text-subtle
+              = d.developer&.name || d.developer_name || "Unassigned"
+              · #{d.status.tr("_", " ")}
+              - if d.status == "blocked"
+                %i.ph.ph-warning.text-negative
+    - else
+      %p.text-sm.text-center.text-subtle No active delegations.

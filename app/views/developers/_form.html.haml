@@ -1,0 +1,57 @@
+= form_with model: developer, class: "flex flex-col gap" do |f|
+  - if developer.errors.any?
+    .alert.alert--negative
+      %p.font-bold
+        = pluralize(developer.errors.count, "error")
+        prevented saving:
+      %ul.text-sm.pis-4
+        - developer.errors.full_messages.each do |msg|
+          %li= msg
+  %div
+    = f.label :name, class: "text-sm font-bold mbe-1 block"
+    = f.text_field :name, class: "input", required: true
+  .flex.gap
+    .flex-1
+      = f.label :role, class: "text-sm font-bold mbe-1 block"
+      = f.text_field :role, class: "input"
+    .flex-1
+      = f.label :level, class: "text-sm font-bold mbe-1 block"
+      = f.select :level, [["", ""], ["Junior", "junior"], ["Mid", "mid"], ["Senior", "senior"], ["Staff", "staff"]], {}, class: "input"
+  .flex.gap
+    .flex-1
+      = f.label :github_handle, class: "text-sm font-bold mbe-1 block"
+      = f.text_field :github_handle, class: "input", placeholder: "@handle"
+    .flex-1
+      = f.label :slack_handle, class: "text-sm font-bold mbe-1 block"
+      = f.text_field :slack_handle, class: "input", placeholder: "@handle"
+  .flex.gap
+    %div{:style => "flex: 0 0 6rem"}
+      = f.label :color, class: "text-sm font-bold mbe-1 block"
+      = f.color_field :color, class: "input"
+    .flex-1
+      = f.label :joined_team, class: "text-sm font-bold mbe-1 block"
+      = f.date_field :joined_team, class: "input"
+  %div
+    = f.label :strengths, class: "text-sm font-bold mbe-1 block"
+    = f.text_area :strengths, class: "input", rows: 3
+  %div
+    = f.label :growth_areas, class: "text-sm font-bold mbe-1 block"
+    = f.text_area :growth_areas, class: "input", rows: 3
+  %div
+    = f.label :career_goals, class: "text-sm font-bold mbe-1 block"
+    = f.text_area :career_goals, class: "input", rows: 3
+  %div
+    = f.label :private_notes, class: "text-sm font-bold mbe-1 block"
+    = f.text_area :private_notes, class: "input", rows: 3, placeholder: "Private notes (not shared)"
+  %div{"data-controller" => "skills"}
+    %label.text-sm.font-bold.mbe-2.block Skills
+    %input{"data-skills-target" => "hiddenField", :name => "developer[skills]", :type => "hidden", :value => "#{(developer.skills || []).to_json}"}/
+    .mbe-2{"data-skills-target" => "list"}
+    .flex.items-center.gap-half
+      %input.input.flex-1.text-sm.max-i-3xs{"data-action" => "keydown.enter->skills#add", "data-skills-target" => "nameInput", :placeholder => "Add skill…", :type => "text"}/
+      %button.btn{"data-action" => "skills#add", :type => "button"}
+        %i.ph.ph-plus
+        Add
+  .flex.items-center.gap.mbs-2
+    = f.submit developer.persisted? ? "Update Developer" : "Save Developer", class: "btn btn--primary"
+    = link_to "Cancel", developer.persisted? ? developer_path(developer) : developers_path, class: "btn btn--borderless"

@@ -1,0 +1,41 @@
+- content_for(:title, "Commitments — Tech Lead OS")
+.flex.items-center.justify-between.mbe-6
+  %h1.font-bold.text-2xl Commitments
+  = link_to new_commitment_path, class: "btn btn--primary" do
+    %i.ph.ph-plus
+    New Commitment
+- if @overdue.any?
+  %h2.font-bold.text-sm.mbe-2.text-negative
+    %i.ph.ph-warning-circle
+    Overdue
+  .flex.flex-col.gap.mbe-6
+    - @overdue.each do |c|
+      = render "commitment_row", commitment: c
+- if @due_soon.any?
+  %h2.font-bold.text-sm.mbe-2.text-subtle
+    %i.ph.ph-clock
+    Due Soon
+  .flex.flex-col.gap.mbe-6
+    - @due_soon.each do |c|
+      = render "commitment_row", commitment: c
+- if @no_date.any?
+  %h2.font-bold.text-sm.mbe-2.text-subtle
+    %i.ph.ph-list-bullets
+    No Due Date
+  .flex.flex-col.gap.mbe-6
+    - @no_date.each do |c|
+      = render "commitment_row", commitment: c
+- if @overdue.empty? && @due_soon.empty? && @no_date.empty?
+  .card.text-center.text-subtle
+    %i.ph.ph-check-circle.mbe-4.text-4xl.block.text-positive
+    %p No pending commitments.
+- if @done_recent.any?
+  %details.mbs-4
+    %summary.text-sm.font-bold.text-subtle.cursor-pointer
+      %i.ph.ph-check-square
+      Done (last 10)
+    .flex.flex-col.gap.mbs-2
+      - @done_recent.each do |c|
+        .card.flex.items-center.gap.opacity-50
+          %i.ph.ph-check-circle.text-positive
+          %span.text-sm.line-through.flex-1= c.text

@@ -1,0 +1,21 @@
+= turbo_frame_tag dom_id(commitment) do
+  .card.flex.items-center.gap
+    = button_to commitment_completion_path(commitment), method: :post, class: "btn btn--positive btn--icon btn--borderless flex-item-no-shrink" do
+      %i.ph.ph-circle.text-xl
+    .flex.flex-col.flex-1
+      %span.font-bold.text-sm= commitment.text
+      .flex.items-center.gap-half.text-xs.text-subtle
+        - if commitment.stakeholder.present?
+          %span
+            %i.ph.ph-user
+            = commitment.stakeholder
+        - if commitment.due_date.present?
+          - overdue = commitment.due_date < Date.current
+          %span{:class => "#{'text-negative' if overdue}"}
+            %i{:class => "ph ph-#{overdue ? 'warning' : 'calendar'}"}
+            = commitment.due_date.strftime("%-m/%-d")
+        - if commitment.source.present?
+          %span
+            via #{commitment.source}
+    = button_to commitment_path(commitment), method: :delete, class: "btn btn--icon btn--borderless flex-item-no-shrink", data: { turbo_confirm: "Remove?" } do
+      %i.ph.ph-trash

@@ -1,0 +1,16 @@
+- if ignored_count > 0
+  %details.mbe-4
+    %summary.text-sm.text-subtle.cursor-pointer
+      %i.ph.ph-eye-slash
+      = ignored_count
+      topic#{"s" if ignored_count != 1} auto-ignored
+    .flex.flex-col.gap-half.mbs-2
+      - if ignored_items.present?
+        - ignored_items.each do |item|
+          .flex.items-center.justify-between.pb-1.border-be-main
+            %span.text-sm.text-subtle= item.slack_topic.title
+            = button_to action_item_path(item), method: :patch, params: { status: "pending" }, class: "btn btn--secondary text-xs" do
+              Restore
+      - else
+        %p.text-xs.text-subtle
+          = link_to "Load ignored items", root_path(show_ignored: true)

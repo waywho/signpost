@@ -1,0 +1,68 @@
+.card.mbe-3{id: "action_item_#{item.id}"}
+  .flex.gap.items-start
+    .flex-1.min-i-0
+      .flex.items-center.gap.text-xs.mbe-3.text-subtle
+        - if item.slack_thread
+          %span
+            %i.ph.ph-hash
+            = item.slack_thread.slack_channel_name
+          = link_to slack_thread_path(item.slack_thread), class: "flex items-center gap-half text-subtle", data: { action: "offcanvas#open", offcanvas_url_param: slack_thread_path(item.slack_thread) } do
+            %i.ph.ph-chat-dots
+            = item.slack_thread.title.presence || item.slack_thread.slack_channel_name
+        - if item.suggested_developer
+          %span
+            %i.ph.ph-user
+            = item.suggested_developer.name
+          - if item.suggestion_reason.present?
+            %span
+              = "(#{item.suggestion_reason})"
+        - if item.suggested_repo.present?
+          %span
+            %i.ph.ph-git-branch
+            = item.suggested_repo
+      .flex.items-center.gap-half.mbe-2
+        = urgency_badge(item.slack_topic.urgency)
+        %span.font-bold.text-sm.flex-1= item.slack_topic.title
+        - if item.slack_thread.slack_url.present?
+          = link_to item.slack_thread.slack_url, target: "_blank", class: "text-xs text-subtle" do
+            %i.ph.ph-arrow-square-out
+            Slack
+      %p.text-sm.mbe-3.text-subtle= item.slack_topic.summary
+      - if item.related_items.present? && item.related_items.any?
+        .mbe-3
+          %span.badge Related:
+          - item.related_items.each do |related|
+            .text-xs.mbs-1.text-subtle
+              - if related["thread_id"]
+                = link_to slack_thread_path(related["thread_id"]), style: "text-decoration: none" do
+                  = "#{related["title"] || "Thread"} (#{((related["similarity"] || 0) * 100).round}% match)"
+              - else
+                = "#{related["title"]} (#{((related["similarity"] || 0) * 100).round}% match)"
+      - if item.draft_title.present?
+        %details.mbe-3
+          %summary.text-xs.font-bold.text-subtle.cursor-pointer
+            %i.ph.ph-file-text
+            = "Draft: #{item.draft_title}"
+          .text-sm.mbs-2.p-3.whitespace-pre-wrap.bg-secondary.rounded-lg= item.draft_body
+    .min-i-64.max-i-2xs
+      = form_with url: action_item_action_path(item), method: :post, id: "act_form_#{item.id}", class: "flex flex-col gap-half", data: { controller: "ticket-option" } do |f|
+        = f.collection_select :developer_id, developers, :id, :name, { selected: item.suggested_developer_id, include_blank: "— unassigned —" }, class: "input text-xs"
+        - if github_repos.any?
+          = f.select :repo, github_repos.map { |r| [r, r] }, { selected: item.suggested_repo }, class: "input text-xs"
+        %label.flex.items-center.gap-half.text-xs
+          %input.input{type: "checkbox", name: "notify_thread", value: "1"}/
+          %i.ph.ph-chat-circle
+          Notify on thread
+        %label.flex.items-center.gap-half.text-xs
+          %input.input{type: "checkbox", name: "create_issue", value: "1", checked: item.action_type == "create_ticket", "data-ticket-option-target": "createCheckbox", "data-action": "ticket-option#createChanged"}/
+          %i.ph.ph-github-logo
+          Create GitHub issue
+        %input.input.text-xs{type: "url", name: "existing_issue_url", placeholder: "Or paste issue URL…", "data-ticket-option-target": "existingUrl", "data-action": "input->ticket-option#urlChanged"}/
+      .flex.items-center.gap-half.mbs-1
+        %button.btn.btn--primary.text-xs{type: "submit", form: "act_form_#{item.id}"} Do it
+        = button_to action_item_path(item), method: :patch, params: { status: "resolved" }, class: "btn btn--borderless text-xs" do
+          %i.ph.ph-check-circle
+          Resolved
+        = button_to action_item_path(item), method: :patch, params: { status: "dismissed" }, class: "btn btn--borderless text-xs" do
+          %i.ph.ph-x
+          Dismiss

@@ -60,7 +60,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # Convert .erb templates to .haml [https://github.com/dhl/erb2haml]
-  gem "erb2haml", require: false
+  gem "erb2haml"
 end
 
 group :development do

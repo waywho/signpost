@@ -1,0 +1,86 @@
+- content_for(:title, "#{@developer.name} — Tech Lead OS")
+- content_for(:body_class, "sidebar-layout")
+#sidebar
+  = render "sidebar", developers: Developer.by_name.includes(:developer_notes), current_dev: @developer
+#main
+  .container
+    .flex.items-center.justify-between.mbe-6
+      %h1.font-bold.text-2xl= @developer.name
+      .flex.items-center.gap-half
+        = link_to edit_developer_path(@developer), class: "text-sm text-subtle" do
+          %i.ph.ph-pencil
+          Edit
+        = button_to developer_path(@developer), method: :delete, class: "btn btn--negative btn--borderless text-sm", data: { turbo_confirm: "Remove #{@developer.name}?" } do
+          %i.ph.ph-trash
+          Delete
+    .card.mbe-4
+      %dl.flex.flex-col.gap-half
+        - { "Role" => @developer.role, "Level" => @developer.level, "GitHub" => @developer.github_handle, "Slack" => @developer.slack_handle, "Joined" => @developer.joined_team&.strftime("%B %Y") }.each do |label, value|
+          - next unless value.present?
+          .flex.items-center.gap
+            %dt.text-sm.font-bold.min-i-24= label
+            %dd.text-sm= value
+    - if @developer.strengths.present?
+      .card.mbe-4
+        %h2.font-bold.text-sm.mbe-2.text-subtle Strengths
+        %p.text-sm= @developer.strengths
+    - if @developer.growth_areas.present?
+      .card.mbe-4
+        %h2.font-bold.text-sm.mbe-2.text-subtle Growth Areas
+        %p.text-sm= @developer.growth_areas
+    - if @developer.career_goals.present?
+      .card.mbe-4
+        %h2.font-bold.text-sm.mbe-2.text-subtle Career Goals
+        %p.text-sm= @developer.career_goals
+    - if @developer.skills.present? && @developer.skills.any?
+      .card.mbe-4
+        %h2.font-bold.text-sm.mbe-2.text-subtle Skills
+        .flex.flex-col.gap-half
+          - @developer.skills.each do |skill|
+            - skill = skill.is_a?(Hash) ? skill : {}
+            .flex.items-center.gap
+              %span.text-sm.flex-1= skill["name"] || skill[:name]
+              .flex.gap-half
+                - rating = (skill["rating"] || skill[:rating] || 0).to_i
+                - 5.times do |i|
+                  %i{:class => "ph #{i  rating ? 'ph-star-fill' : 'ph-star'} #{i  rating ? 'text-accent' : 'text-border'}"}
+    = render "github_activity", developer: @developer, activities: @github_activities
+    .card.mbe-4
+      %h2.font-bold.text-sm.mbe-4.text-subtle
+        %i.ph.ph-note
+        Observations
+      = turbo_frame_tag "new_note_form" do
+        = form_with model: [@developer, @developer_note], class: "flex items-center gap mbe-4" do |f|
+          = f.select :note_type, [["Good", "good"], ["Growth", "growth"], ["Concern", "concern"], ["Context", "context"]], {}, class: "input", style: "max-inline-size: 8rem"
+          = f.text_field :content, placeholder: "Add observation...", class: "input flex-1"
+          = f.submit "Add", class: "btn btn--primary"
+      #notes_list
+        - @notes.each do |note|
+          = render "developer_notes/note", note: note
+    %turbo-frame#oneone_prep
+      - if @claude_configured
+        .card.mbe-4
+          = button_to developer_prep_path(@developer), method: :post, class: "btn btn--primary", data: { turbo_frame: "oneone_prep" } do
+            %i.ph.ph-brain
+            Prep 1:1
+          %p.text-xs.mbs-2.text-subtle
+            Generate talking points from recent notes, activity, and last 1:1.
+    .card
+      .flex.items-center.justify-between.mbe-4
+        %h2.font-bold.text-sm.text-subtle
+          %i.ph.ph-chats
+          1:1 Sessions
+        = link_to new_developer_oneone_session_path(@developer), class: "text-sm text-accent" do
+          %i.ph.ph-plus
+          Log 1:1
+      - if @oneone_sessions.any?
+        .flex.flex-col.gap-half
+          - @oneone_sessions.each do |session|
+            = link_to developer_oneone_session_path(@developer, session), class: "flex items-center gap card", style: "text-decoration: none" do
+              .flex.flex-col.flex-1
+                %span.font-medium.text-sm= session.session_date.strftime("%B %-d, %Y")
+                - if session.summary.present?
+                  %span.text-xs.overflow-ellipsis.text-subtle= session.summary.truncate(80)
+              %i.ph.ph-caret-right.text-subtle
+      - else
+        %p.text-sm.text-center.text-subtle No 1:1 sessions yet.

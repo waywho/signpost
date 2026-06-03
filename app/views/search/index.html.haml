@@ -1,0 +1,79 @@
+- content_for(:title, "Search — Tech Lead OS")
+
+%h1.font-bold.text-2xl.mbe-6 Semantic Search
+
+= form_with url: search_path, method: :get, class: "flex flex-col gap mbe-6" do |f|
+  .flex.items-center.gap
+    = f.search_field :query, value: @query, placeholder: "Search threads, topics, and messages…", class: "input flex-1", style: "font-size: var(--text-base)", autofocus: true
+    = f.submit "Search", class: "btn btn--primary"
+  .flex.items-center.gap-half.text-xs.text-subtle
+    %span Search across:
+    - %w[thread topic message].each do |level|
+      %label.flex.items-center.gap-half
+        - checked = params[:levels].blank? || params[:levels]&.include?(level)
+        %input{type: "checkbox", name: "levels[]", value: level, checked: checked}/
+        = "#{level.capitalize}s"
+
+- if @error
+  .alert.alert--negative.mbe-4
+    %p.text-sm
+      %i.ph.ph-warning
+      = "Search failed: #{@error}"
+
+- if @query.present?
+  %p.text-sm.mbe-4.text-subtle
+    = "#{@results.size} results for \"#{@query}\""
+
+  - if @results.any?
+    .flex.flex-col.gap
+      - @results.each do |result|
+        .card
+          .flex.items-center.gap-half.mbe-2
+            - type_icon = { "thread" => "ph-chat-dots", "topic" => "ph-list-checks", "message" => "ph-chat-text" }[result[:type]] || "ph-magnifying-glass"
+            - type_badge = { "thread" => "badge--primary", "topic" => "badge--secondary" }[result[:type]] || ""
+            - type_color = { "thread" => "var(--color-primary)", "topic" => "#f97316", "message" => "var(--color-text-subtle)" }[result[:type]] || "var(--color-text-subtle)"
+            %i{class: "ph #{type_icon}", style: "color: #{type_color}"}
+            %span{class: "badge #{type_badge}"}= result[:type].capitalize
+            %span.text-xs.text-subtle
+              = "similarity: #{(result[:similarity] * 100).round(1)}%"
+
+          - case result[:type]
+          - when "thread"
+            - thread = result[:thread]
+            = link_to slack_thread_path(thread[:id]), style: "text-decoration: none" do
+              %span.font-bold.text-sm= thread[:title] || "Untitled thread"
+            - if thread[:summary].present?
+              %p.text-sm.mbs-1.text-subtle= thread[:summary].truncate(150)
+            .flex.items-center.gap-half.text-xs.mbs-1.text-subtle
+              - if thread[:category]
+                %span= thread[:category]
+              - if thread[:captured_at]
+                %span= thread[:captured_at].to_date
+          - when "topic"
+            - topic = result[:topic]
+            - thread = result[:thread]
+            %span.font-bold.text-sm= topic[:title]
+            %p.text-sm.mbs-1= topic[:summary]
+            .flex.items-center.gap-half.text-xs.mbs-1.text-subtle
+              - if topic[:urgency]
+                %span{class: "badge #{urgency_badge_variant(topic[:urgency])}"}= topic[:urgency]
+              - if topic[:category]
+                %span= topic[:category]
+              - if thread
+                %span
+                  in
+                  = link_to thread[:title] || "thread", slack_thread_path(thread[:id])
+          - when "message"
+            - msg = result[:message]
+            - thread = result[:thread]
+            .flex.items-center.gap-half.mbe-1
+              %span.font-bold.text-sm= msg[:user_name] || "Unknown"
+            %p.text-sm.whitespace-pre-wrap.break-words= msg[:content].truncate(200)
+            - if thread
+              .text-xs.mbs-1.text-subtle
+                in
+                = link_to thread[:title] || "thread", slack_thread_path(thread[:id])
+  - elsif @query.present?
+    .card.text-center.text-subtle
+      %i.ph.ph-magnifying-glass.mbe-4.text-4xl.block
+      %p No results found.

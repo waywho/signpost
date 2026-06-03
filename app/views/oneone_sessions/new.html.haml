@@ -1,0 +1,30 @@
+- content_for(:title, "Log 1:1 — #{@developer.name} — Tech Lead OS")
+.container.mbs-6.max-i-form
+  .mbe-4
+    = link_to developer_path(@developer), class: "flex items-center gap-half text-sm text-subtle" do
+      %i.ph.ph-caret-left
+      = @developer.name
+  %h1.font-bold.text-2xl.mbe-6 Log 1:1 Session
+  .card
+    = form_with model: [@developer, @oneone_session], class: "flex flex-col gap" do |f|
+      - if @oneone_session.errors.any?
+        .alert.alert--negative
+          %ul.text-sm
+            - @oneone_session.errors.full_messages.each do |msg|
+              %li= msg
+      %div
+        = f.label :session_date, class: "text-sm font-bold mbe-1 block"
+        = f.date_field :session_date, class: "input", required: true
+      - %i[discussed wins challenges growth action_items].each do |field|
+        %div
+          = f.label field, field.to_s.humanize, class: "text-sm font-bold mbe-1 block"
+          = f.text_area field, class: "input", rows: 3
+      %div
+        = f.label :private_notes, class: "text-sm font-bold mbe-1 block"
+        = f.text_area :private_notes, class: "input", rows: 3, placeholder: "Private — not shared with the developer"
+      %div
+        = f.label :summary, class: "text-sm font-bold mbe-1 block"
+        = f.text_area :summary, class: "input", rows: 2
+      .flex.items-center.gap.mbs-2
+        = f.submit "Save 1:1 Session", class: "btn btn--primary"
+        = link_to "Cancel", developer_path(@developer), class: "btn btn--borderless"

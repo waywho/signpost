@@ -1,0 +1,14 @@
+.flex.items-center.justify-between.pb-1.border-be-main{:id => "action_item_#{item.id}"}
+  .flex.flex-col.min-i-0
+    .flex.items-center.gap-half
+      %span.badge.badge--secondary.text-xs= item.slack_topic.slack_thread&.slack_channel_name
+      %span.text-sm.font-bold= item.slack_topic.title
+    - if item.slack_thread
+      = link_to slack_thread_path(item.slack_thread, anchor: "topic_#{item.slack_topic_id}"), class: "text-xs text-subtle", data: { turbo_frame: "_top" } do
+        %i.ph.ph-chat-dots
+        = item.slack_thread.title.presence || "Thread"
+  .flex.items-center.gap-half
+    = button_to action_item_path(item), method: :patch, params: { status: "resolved" }, class: "btn btn--icon btn--borderless", title: "Resolved" do
+      %i.ph.ph-check-circle
+    = button_to action_item_path(item), method: :patch, params: { status: "dismissed" }, class: "btn btn--icon btn--borderless", title: "Dismiss" do
+      %i.ph.ph-x

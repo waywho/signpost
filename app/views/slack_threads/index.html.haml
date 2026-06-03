@@ -1,0 +1,65 @@
+- content_for(:title, "Slack Threads — Tech Lead OS")
+.flex.items-center.justify-between.mbe-4
+  %h1.font-bold.text-2xl Slack Threads
+  = link_to new_slack_thread_path, class: "btn btn--primary" do
+    %i.ph.ph-plus
+    Log Thread
+.flex.items-center.gap-half.mbe-4
+  - current_status = params[:status] || "new_thread"
+  - [["New", "new_thread"], ["Triaged", "triaged"], ["Actioned", "actioned"], ["Archived", "archived"], ["All", "all"]].each do |label, status|
+    - active = current_status == status
+    - count = status == "all" ? @status_counts.values.sum : (@status_counts[status] || 0)
+    = link_to slack_threads_path(status: status, category: params[:category], q: params[:q]), class: "text-sm #{active ? 'font-bold' : 'text-subtle'}" do
+      = label
+      - if count > 0 && status != "all"
+        %span.text-xs
+          (#{count})
+.flex.items-center.gap.mbe-4.flex-wrap
+  .flex.items-center.gap-half
+    = link_to "All categories", slack_threads_path(status: params[:status] || "new_thread", q: params[:q]), class: "text-sm #{params[:category].blank? ? 'font-bold' : 'text-subtle'}"
+    - @categories.each do |cat|
+      = link_to cat, slack_threads_path(status: params[:status] || "new_thread", category: cat, q: params[:q]), class: "text-sm #{params[:category] == cat ? 'font-bold' : 'text-subtle'}"
+  = form_with url: slack_threads_path, method: :get, class: "flex items-center gap-half", data: { controller: "thread-filter", action: "submit->thread-filter#submit" } do |f|
+    = hidden_field_tag :status, params[:status] || "new_thread"
+    = hidden_field_tag :category, params[:category]
+    = f.search_field :q, value: params[:q], placeholder: "Search…", class: "input min-i-64", data: { "thread-filter-target": "input", action: "input->thread-filter#scheduleSubmit" }
+- if @slack_threads.any?
+  .flex.flex-col.gap
+    - @slack_threads.each do |thread|
+      .card.flex.items-center.gap{:id => "#{dom_id(thread)}"}
+        = link_to slack_thread_path(thread), class: "flex items-center gap flex-1 min-i-0", style: "text-decoration: none" do
+          %i{:class => "ph #{category_icon(thread.category)} text-xl text-accent flex-item-no-shrink"}
+          .flex.flex-col.flex-1.min-i-0
+            .flex.items-center.gap-half
+              %span.font-bold.text-sm= thread.title.presence || "Untitled"
+              - urgency = highest_urgency(thread)
+              - if urgency
+                %span{:class => "badge #{urgency_badge_variant(urgency)}"}= urgency
+              - if thread.slack_topics.any?
+                %span.text-xs.text-subtle
+                  = thread.slack_topics.size
+                  topics
+            - if thread.summary.present?
+              %span.text-xs.overflow-ellipsis.text-subtle= thread.summary.truncate(80)
+            .flex.items-center.gap-half.text-xs.text-subtle
+              - if thread.slack_channel_name.present?
+                %span
+                  %i.ph.ph-hash
+                  = thread.slack_channel_name
+              - if thread.capture_reason.present?
+                %span= thread.capture_reason.tr("_", " ")
+              %span= thread.captured_at&.strftime("%b %-d")
+        - if thread.status.in?(%w[new_thread triaged])
+          .flex.items-center.gap-half.flex-item-no-shrink
+            = button_to slack_thread_acknowledgement_path(thread), method: :post, class: "btn btn--positive btn--icon btn--borderless", title: "Acknowledge" do
+              %i.ph.ph-check
+            = button_to slack_thread_dismissal_path(thread), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do
+              %i.ph.ph-x
+        - else
+          %span{:class => "badge #{status_badge_variant(thread.status)}"}= thread.status
+- else
+  .card.text-center.text-subtle
+    %i.ph.ph-chat-dots.mbe-4.text-4xl.block
+    %p No threads found.
+    - if params[:q].present? || params[:category].present? || (params[:status] || "new_thread") != "new_thread"
+      %p.text-sm.mbs-2= link_to "Clear filters", slack_threads_path
