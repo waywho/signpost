@@ -6,10 +6,8 @@
     = form_with url: settings_ai_backend_path, method: :patch, class: "flex flex-col gap" do |f|
       %div
         %label.text-sm.font-bold.mbe-1.block Backend
-        %select.input{name: "ai_backend", onchange: "this.closest('turbo-frame').querySelector('#anthropic-key-field').style.display = this.value === 'api' ? '' : 'none'"}
-          - %w[cli api].each do |mode|
-            %option{value: mode, selected: @ai_backend == mode}
-              = mode == "cli" ? "Claude Code CLI (uses your subscription)" : "Anthropic API (requires API key)"
+        - backend_options = [["Claude Code CLI (uses your subscription)", "cli"], ["Anthropic API (requires API key)", "api"]]
+        = f.select :ai_backend, backend_options, { selected: @ai_backend }, onchange: "this.closest('turbo-frame').querySelector('#anthropic-key-field').style.display = this.value === 'api' ? '' : 'none'"
         %p.text-xs.mbs-1.text-subtle
           %strong CLI:
           Uses your installed
@@ -23,7 +21,7 @@
           %label.text-sm.font-bold.block Anthropic API Key
           %i{class: "ph #{@has_anthropic_key ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{@has_anthropic_key ? 'status-icon--ok' : 'status-icon--pending'}"}
         .group
-          %input.input{type: "password", name: "anthropic_api_key", placeholder: (@has_anthropic_key ? "Configured — leave blank to keep" : "sk-ant-..."), data: { "password-reveal-target": "input" }}/
+          = f.password_field :anthropic_api_key, placeholder: (@has_anthropic_key ? "Configured — leave blank to keep" : "sk-ant-..."), data: { "password-reveal-target": "input" }
           %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
             %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
         %p.text-xs.mbs-1.text-subtle
