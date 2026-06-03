@@ -40,7 +40,7 @@ class ActionItems::ActionsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to root_path
     assert_equal 1, calls[:post_message].size
-    assert_equal "<@U12345> Can you take a look?", calls[:post_message].first[:text]
+    assert_equal "@U12345 Can you take a look?", calls[:post_message].first[:text]
   end
 
   test "create with notify_thread and ticket posts message with link" do
@@ -51,7 +51,7 @@ class ActionItems::ActionsControllerTest < ActionDispatch::IntegrationTest
         existing_issue_url: "https://github.com/org/repo/issues/42"
       }
     end
-    assert_equal "<@U12345> Can you take a look?\nhttps://github.com/org/repo/issues/42", calls[:post_message].first[:text]
+    assert_equal "@U12345 Can you take a look?\nhttps://github.com/org/repo/issues/42", calls[:post_message].first[:text]
   end
 
   test "create with notify_thread no developer no ticket adds emoji" do

@@ -12,6 +12,15 @@ class Developer < ApplicationRecord
 
   before_validation :parse_skills_json
 
+  def slack_mention
+    return nil if slack_handle.blank?
+
+    handle = slack_handle.to_s.strip
+    return nil if handle.blank?
+
+    handle.include?("@") ? handle : "@#{handle}"
+  end
+
   private
 
   def parse_skills_json

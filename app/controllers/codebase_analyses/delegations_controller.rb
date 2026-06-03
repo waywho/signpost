@@ -33,7 +33,7 @@ class CodebaseAnalyses::DelegationsController < ApplicationController
     channel = @slack_thread.slack_channel_id
     thread_ts = @slack_thread.slack_thread_ts
     parts = []
-    parts << "<@#{developer.slack_handle}> Can you take a look?" if developer&.slack_handle.present?
+    parts << "#{developer.slack_mention} Can you take a look?" if developer&.slack_mention
     parts << @analysis.github_issue_url if @analysis.github_issue_url.present?
 
     if parts.any?

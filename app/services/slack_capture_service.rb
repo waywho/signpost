@@ -1,6 +1,9 @@
 class SlackCaptureService
-  def initialize(slack_client: nil, embedding_service: nil, noise_filter_service: nil)
-    @slack = slack_client || Slack::Web::Client.new(token: EncryptedSetting.get("credentials", "slack_user_token") || EncryptedSetting.get("credentials", "slack_bot_token"))
+  def initialize(slack_client: nil, bot_slack_client: nil, embedding_service: nil, noise_filter_service: nil)
+    bot_token = EncryptedSetting.get("credentials", "slack_bot_token")
+    user_token = EncryptedSetting.get("credentials", "slack_user_token")
+    @slack = slack_client || Slack::Web::Client.new(token: user_token || bot_token)
+    @bot_slack = bot_slack_client || (bot_token ? Slack::Web::Client.new(token: bot_token) : @slack)
     @embedder = embedding_service || EmbeddingService.new
     @noise_filter = noise_filter_service || NoiseFilterService.new
   end
@@ -60,7 +63,7 @@ class SlackCaptureService
     return thread if thread
 
     channel_name = begin
-      @slack.conversations_info(channel: channel_id).channel.name
+      @bot_slack.conversations_info(channel: channel_id).channel.name
     rescue => e
       Rails.logger.warn "[SlackCaptureService] conversations_info failed for #{channel_id}: #{e.class}: #{e.message}"
       WatchedChannel.find_by(channel_id: channel_id)&.channel_name
@@ -105,8 +108,16 @@ class SlackCaptureService
 
   def resolve_user_name(user_id)
     return unless user_id
-    @slack.users_info(user: user_id).user.real_name
-  rescue
-    nil
+
+    @user_name_cache ||= {}
+    return @user_name_cache[user_id] if @user_name_cache.key?(user_id)
+
+    user = @bot_slack.users_info(user: user_id).user
+    profile = user.profile
+    name = profile&.display_name.presence || profile&.real_name.presence || user.real_name.presence || user.name
+    @user_name_cache[user_id] = name
+  rescue => e
+    Rails.logger.warn "[SlackCaptureService] users_info failed for #{user_id}: #{e.class}: #{e.message}"
+    @user_name_cache[user_id] = nil
   end
 end

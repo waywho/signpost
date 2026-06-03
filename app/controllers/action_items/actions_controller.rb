@@ -72,15 +72,15 @@ class ActionItems::ActionsController < ApplicationController
     thread_ts = @item.slack_thread.slack_thread_ts
 
     parts = []
-    if developer&.slack_handle.present?
-      parts << "<@#{developer.slack_handle}> Can you take a look?"
+    if developer&.slack_mention
+      parts << "#{developer.slack_mention} Can you take a look?"
     end
     parts << ticket_url if ticket_url.present?
 
     if parts.empty?
       slack.add_reaction(channel:, timestamp: thread_ts, emoji: "eyes")
     else
-      if developer&.slack_handle.blank? && ticket_url.present?
+      if developer&.slack_mention.nil? && ticket_url.present?
         parts.unshift("A ticket is created:")
       end
       slack.post_message(channel:, thread_ts:, text: parts.join("\n"))
