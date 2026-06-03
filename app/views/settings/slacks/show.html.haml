@@ -16,7 +16,7 @@
             %label.text-sm.font-bold.block= meta[:label]
             %i{class: "ph #{has_value ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{has_value ? 'status-icon--ok' : 'status-icon--pending'}"}
           .group
-            %input.input{type: "password", name: key, placeholder: (has_value ? "Configured — leave blank to keep" : "Not set"), data: { "password-reveal-target": "input" }}/
+            = f.password_field key, placeholder: (has_value ? "Configured — leave blank to keep" : "Not set"), data: { "password-reveal-target": "input" }
             %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
               %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
           %p.text-xs.mbs-1.text-subtle= meta[:hint]
@@ -30,21 +30,19 @@
       .flex.gap
         .flex-1
           %label.text-sm.font-bold.mbe-1.block Capture Mode
-          %select.input{name: "slack_capture_mode"}
-            - %w[socket poll both].each do |mode|
-              %option{value: mode, selected: @slack_capture_mode == mode}= mode
+          = f.select :slack_capture_mode, %w[socket poll both], selected: @slack_capture_mode
         .flex-1
           %label.text-sm.font-bold.mbe-1.block Brain Emoji
-          %input.input{type: "text", name: "slack_brain_emoji", value: @slack_brain_emoji}/
+          = f.text_field :slack_brain_emoji, value: @slack_brain_emoji
         .flex-1
           %label.text-sm.font-bold.mbe-1.block Poll Interval (min)
-          %input.input{type: "number", name: "poll_interval_minutes", value: @poll_interval_minutes}/
+          = f.number_field :poll_interval_minutes, value: @poll_interval_minutes
       .flex.gap
         .flex-1
           %label.text-sm.font-bold.mbe-1.block Your Slack User ID
           - if @slack_user_id.present?
             .flex.items-center.gap-half
-              %input.input.text-subtle{type: "text", value: @slack_user_id, readonly: true}/
+              = text_field_tag :slack_user_id_display, @slack_user_id, readonly: true, class: "input text-subtle", id: nil
               %span.text-xs.text-positive
                 %i.ph.ph-check-circle
                 Auto-detected
@@ -72,21 +70,16 @@
       - if @unwatched_channels.any?
         .flex-2{data: { controller: "searchable-select" }}
           %label.text-sm.font-bold.mbe-1.block Channel
-          %input.input.mbe-1{type: "text", placeholder: "Search channels...", data: { "searchable-select-target": "input", action: "input->searchable-select#filter" }}/
-          %select.input{name: "channel_select", data: { "searchable-select-target": "select" }}
-            %option{value: ""} — select a channel —
-            - @unwatched_channels.each do |ch|
-              %option{value: "#{ch[:id]}|#{ch[:name]}", data: { name: ch[:name].downcase }}= ch[:name]
+          = text_field_tag :channel_search, nil, placeholder: "Search channels...", class: "input mbe-1", data: { "searchable-select-target": "input", action: "input->searchable-select#filter" }, id: nil
+          - channel_options = [["— select a channel —", ""]] + @unwatched_channels.map { |ch| [ch[:name], "#{ch[:id]}|#{ch[:name]}", { data: { name: ch[:name].downcase } }] }
+          = f.select :channel_select, options_for_select(channel_options), {}, data: { "searchable-select-target": "select" }
       - elsif @slack_configured
         %p.text-sm.text-subtle All your channels are already watched.
       - else
         %p.text-sm.text-subtle Configure Slack tokens above to see your channels.
       .flex-1
         %label.text-sm.font-bold.mbe-1.block Capture Mode
-        %select.input{name: "capture_mode"}
-          %option{value: "full_stream"} Full Stream
-          %option{value: "involvement_only"} Involvement Only
-          %option{value: "ignored"} Ignored
+        = f.select :capture_mode, [["Full Stream", "full_stream"], ["Involvement Only", "involvement_only"], ["Ignored", "ignored"]]
       - if @unwatched_channels.any?
         = f.submit "Add Channel", class: "btn btn--primary"
 
@@ -105,8 +98,8 @@
     = form_with url: settings_noise_filters_path, method: :post, class: "flex items-end gap" do |f|
       .flex-1
         %label.text-sm.font-bold.mbe-1.block Category
-        %input.input{type: "text", name: "filter_category", placeholder: "deploy_notification", required: true}/
+        = f.text_field :filter_category, placeholder: "deploy_notification", required: true
       .flex-2
         %label.text-sm.font-bold.mbe-1.block Description
-        %input.input{type: "text", name: "filter_description", placeholder: "Automated deploy notifications", required: true}/
+        = f.text_field :filter_description, placeholder: "Automated deploy notifications", required: true
       = f.submit "Add Filter", class: "btn btn--primary"
