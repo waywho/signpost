@@ -9,7 +9,7 @@
           %label.text-sm.font-bold.block Secret iCal URL
           %i{class: "ph #{@has_google_ical_url ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{@has_google_ical_url ? 'status-icon--ok' : 'status-icon--pending'}"}
         .group
-          %input.input{type: "password", name: "google_ical_url", placeholder: (@has_google_ical_url ? "Configured — leave blank to keep" : "https://calendar.google.com/calendar/ical/.../basic.ics"), data: { "password-reveal-target": "input" }}/
+          = f.password_field :google_ical_url, placeholder: (@has_google_ical_url ? "Configured — leave blank to keep" : "https://calendar.google.com/calendar/ical/.../basic.ics"), data: { "password-reveal-target": "input" }
           %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
             %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
         %p.text-xs.mbs-1.text-subtle
