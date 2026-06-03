@@ -1,4 +1,4 @@
-- content_for(:title, "#{@developer.name} — Tech Lead OS")
+- content_for(:title, "#{@developer.name} — Vane")
 - content_for(:body_class, "sidebar-layout")
 #sidebar
   = render "sidebar", developers: Developer.by_name.includes(:developer_notes), current_dev: @developer

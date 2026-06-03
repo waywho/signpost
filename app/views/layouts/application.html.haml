@@ -2,7 +2,7 @@
 %html
   %head
     %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
-    %title= content_for(:title) || "Tech Lead OS"
+    %title= content_for(:title) || "Vane"
     %meta{:content => "width=device-width,initial-scale=1", :name => "viewport"}/
     %meta{:content => "yes", :name => "apple-mobile-web-app-capable"}/
     %meta{:content => "yes", :name => "mobile-web-app-capable"}/
@@ -21,9 +21,11 @@
   %body{:class => "#{content_for(:body_class).presence || 'header-layout'}", "data-controller" => "offcanvas"}
     %header#header
       .container.flex.items-center.justify-between
-        = link_to root_path, class: "flex items-center gap-half font-bold text-lg" do
-          %i.ph.ph-brain.text-accent
-          Tech Lead OS
+        = link_to root_path, class: "flex items-center gap-half" do
+          %i.ph.ph-compass-rose.text-accent.text-2xl
+          .flex.flex-col
+            %span.font-bold.text-lg Vane
+            %span.text-xs.text-subtle Your Tech Lead OS
         %nav.flex.items-center.gap
           = link_to "Team", developers_path, class: "text-sm"
           = link_to "Delegations", delegations_path, class: "text-sm"
