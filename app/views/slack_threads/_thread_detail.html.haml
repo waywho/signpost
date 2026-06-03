@@ -44,7 +44,7 @@
       = form_with url: slack_thread_topic_merge_path(slack_thread), method: :post, class: "mbe-2" do |f|
         - topics.each do |topic|
           .flex.items-start.gap-half.mbe-2
-            %input.input.mbs-1.flex-item-no-shrink{:name => "topic_ids[]", :type => "checkbox", :value => "#{topic.id}"}/
+            = check_box_tag "topic_ids[]", topic.id, false, class: "input mbs-1 flex-item-no-shrink", id: nil
             .flex-1
               = render "topic", topic:
         = f.submit "Merge Selected Topics", class: "btn btn--borderless text-xs"
