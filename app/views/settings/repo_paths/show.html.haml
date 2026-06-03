@@ -1,0 +1,25 @@
+= turbo_frame_tag "settings_repo_paths" do
+  .card
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-folder-open
+      Local Repo Paths
+    %p.text-xs.mbe-4.text-subtle Map GitHub repo names to local directories for codebase analysis.
+    = form_with url: settings_repo_paths_path, method: :patch, class: "flex flex-col gap" do |f|
+      %div{data: { controller: "repo-paths" }}
+        .flex.flex-col.gap-half.mbe-2{data: { "repo-paths-target": "list" }}
+          - @repo_paths.each do |name, path|
+            .flex.items-center.gap-half{data: { "repo-paths-target": "row" }}
+              %input.input.text-sm.flex-1{type: "text", name: "repo_names[]", value: name, placeholder: "myorg/api"}/
+              %input.input.text-sm.flex-2{type: "text", name: "repo_local_paths[]", value: path, placeholder: "/Users/you/src/api"}/
+              %button.btn.btn--negative.btn--icon.btn--borderless{type: "button", data: { action: "repo-paths#remove" }}
+                %i.ph.ph-trash
+        %template{data: { "repo-paths-target": "template" }}
+          .flex.items-center.gap-half{data: { "repo-paths-target": "row" }}
+            %input.input.text-sm.flex-1{type: "text", name: "repo_names[]", placeholder: "myorg/api"}/
+            %input.input.text-sm.flex-2{type: "text", name: "repo_local_paths[]", placeholder: "/Users/you/src/api"}/
+            %button.btn.btn--negative.btn--icon.btn--borderless{type: "button", data: { action: "repo-paths#remove" }}
+              %i.ph.ph-trash
+        %button.btn.btn--borderless.text-xs{type: "button", data: { action: "repo-paths#add" }}
+          %i.ph.ph-plus
+          Add Repo
+      = f.submit "Save Repo Paths", class: "btn btn--primary self-start"

@@ -66,7 +66,7 @@ Browse icons at https://phosphoricons.com.
 ## Linting
 
 - Linter is **rubocop-rails-omakase**.
-- After changing Ruby files, run `bin/rubocop -A` to auto-fix violations before committing.
+- **Always run `bin/rubocop -A` after changing Ruby files.** Auto-fixes style violations in place. Required before declaring any Ruby task done.
 - Run `bin/rubocop` (no `-A`) to report without fixing.
 
 ## Testing

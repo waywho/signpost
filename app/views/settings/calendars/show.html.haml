@@ -1,0 +1,18 @@
+= turbo_frame_tag "settings_calendar" do
+  .card
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-calendar
+      Google Calendar
+    = form_with url: settings_calendar_path, method: :patch, class: "flex flex-col gap" do |f|
+      %div{data: { controller: "password-reveal" }}
+        .flex.items-center.gap-half.mbe-1
+          %label.text-sm.font-bold.block Secret iCal URL
+          %i{class: "ph #{@has_google_ical_url ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{@has_google_ical_url ? 'status-icon--ok' : 'status-icon--pending'}"}
+        .group
+          %input.input{type: "password", name: "google_ical_url", placeholder: (@has_google_ical_url ? "Configured — leave blank to keep" : "https://calendar.google.com/calendar/ical/.../basic.ics"), data: { "password-reveal-target": "input" }}/
+          %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
+            %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
+        %p.text-xs.mbs-1.text-subtle
+          = link_to "Open Google Calendar Settings", "https://calendar.google.com/calendar/r/settings", target: "_blank"
+          → click your calendar on the left → scroll to "Secret address in iCal format" → copy the URL
+      = f.submit "Save Calendar URL", class: "btn btn--primary self-start"

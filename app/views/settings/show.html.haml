@@ -1,0 +1,31 @@
+- content_for(:title, "Settings — Tech Lead OS")
+
+%h1.font-bold.text-2xl.mbe-6 Settings
+
+.flex.gap.items-start{data: { controller: "settings-nav" }}
+  -# Side nav
+  %nav.flex.flex-col.gap-half.min-i-48.sticky{style: "top: var(--size-4)"}
+    - sections = [{ icon: "ph-brain", label: "AI Backend", anchor: "ai_backend" }, { icon: "ph-cube", label: "OpenAI", anchor: "openai" }, { icon: "ph-github-logo", label: "GitHub", anchor: "github" }, { icon: "ph-chat-teardrop-dots", label: "Slack", anchor: "slack" }, { icon: "ph-calendar", label: "Calendar", anchor: "calendar" }, { icon: "ph-folder-open", label: "Repos", anchor: "repo_paths" }, { icon: "ph-magnifying-glass", label: "Search", anchor: "search" }, { icon: "ph-archive", label: "Archive", anchor: "archive" }]
+    - sections.each do |section|
+      %a.sidebar-menu__button.btn.text-sm.flex.items-center.gap-half{href: "##{section[:anchor]}", data: { "settings-nav-target": "link", action: "settings-nav#select" }}
+        %i{class: "ph #{section[:icon]}"}
+        = section[:label]
+
+  -# Panels
+  .flex-1
+    #ai_backend{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_ai_backend", src: settings_ai_backend_path
+    #openai{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_openai", src: settings_openai_path
+    #github{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_github", src: settings_github_path
+    #slack{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_slack", src: settings_slack_path
+    #calendar{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_calendar", src: settings_calendar_path
+    #repo_paths{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_repo_paths", src: settings_repo_paths_path
+    #search{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_search", src: settings_search_path
+    #archive{data: { "settings-nav-target": "panel" }}
+      = turbo_frame_tag "settings_archive", src: settings_archive_path

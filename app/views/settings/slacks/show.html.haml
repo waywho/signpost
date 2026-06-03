@@ -1,0 +1,112 @@
+= turbo_frame_tag "settings_slack" do
+  - slack_keys = { "slack_bot_token" => { label: "Bot Token", hint: "For reading channels and events (xoxb-...)" }, "slack_user_token" => { label: "User Token", hint: "For reacting/replying as you (xoxp-...)" }, "slack_app_token" => { label: "App-Level Token", hint: "For Socket Mode real-time events (xapp-...)" } }
+  .card
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-chat-teardrop-dots
+      Slack
+
+    -# Tokens
+    %h3.font-bold.text-xs.mbe-2.text-subtle Tokens
+    = form_with url: settings_slack_path, method: :patch, class: "flex flex-col gap mbe-6" do |f|
+      = hidden_field_tag :form, "tokens"
+      - slack_keys.each do |key, meta|
+        - has_value = @slack_token_present[key]
+        %div{data: { controller: "password-reveal" }}
+          .flex.items-center.gap-half.mbe-1
+            %label.text-sm.font-bold.block= meta[:label]
+            %i{class: "ph #{has_value ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{has_value ? 'status-icon--ok' : 'status-icon--pending'}"}
+          .group
+            %input.input{type: "password", name: key, placeholder: (has_value ? "Configured — leave blank to keep" : "Not set"), data: { "password-reveal-target": "input" }}/
+            %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
+              %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
+          %p.text-xs.mbs-1.text-subtle= meta[:hint]
+      = f.submit "Save Tokens", class: "btn btn--primary self-start"
+
+    -# Capture Settings
+    .separator.mbe-4
+    %h3.font-bold.text-xs.mbe-2.text-subtle Capture Settings
+    = form_with url: settings_slack_path, method: :patch, class: "flex flex-col gap mbe-6" do |f|
+      = hidden_field_tag :form, "capture"
+      .flex.gap
+        .flex-1
+          %label.text-sm.font-bold.mbe-1.block Capture Mode
+          %select.input{name: "slack_capture_mode"}
+            - %w[socket poll both].each do |mode|
+              %option{value: mode, selected: @slack_capture_mode == mode}= mode
+        .flex-1
+          %label.text-sm.font-bold.mbe-1.block Brain Emoji
+          %input.input{type: "text", name: "slack_brain_emoji", value: @slack_brain_emoji}/
+        .flex-1
+          %label.text-sm.font-bold.mbe-1.block Poll Interval (min)
+          %input.input{type: "number", name: "poll_interval_minutes", value: @poll_interval_minutes}/
+      .flex.gap
+        .flex-1
+          %label.text-sm.font-bold.mbe-1.block Your Slack User ID
+          - if @slack_user_id.present?
+            .flex.items-center.gap-half
+              %input.input.text-subtle{type: "text", value: @slack_user_id, readonly: true}/
+              %span.text-xs.text-positive
+                %i.ph.ph-check-circle
+                Auto-detected
+            %p.text-xs.mbs-1.text-subtle Threads you start are skipped during capture.
+          - else
+            .flex.items-center.gap-half
+              %span.text-xs.text-subtle
+                %i.ph.ph-info
+                Auto-detected on first capture run
+      = f.submit "Save Capture Settings", class: "btn btn--primary self-start"
+
+    -# Watched Channels
+    .separator.mbe-4
+    %h3.font-bold.text-xs.mbe-2.text-subtle Watched Channels
+    - if @watched_channels.any?
+      .flex.flex-col.gap-half.mbe-4
+        - @watched_channels.each do |ch|
+          .flex.items-center.justify-between.pb-1.border-be-main
+            %div
+              %span.font-bold.text-sm= ch.channel_name
+              %span.text-xs.text-subtle= "#{ch.channel_id} · #{ch.capture_mode}"
+            = button_to settings_watched_channel_path(ch.channel_id), method: :delete, class: "btn btn--negative btn--icon btn--borderless" do
+              %i.ph.ph-trash
+    = form_with url: settings_watched_channels_path, method: :post, class: "flex items-end gap mbe-6" do |f|
+      - if @unwatched_channels.any?
+        .flex-2{data: { controller: "searchable-select" }}
+          %label.text-sm.font-bold.mbe-1.block Channel
+          %input.input.mbe-1{type: "text", placeholder: "Search channels...", data: { "searchable-select-target": "input", action: "input->searchable-select#filter" }}/
+          %select.input{name: "channel_select", data: { "searchable-select-target": "select" }}
+            %option{value: ""} — select a channel —
+            - @unwatched_channels.each do |ch|
+              %option{value: "#{ch[:id]}|#{ch[:name]}", data: { name: ch[:name].downcase }}= ch[:name]
+      - elsif @slack_configured
+        %p.text-sm.text-subtle All your channels are already watched.
+      - else
+        %p.text-sm.text-subtle Configure Slack tokens above to see your channels.
+      .flex-1
+        %label.text-sm.font-bold.mbe-1.block Capture Mode
+        %select.input{name: "capture_mode"}
+          %option{value: "full_stream"} Full Stream
+          %option{value: "involvement_only"} Involvement Only
+          %option{value: "ignored"} Ignored
+      - if @unwatched_channels.any?
+        = f.submit "Add Channel", class: "btn btn--primary"
+
+    -# Noise Filters
+    .separator.mbe-4
+    %h3.font-bold.text-xs.mbe-2.text-subtle Noise Filters
+    - if @noise_filters.any?
+      .flex.flex-col.gap-half.mbe-4
+        - @noise_filters.each do |nf|
+          .flex.items-center.justify-between.pb-1.border-be-main
+            %div
+              %span.font-bold.text-sm= nf.category
+              %span.text-xs.text-subtle= nf.description
+            = button_to settings_noise_filter_path(nf), method: :delete, class: "btn btn--negative btn--icon btn--borderless" do
+              %i.ph.ph-trash
+    = form_with url: settings_noise_filters_path, method: :post, class: "flex items-end gap" do |f|
+      .flex-1
+        %label.text-sm.font-bold.mbe-1.block Category
+        %input.input{type: "text", name: "filter_category", placeholder: "deploy_notification", required: true}/
+      .flex-2
+        %label.text-sm.font-bold.mbe-1.block Description
+        %input.input{type: "text", name: "filter_description", placeholder: "Automated deploy notifications", required: true}/
+      = f.submit "Add Filter", class: "btn btn--primary"

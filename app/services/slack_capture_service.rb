@@ -61,8 +61,9 @@ class SlackCaptureService
 
     channel_name = begin
       @slack.conversations_info(channel: channel_id).channel.name
-    rescue
-      nil
+    rescue => e
+      Rails.logger.warn "[SlackCaptureService] conversations_info failed for #{channel_id}: #{e.class}: #{e.message}"
+      WatchedChannel.find_by(channel_id: channel_id)&.channel_name
     end
 
     SlackThread.create!(

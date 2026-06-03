@@ -1,0 +1,43 @@
+= turbo_frame_tag "settings_github" do
+  .card
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-github-logo
+      GitHub
+    = form_with url: settings_github_path, method: :patch, class: "flex flex-col gap" do |f|
+      %div{data: { controller: "password-reveal" }}
+        .flex.items-center.gap-half.mbe-1
+          %label.text-sm.font-bold.block Personal Access Token
+          %i{class: "ph #{@has_github_pat ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{@has_github_pat ? 'status-icon--ok' : 'status-icon--pending'}"}
+        .group
+          %input.input{type: "password", name: "github_pat", placeholder: (@has_github_pat ? "Configured — leave blank to keep" : "ghp-..."), data: { "password-reveal-target": "input" }}/
+          %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
+            %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
+        %p.text-xs.mbs-1.text-subtle For PR queue, developer activity, and issue creation
+      %div
+        %label.text-sm.font-bold.mbe-1.block Username
+        %input.input{type: "text", name: "github_username", value: @github_username, placeholder: "your-github-handle"}/
+      %div
+        %label.text-sm.font-bold.mbe-2.block
+          Watched Repos
+          %span.font-normal.text-xs.text-subtle (for issue creation)
+        - if @available_repos.any?
+          - orgs = @available_repos.map { |r| r[:full_name].split("/").first }.uniq.sort
+          %div{data: { controller: "repo-filter" }}
+            - if orgs.size > 1
+              .flex.items-center.gap-half.mbe-2
+                %span.text-xs.text-subtle Filter:
+                %button.badge{type: "button", data: { action: "repo-filter#filter", "repo-filter-org-param": "" }} All
+                - orgs.each do |org|
+                  %button.badge{type: "button", data: { action: "repo-filter#filter", "repo-filter-org-param": org }}= org
+            .flex.flex-col.gap-half.max-bs-80{data: { "repo-filter-target": "list" }}
+              - @available_repos.each do |repo|
+                %label.flex.items-center.gap-half.text-sm{data: { org: repo[:full_name].split("/").first }}
+                  %input.input{type: "checkbox", name: "github_repos[]", value: repo[:full_name], checked: @selected_repos.include?(repo[:full_name])}/
+                  = repo[:full_name]
+                  - if repo[:private]
+                    %i.ph.ph-lock.text-subtle
+        - elsif @github_configured
+          %p.text-sm.text-subtle Could not fetch repos. Check your GitHub PAT.
+        - else
+          %p.text-sm.text-subtle Save your PAT above and reload to see repos.
+      = f.submit "Save GitHub Settings", class: "btn btn--primary self-start"

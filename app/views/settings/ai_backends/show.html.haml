@@ -1,0 +1,32 @@
+= turbo_frame_tag "settings_ai_backend" do
+  .card
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-brain
+      AI Backend
+    = form_with url: settings_ai_backend_path, method: :patch, class: "flex flex-col gap" do |f|
+      %div
+        %label.text-sm.font-bold.mbe-1.block Backend
+        %select.input{name: "ai_backend", onchange: "this.closest('turbo-frame').querySelector('#anthropic-key-field').style.display = this.value === 'api' ? '' : 'none'"}
+          - %w[cli api].each do |mode|
+            %option{value: mode, selected: @ai_backend == mode}
+              = mode == "cli" ? "Claude Code CLI (uses your subscription)" : "Anthropic API (requires API key)"
+        %p.text-xs.mbs-1.text-subtle
+          %strong CLI:
+          Uses your installed
+          %code claude
+          command. No API key needed.
+          %br
+          %strong API:
+          Direct HTTP calls to Anthropic. Requires an API key.
+      #anthropic-key-field{class: (@ai_backend == "api" ? nil : "hidden"), data: { controller: "password-reveal" }}
+        .flex.items-center.gap-half.mbe-1
+          %label.text-sm.font-bold.block Anthropic API Key
+          %i{class: "ph #{@has_anthropic_key ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{@has_anthropic_key ? 'status-icon--ok' : 'status-icon--pending'}"}
+        .group
+          %input.input{type: "password", name: "anthropic_api_key", placeholder: (@has_anthropic_key ? "Configured — leave blank to keep" : "sk-ant-..."), data: { "password-reveal-target": "input" }}/
+          %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
+            %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
+        %p.text-xs.mbs-1.text-subtle
+          Get a key at
+          = link_to "console.anthropic.com", "https://console.anthropic.com/settings/keys", target: "_blank"
+      = f.submit "Save", class: "btn btn--primary self-start"

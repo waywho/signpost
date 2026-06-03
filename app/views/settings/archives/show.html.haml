@@ -1,0 +1,17 @@
+= turbo_frame_tag "settings_archive" do
+  .card
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-archive
+      Archive & Reanalysis
+    = form_with url: settings_archive_path, method: :patch, class: "flex flex-col gap" do |f|
+      .flex.gap
+        .flex-1
+          %label.text-sm.font-bold.mbe-1.block Compress after (months)
+          %input.input{type: "number", name: "compression_after_months", value: @compression_after_months}/
+        .flex-1
+          %label.text-sm.font-bold.mbe-1.block Reanalysis threshold (messages)
+          %input.input{type: "number", name: "reanalysis_message_threshold", value: @reanalysis_message_threshold}/
+        .flex-1
+          %label.text-sm.font-bold.mbe-1.block Reanalysis quiet period (min)
+          %input.input{type: "number", name: "reanalysis_quiet_minutes", value: @reanalysis_quiet_minutes}/
+      = f.submit "Save Archive Settings", class: "btn btn--primary self-start"

@@ -46,7 +46,20 @@ Rails.application.routes.draw do
     resource :action, only: [ :create ], module: :action_items
   end
 
-  resource :settings, only: [ :show, :update ]
+  resource :settings, only: [ :show ] do
+    scope module: :settings do
+      resource :ai_backend, only: %i[show update]
+      resource :openai, only: %i[show update]
+      resource :github, only: %i[show update]
+      resource :slack, only: %i[show update]
+      resource :calendar, only: %i[show update]
+      resource :repo_paths, only: %i[show update]
+      resource :search, only: %i[show update]
+      resource :archive, only: %i[show update]
+      resources :watched_channels, only: %i[create destroy]
+      resources :noise_filters, only: %i[create destroy]
+    end
+  end
   resource :status, only: :show, controller: "status"
   resource :dashboard, only: :show, controller: "dashboard" do
     scope module: :dashboard do

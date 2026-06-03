@@ -1,0 +1,10 @@
+= turbo_frame_tag "settings_search" do
+  .card
+    %h2.font-bold.text-sm.mbe-4.text-subtle
+      %i.ph.ph-magnifying-glass
+      Search
+    = form_with url: settings_search_path, method: :patch, class: "flex items-end gap" do |f|
+      .flex-1
+        %label.text-sm.font-bold.mbe-1.block Default Similarity Threshold
+        %input.input{type: "number", name: "search_default_threshold", value: @search_default_threshold, step: "0.05", min: "0", max: "1"}/
+      = f.submit "Save", class: "btn btn--primary"
