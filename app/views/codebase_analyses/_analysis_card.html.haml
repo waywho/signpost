@@ -38,7 +38,7 @@
       = form_with url: slack_thread_codebase_analysis_delegation_path(analysis.slack_thread, analysis), method: :post, class: "flex items-center gap-half" do |f|
         = f.collection_select :developer_id, developers, :id, :name, { include_blank: "— assign —" }, class: "input text-xs"
         %label.flex.items-center.gap-half.text-xs
-          %input.input{:name => "notify_thread", :type => "checkbox", :value => "1"}/
+          = f.check_box :notify_thread, id: nil
           %i.ph.ph-chat-circle
         = f.submit "Delegate", class: "btn btn--secondary text-xs"
       = form_with url: slack_thread_codebase_analyses_path(analysis.slack_thread), method: :post, class: "inline-flex" do |f|
