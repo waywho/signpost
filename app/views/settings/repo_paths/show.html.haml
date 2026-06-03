@@ -9,14 +9,14 @@
         .flex.flex-col.gap-half.mbe-2{data: { "repo-paths-target": "list" }}
           - @repo_paths.each do |name, path|
             .flex.items-center.gap-half{data: { "repo-paths-target": "row" }}
-              %input.input.text-sm.flex-1{type: "text", name: "repo_names[]", value: name, placeholder: "myorg/api"}/
-              %input.input.text-sm.flex-2{type: "text", name: "repo_local_paths[]", value: path, placeholder: "/Users/you/src/api"}/
+              = text_field_tag "repo_names[]", name, class: "input text-sm flex-1", placeholder: "myorg/api", id: nil
+              = text_field_tag "repo_local_paths[]", path, class: "input text-sm flex-2", placeholder: "/Users/you/src/api", id: nil
               %button.btn.btn--negative.btn--icon.btn--borderless{type: "button", data: { action: "repo-paths#remove" }}
                 %i.ph.ph-trash
         %template{data: { "repo-paths-target": "template" }}
           .flex.items-center.gap-half{data: { "repo-paths-target": "row" }}
-            %input.input.text-sm.flex-1{type: "text", name: "repo_names[]", placeholder: "myorg/api"}/
-            %input.input.text-sm.flex-2{type: "text", name: "repo_local_paths[]", placeholder: "/Users/you/src/api"}/
+            = text_field_tag "repo_names[]", nil, class: "input text-sm flex-1", placeholder: "myorg/api", id: nil
+            = text_field_tag "repo_local_paths[]", nil, class: "input text-sm flex-2", placeholder: "/Users/you/src/api", id: nil
             %button.btn.btn--negative.btn--icon.btn--borderless{type: "button", data: { action: "repo-paths#remove" }}
               %i.ph.ph-trash
         %button.btn.btn--borderless.text-xs{type: "button", data: { action: "repo-paths#add" }}
