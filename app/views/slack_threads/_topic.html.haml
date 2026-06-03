@@ -28,12 +28,12 @@
       = button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "text-sm text-accent" do
         %i.ph.ph-ticket
         Draft Ticket
-      = link_to new_delegation_path(thread_id: topic.slack_thread.id, slack_topic_id: topic.id), class: "btn btn--primary", data: { turbo: false } do
+      = link_to new_delegation_path(thread_id: topic.slack_thread.id, slack_topic_id: topic.id), class: "btn btn--borderless", data: { turbo: false } do
         %i.ph.ph-arrow-bend-up-right
         Delegate
-      = button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "actioned" }, class: "text-sm text-subtle" do
+      = button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "actioned" }, class: "btn btn--borderless text-sm text-subtle" do
         %i.ph.ph-check
         Resolve
-      = button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "dismissed" }, class: "text-sm text-subtle" do
+      = button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "dismissed" }, class: "btn btn--borderless text-sm text-subtle" do
         %i.ph.ph-x
         Dismiss
