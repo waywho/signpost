@@ -15,7 +15,7 @@
           %ul.flex.flex-col.gap-half{"data-daily-log-target" => "priorityList"}
             - (@daily_log.tomorrow_priorities.presence || [""]).each_with_index do |p, i|
               %li.flex.items-center.gap-half
-                %input.input.flex-1.text-sm{:name => "daily_log[tomorrow_priorities][]", :placeholder => "Priority #{i + 1}", :type => "text", :value => p}/
+                = text_field_tag "daily_log[tomorrow_priorities][]", p, class: "input flex-1 text-sm", placeholder: "Priority #{i + 1}", id: nil
                 %button.text-subtle{"data-action" => "daily-log#removePriority", :type => "button"}
                   %i.ph.ph-x
           %button.text-sm.flex.items-center.gap-half.text-accent{"data-action" => "daily-log#addPriority", :type => "button"}
