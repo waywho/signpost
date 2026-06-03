@@ -6,7 +6,7 @@
     <%= button_to slack_thread_acknowledgement_path(thread), method: :post, class: "btn btn--primary" do %>
       <i class="ph ph-check"></i> Acknowledge
     <% end %>
-    <%= button_to slack_thread_delegation_path(thread), method: :post, class: "btn btn--primary", data: { turbo: false } do %>
+    <%= link_to new_delegation_path(thread_id: thread.id), class: "btn btn--primary", data: { turbo: false } do %>
       <i class="ph ph-arrow-bend-up-right"></i> Delegate
     <% end %>
     <%= button_to slack_thread_dismissal_path(thread), method: :post, class: "btn btn--borderless" do %>

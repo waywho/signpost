@@ -17,7 +17,7 @@ class DelegationsController < ApplicationController
   end
 
   def new
-    @delegation = Delegation.new(params[:delegation] ? delegation_params : {})
+    @delegation = Delegation.new(thread_params || delegation_params)
     @developers = Developer.by_name
   end
 
@@ -63,6 +63,21 @@ class DelegationsController < ApplicationController
     return unless topic&.open?
     topic.update!(status: "actioned")
     topic.action_items.pending.update_all(status: "actioned", actioned_at: Time.current)
+  end
+
+  def thread_params
+    return unless params[:thread_id]
+
+    thread = SlackThread.find(params[:thread_id])
+    topic = thread.slack_topics.find_by(id: params[:slack_topic_id])
+
+    {
+      summary: topic&.title.presence || thread.title.presence || thread.summary&.truncate(100) || "From Slack thread",
+      slack_channel_id: thread.slack_channel_id,
+      slack_thread_ts: thread.slack_thread_ts,
+      urgency: topic&.urgency,
+      issue_type: topic&.category
+    }.compact_blank
   end
 
   def delegation_params

@@ -6,6 +6,10 @@ class SlackThreads::DismissalsController < ApplicationController
       topic.update!(status: "dismissed")
       topic.action_items.pending.update_all(status: "dismissed", actioned_at: Time.current)
     end
-    redirect_to slack_threads_path, notice: "Dismissed."
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@slack_thread) }
+      format.html { redirect_to slack_threads_path, notice: "Dismissed." }
+    end
   end
 end

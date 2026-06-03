@@ -35,7 +35,7 @@
       <%= button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "text-sm", style: "color: var(--color-primary)" do %>
         <i class="ph ph-ticket"></i> Draft Ticket
       <% end %>
-      <%= button_to slack_thread_slack_topic_delegation_path(topic.slack_thread, topic), method: :post, class: "text-sm", style: "color: var(--color-primary)", data: { turbo: false } do %>
+      <%= link_to new_delegation_path(thread_id: topic.slack_thread.id, slack_topic_id: topic.id), class: "btn btn--primary", data: { turbo: false } do %>
         <i class="ph ph-arrow-bend-up-right"></i> Delegate
       <% end %>
       <%= button_to slack_thread_slack_topic_path(topic.slack_thread, topic), method: :patch, params: { status: "actioned" }, class: "text-sm", style: "color: var(--color-text-subtle)" do %>

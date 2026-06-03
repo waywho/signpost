@@ -30,9 +30,19 @@ class ActionItems::ActionsController < ApplicationController
     end
 
     @item.slack_topic.update!(status: "actioned")
-    redirect_to root_path, notice: "Done."
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("action_item_#{@item.id}") }
+      format.html { redirect_to root_path, notice: "Done." }
+    end
   rescue => e
-    redirect_to root_path, alert: "Failed: #{e.message}"
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("action_item_#{@item.id}",
+          partial: "action_items/error", locals: { item: @item, message: e.message })
+      end
+      format.html { redirect_to root_path, alert: "Failed: #{e.message}" }
+    end
   end
 
   private

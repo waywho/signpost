@@ -27,10 +27,8 @@ Rails.application.routes.draw do
     resource :triage, only: [:create], module: :slack_threads
     resource :acknowledgement, only: [:create], module: :slack_threads
     resource :dismissal, only: [:create], module: :slack_threads
-    resource :delegation, only: [:create], module: :slack_threads
     resource :topic_merge, only: [:create], module: :slack_topics, controller: :merges
     resources :slack_topics, only: [:update] do
-      resource :delegation, only: [:create], module: :slack_topics
       resource :ticket_draft, only: [:create], module: :slack_topics
     end
     resources :codebase_analyses, only: %i[create show] do

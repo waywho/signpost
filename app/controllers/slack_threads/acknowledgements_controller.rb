@@ -15,6 +15,10 @@ class SlackThreads::AcknowledgementsController < ApplicationController
       topic.update!(status: "actioned")
       topic.action_items.pending.update_all(status: "actioned", actioned_at: Time.current)
     end
-    redirect_to slack_threads_path, notice: "Acknowledged."
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@slack_thread) }
+      format.html { redirect_to slack_threads_path, notice: "Acknowledged." }
+    end
   end
 end

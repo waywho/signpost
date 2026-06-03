@@ -6,9 +6,21 @@ class SlackTopicsController < ApplicationController
     @topic.update!(status: params[:status])
     sync_action_items
 
-    redirect_to @slack_thread, notice: "Topic #{params[:status]}."
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("topic_#{@topic.id}",
+          partial: "slack_threads/topic", locals: { topic: @topic })
+      end
+      format.html { redirect_to @slack_thread, notice: "Topic #{params[:status]}." }
+    end
   rescue => e
-    redirect_to @slack_thread, alert: "Failed: #{e.message}"
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace("topic_#{@topic.id}",
+          html: content_tag(:div, e.message, id: "topic_#{@topic.id}", class: "alert alert--negative mbe-2"))
+      end
+      format.html { redirect_to @slack_thread, alert: "Failed: #{e.message}" }
+    end
   end
 
   private
