@@ -16,23 +16,25 @@
       %span.text-sm Drafting ticket…
   - elsif topic.status != "open"
     - linked_delegation = (defined?(delegation) && delegation.present?) ? delegation : topic.delegation
+    .flex.gap-2
+      %span.badge.badge--positive{data: { tooltip: "topic #{badge_tooltip(:status)}" }.compact}
+        %i.ph.ph-check-circle
+        = topic.status
+      - if linked_delegation
+        %span.badge.badge--positive{data: { tooltip: "delegation #{badge_tooltip(:status)}" }.compact}= linked_delegation.status.tr("_", " ")
     - issue_urls = topic.action_items.where.not(github_issue_url: nil).pluck(:github_issue_url).uniq
     - if linked_delegation || issue_urls.any?
       .flex.items-center.gap-half.flex-wrap.mbs-2
         - if linked_delegation
           - link_label = topic.action_recommendation == "create_ticket" ? "View draft ticket" : "View delegation"
-          = link_to delegation_path(linked_delegation), class: "btn btn--borderless text-sm text-accent" do
+          = link_to delegation_path(linked_delegation), class: "btn btn--borderless text-sm text-accent", data: { turbo_frame: "_top" } do
             %i.ph.ph-arrow-bend-up-right
             = link_label
-          %span.badge.badge--positive{data: { tooltip: badge_tooltip(:status) }.compact}= linked_delegation.status.tr("_", " ")
         - issue_urls.each do |url|
           = link_to url, target: "_blank", class: "btn btn--borderless text-sm text-accent" do
             %i.ph.ph-github-logo
             View issue
-    - else
-      %span.badge.badge--positive.mis-2{data: { tooltip: badge_tooltip(:status) }.compact}
-        %i.ph.ph-check-circle
-        = topic.status
+
   - else
     .flex.items-center.gap.mbs-2
       = button_to slack_thread_slack_topic_ticket_draft_path(topic.slack_thread, topic), method: :post, class: "btn btn--borderless text-sm text-accent" do
