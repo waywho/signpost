@@ -17,7 +17,7 @@ class DelegationsController < ApplicationController
   end
 
   def new
-    @delegation = Delegation.new(thread_params || delegation_params)
+    @delegation = Delegation.new(thread_params || (params[:delegation] ? delegation_params : {}))
     @developers = Developer.by_name
   end
 
