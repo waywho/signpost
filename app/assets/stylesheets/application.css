@@ -193,3 +193,35 @@
 /* disabled */
 .disabled\:opacity-50:disabled { opacity: 0.5; }
 .disabled\:pointer-events-none:disabled { pointer-events: none; }
+
+/****************************************************************
+* Tooltip — pure-CSS hover/focus tooltip via [data-tooltip] attr
+*****************************************************************/
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  inset-block-end: calc(100% + 6px);
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary);
+  color: var(--color-text-reversed);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--rounded-md);
+  font-size: var(--text-xs);
+  font-weight: var(--font-normal, 400);
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: var(--shadow-md);
+}
+
+[data-tooltip-position="below"]:hover::after,
+[data-tooltip-position="below"]:focus-visible::after {
+  inset-block-start: calc(100% + 6px);
+  inset-block-end: auto;
+}

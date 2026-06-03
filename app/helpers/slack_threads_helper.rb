@@ -21,7 +21,9 @@ module SlackThreadsHelper
   end
 
   def urgency_badge(urgency)
-    tag.span urgency || "—", class: "badge #{urgency_badge_variant(urgency)}"
+    tag.span urgency || "—",
+      class: "badge #{urgency_badge_variant(urgency)}",
+      data: { tooltip: badge_tooltip(:urgency) }.compact
   end
 
   def urgency_badge_variant(urgency)

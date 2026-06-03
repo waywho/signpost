@@ -10,9 +10,9 @@
     = button_to slack_thread_triage_path(slack_thread), method: :post, class: "btn btn--borderless text-xs" do
       %i.ph.ph-arrow-clockwise
       Triage
-    %span{:class => "badge #{status_badge_variant(slack_thread.status)}"}= slack_thread.status
+    %span{class: "badge #{status_badge_variant(slack_thread.status)}", data: { tooltip: badge_tooltip(:status) }.compact}= slack_thread.status
     - if slack_thread.category.present?
-      %span.badge= slack_thread.category
+      %span.badge{data: { tooltip: badge_tooltip(:category) }.compact}= slack_thread.category
   .flex.items-center.gap.text-sm.text-subtle
     - if slack_thread.slack_channel_name.present?
       %span

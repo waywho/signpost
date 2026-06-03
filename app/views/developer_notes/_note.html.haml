@@ -1,5 +1,5 @@
 - note_badge = { "good" => "badge--positive", "concern" => "badge--negative", "growth" => "badge--primary" }[note.note_type] || ""
 .flex.gap.items-start.pb-2.border-be-main
-  %span{:class => "badge #{note_badge} min-i-16"}= note.note_type&.capitalize
+  %span{class: "badge #{note_badge} min-i-16", data: { tooltip: badge_tooltip(:note_type) }.compact}= note.note_type&.capitalize
   %p.text-sm.flex-1= note.content
   %time.text-xs.text-subtle= note.created_at.strftime("%b %-d")

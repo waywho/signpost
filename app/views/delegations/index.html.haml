@@ -13,12 +13,12 @@
     - @delegations.each do |d|
       = link_to delegation_path(d), class: "card flex items-center gap", style: "text-decoration: none" do
         - if d.urgency.present?
-          %span{:class => "badge #{urgency_badge_variant(d.urgency)} min-i-16"}= d.urgency
+          %span{class: "badge #{urgency_badge_variant(d.urgency)} min-i-16", data: { tooltip: badge_tooltip(:urgency) }.compact}= d.urgency
         .flex.flex-col.flex-1.min-i-0
           %span.font-bold.text-sm= d.summary.truncate(60)
           %span.text-xs.text-subtle= d.developer&.name || d.developer_name || "Unassigned"
         - delegation_badge = { "blocked" => "badge--negative", "done" => "badge--positive", "in_progress" => "badge--primary" }[d.status] || ""
-        %span{:class => "badge #{delegation_badge}"}= d.status.tr("_", " ")
+        %span{class: "badge #{delegation_badge}", data: { tooltip: badge_tooltip(:status) }.compact}= d.status.tr("_", " ")
 - else
   .card.text-center.text-subtle
     %i.ph.ph-clipboard.mbe-4.text-4xl.block

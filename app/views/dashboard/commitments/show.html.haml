@@ -8,7 +8,7 @@
         = render "dashboard/section_refresh", url: dashboard_commitments_path, frame: "dashboard_commitments"
         = link_to "View all →", commitments_path, class: "text-xs text-subtle"
     - if @overdue.any?
-      %p.badge.badge--negative.mbe-2
+      %p.badge.badge--negative.mbe-2{data: { tooltip: badge_tooltip(:due) }.compact}
         %i.ph.ph-warning-circle
         Overdue
       %ul.flex.flex-col.gap-half.mbe-3
@@ -17,7 +17,7 @@
             %span= c.text.truncate(50)
             %span.text-xs= c.due_date&.strftime("%-m/%-d")
     - if @due.any?
-      %p.badge.mbe-2 Due soon
+      %p.badge.mbe-2{data: { tooltip: badge_tooltip(:due) }.compact} Due soon
       %ul.flex.flex-col.gap-half
         - @due.each do |c|
           %li.flex.items-center.justify-between.text-sm

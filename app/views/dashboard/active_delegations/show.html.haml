@@ -16,7 +16,7 @@
             .flex.items-center.justify-between
               %span.text-sm.font-bold= d.summary.truncate(50)
               - if d.urgency.in?(%w[critical high])
-                %span{:class => "badge #{urgency_badge_variant(d.urgency)}"}= d.urgency
+                %span{class: "badge #{urgency_badge_variant(d.urgency)}", data: { tooltip: badge_tooltip(:urgency) }.compact}= d.urgency
             .text-xs.text-subtle
               = d.developer&.name || d.developer_name || "Unassigned"
               · #{d.status.tr("_", " ")}

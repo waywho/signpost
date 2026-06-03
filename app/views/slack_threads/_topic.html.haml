@@ -2,20 +2,20 @@
   .flex.items-center.gap-half.mbe-2
     %span.font-bold.text-sm.flex-1= topic.title
     - if topic.urgency.present?
-      %span{:class => "badge #{urgency_badge_variant(topic.urgency)}"}= topic.urgency
+      %span{class: "badge #{urgency_badge_variant(topic.urgency)}", data: { tooltip: badge_tooltip(:urgency) }.compact}= topic.urgency
     - if topic.category.present?
-      %span.badge= topic.category
+      %span.badge{data: { tooltip: badge_tooltip(:category) }.compact}= topic.category
+    - if topic.action_recommendation.present?
+      %span.badge{data: { tooltip: badge_tooltip(:recommendation) }.compact}
+        %i.ph.ph-arrow-right
+        = topic.action_recommendation.tr("_", " ")
   %p.text-sm.mbe-2= topic.summary
-  - if topic.action_recommendation.present?
-    %span.badge
-      %i.ph.ph-arrow-right
-      = topic.action_recommendation.tr("_", " ")
   - if topic.drafting?
     .flex.items-center.gap-half.mbs-2.p-2.text-subtle
       %i.ph.ph-spinner.animate-spin.inline-block
       %span.text-sm Drafting ticket…
   - elsif topic.status != "open"
-    %span.badge.badge--positive.mis-2
+    %span.badge.badge--positive.mis-2{data: { tooltip: badge_tooltip(:status) }.compact}
       %i.ph.ph-check-circle
       = topic.status
     - if defined?(delegation) && delegation.present?

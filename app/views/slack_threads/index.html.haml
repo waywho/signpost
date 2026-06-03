@@ -34,7 +34,7 @@
               %span.font-bold.text-sm= thread.title.presence || "Untitled"
               - urgency = highest_urgency(thread)
               - if urgency
-                %span{:class => "badge #{urgency_badge_variant(urgency)}"}= urgency
+                %span{class: "badge #{urgency_badge_variant(urgency)}", data: { tooltip: badge_tooltip(:urgency) }.compact}= urgency
               - if thread.slack_topics.any?
                 %span.text-xs.text-subtle
                   = thread.slack_topics.size
@@ -56,7 +56,7 @@
             = button_to slack_thread_dismissal_path(thread), method: :post, class: "btn btn--icon btn--borderless", title: "Dismiss" do
               %i.ph.ph-x
         - else
-          %span{:class => "badge #{status_badge_variant(thread.status)}"}= thread.status
+          %span{class: "badge #{status_badge_variant(thread.status)}", data: { tooltip: badge_tooltip(:status) }.compact}= thread.status
 - else
   .card.text-center.text-subtle
     %i.ph.ph-chat-dots.mbe-4.text-4xl.block

@@ -3,7 +3,7 @@
     %i.ph.ph-magnifying-glass-plus.text-accent
     %span.font-bold.text-sm.flex-1
       Analysis: #{analysis.repo_name}
-    %span{:class => "badge #{analysis.completed? ? 'badge--positive' : analysis.failed? ? 'badge--negative' : 'badge--secondary'}"}
+    %span{class: "badge #{analysis.completed? ? 'badge--positive' : analysis.failed? ? 'badge--negative' : 'badge--secondary'}", data: { tooltip: badge_tooltip(:analysis_status) }.compact}
       = analysis.status
   - case analysis.status
   - when "pending", "running"

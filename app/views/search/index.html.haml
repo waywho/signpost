@@ -33,7 +33,7 @@
             - type_badge = { "thread" => "badge--primary", "topic" => "badge--secondary" }[result[:type]] || ""
             - type_color = { "thread" => "var(--color-primary)", "topic" => "#f97316", "message" => "var(--color-text-subtle)" }[result[:type]] || "var(--color-text-subtle)"
             %i{class: "ph #{type_icon}", style: "color: #{type_color}"}
-            %span{class: "badge #{type_badge}"}= result[:type].capitalize
+            %span{class: "badge #{type_badge}", data: { tooltip: badge_tooltip(:search_type) }.compact}= result[:type].capitalize
             %span.text-xs.text-subtle
               = "similarity: #{(result[:similarity] * 100).round(1)}%"
 
@@ -56,7 +56,7 @@
             %p.text-sm.mbs-1= topic[:summary]
             .flex.items-center.gap-half.text-xs.mbs-1.text-subtle
               - if topic[:urgency]
-                %span{class: "badge #{urgency_badge_variant(topic[:urgency])}"}= topic[:urgency]
+                %span{class: "badge #{urgency_badge_variant(topic[:urgency])}", data: { tooltip: badge_tooltip(:urgency) }.compact}= topic[:urgency]
               - if topic[:category]
                 %span= topic[:category]
               - if thread

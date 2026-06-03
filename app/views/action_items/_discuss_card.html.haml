@@ -1,8 +1,8 @@
 .card.p-3.mbe-2{:id => "action_item_#{item.id}"}
   .flex.items-center.justify-between.mbe-1
     .flex.items-center.gap-half
-      %span.badge.badge--primary.text-xs Discuss
-      %span.badge.badge--secondary.text-xs= item.slack_topic.slack_thread&.slack_channel_name
+      %span.badge.badge--primary.text-xs{data: { tooltip: badge_tooltip(:recommendation) }.compact} Discuss
+      %span.badge.badge--secondary.text-xs{data: { tooltip: badge_tooltip(:channel) }.compact}= item.slack_topic.slack_thread&.slack_channel_name
     .flex.items-center.gap-half
       - if item.slack_topic.slack_thread&.slack_url.present?
         %a.btn.btn--icon.btn--borderless{:href => "#{item.slack_topic.slack_thread.slack_url}", :target => "_blank", :title => "Open in Slack"}
