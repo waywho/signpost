@@ -19,6 +19,7 @@
 
   &:hover {
     background-color: var(--btn-hover-color, var(--color-border-light));
+    cursor: pointer;
   }
 
   &:focus-visible {
