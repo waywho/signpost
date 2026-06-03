@@ -9,7 +9,7 @@
           %label.text-sm.font-bold.block API Key
           %i{class: "ph #{@has_openai_key ? 'ph-check-circle' : 'ph-circle-dashed'} status-icon #{@has_openai_key ? 'status-icon--ok' : 'status-icon--pending'}"}
         .group
-          %input.input{type: "password", name: "openai_api_key", placeholder: (@has_openai_key ? "Configured — leave blank to keep" : "sk-..."), data: { "password-reveal-target": "input" }}/
+          = f.password_field :openai_api_key, placeholder: (@has_openai_key ? "Configured — leave blank to keep" : "sk-..."), data: { "password-reveal-target": "input" }
           %button.btn.btn--icon{type: "button", title: "Toggle visibility", data: { action: "password-reveal#toggle" }}
             %i.ph.ph-eye{data: { "password-reveal-target": "icon" }}
         %p.text-xs.mbs-1.text-subtle
