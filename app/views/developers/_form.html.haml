@@ -45,10 +45,10 @@
     = f.text_area :private_notes, class: "input", rows: 3, placeholder: "Private notes (not shared)"
   %div{"data-controller" => "skills"}
     %label.text-sm.font-bold.mbe-2.block Skills
-    %input{"data-skills-target" => "hiddenField", :name => "developer[skills]", :type => "hidden", :value => "#{(developer.skills || []).to_json}"}/
+    = f.hidden_field :skills, value: (developer.skills || []).to_json, data: { "skills-target": "hiddenField" }
     .mbe-2{"data-skills-target" => "list"}
     .flex.items-center.gap-half
-      %input.input.flex-1.text-sm.max-i-3xs{"data-action" => "keydown.enter->skills#add", "data-skills-target" => "nameInput", :placeholder => "Add skill…", :type => "text"}/
+      = text_field_tag :skill_name, nil, class: "input flex-1 text-sm max-i-3xs", placeholder: "Add skill…", data: { action: "keydown.enter->skills#add", "skills-target": "nameInput" }, id: nil, name: nil
       %button.btn{"data-action" => "skills#add", :type => "button"}
         %i.ph.ph-plus
         Add
