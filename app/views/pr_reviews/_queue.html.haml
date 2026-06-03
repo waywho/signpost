@@ -19,19 +19,19 @@
         %button.badge{"aria-current" => "page", "data-action" => "pr-filter#filterRepo", "data-pr-filter-target" => "repoTab", "data-repo" => "", :type => "button"} All
         - repos.each do |repo|
           %button.badge{"data-action" => "pr-filter#filterRepo", "data-pr-filter-target" => "repoTab", "data-repo" => repo, :type => "button"}= repo.split('/').last
-      %input.input.text-xs.max-i-56{"data-action" => "input->pr-filter#search", "data-pr-filter-target" => "searchInput", :placeholder => "Search PRs…", :type => "search"}/
+      = search_field_tag :pr_search, nil, class: "input text-xs max-i-56", placeholder: "Search PRs…", data: { action: "input->pr-filter#search", "pr-filter-target": "searchInput" }, id: nil
     = form_with url: pr_reviews_ignore_path, method: :post do |f|
       .flex.items-center.gap-half.mbe-2{"data-bulk-select-target" => "actions", :hidden => ""}
         %span.text-xs.text-subtle{"data-count" => ""}
         = f.submit "Ignore Selected", class: "btn btn--borderless text-xs"
       .flex.items-center.gap-half.mbe-2.border-be-main.pbe-2
         %label.flex.items-center.gap-half.text-xs.text-subtle
-          %input.input{"data-action" => "bulk-select#toggleAll", "data-bulk-select-target" => "selectAll", :type => "checkbox"}/
+          = check_box_tag :select_all, "1", false, class: "input", data: { action: "bulk-select#toggleAll", "bulk-select-target": "selectAll" }, name: nil, id: nil
           Select all
       .flex.flex-col.gap-half
         - pr_queue.each do |pr|
           .flex.items-center.gap.border-be-main.pbe-2{"data-pr-filter-target" => "item", "data-repo" => "#{pr[:repo]}", "data-title" => "#{pr[:title]}"}
-            %input.input{"data-action" => "bulk-select#toggle", "data-bulk-select-target" => "checkbox", :name => "urls[]", :type => "checkbox", :value => "#{pr[:url]}"}/
+            = check_box_tag "urls[]", pr[:url], false, class: "input", data: { action: "bulk-select#toggle", "bulk-select-target": "checkbox" }, id: nil
             .flex.flex-col.flex-1.min-i-0
               %span.font-bold.text-sm
                 = link_to "##{pr[:number]} #{pr[:title]}", pr[:url], target: "_blank", style: "text-decoration: none"

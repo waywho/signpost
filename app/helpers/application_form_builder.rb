@@ -26,7 +26,7 @@ class ApplicationFormBuilder < ActionView::Helpers::FormBuilder
   private
 
   def merge_class(options, klass)
-    existing = options[:class]
-    options.merge(class: [ klass, existing ].compact.join(" "))
+    classes = ([ klass ] + options[:class].to_s.split).uniq
+    options.merge(class: classes.join(" "))
   end
 end

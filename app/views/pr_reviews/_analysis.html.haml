@@ -113,7 +113,7 @@
         Pre-Submit Checklist
       - analysis[:after_checklist].each do |item|
         .flex.gap.pb-1.border-be-main
-          %input.flex-item-no-shrink{:style => "margin-block-start: 0.125rem", :type => "checkbox"}/
+          = check_box_tag :checklist_item, "1", false, class: "flex-item-no-shrink", style: "margin-block-start: 0.125rem", name: nil, id: nil
           %div
             %p.text-sm= item[:item]
             %p.text-xs.text-subtle= item[:why]
