@@ -16,12 +16,18 @@
       %span.text-sm Drafting ticket…
   - elsif topic.status != "open"
     - linked_delegation = (defined?(delegation) && delegation.present?) ? delegation : topic.delegation
-    - if linked_delegation
-      .flex.items-center.gap-half.mbs-2
-        = link_to delegation_path(linked_delegation), class: "btn btn--borderless text-sm text-accent" do
-          %i.ph.ph-ticket
-          = linked_delegation.summary.truncate(60)
-        %span.badge.badge--positive{data: { tooltip: badge_tooltip(:status) }.compact}= linked_delegation.status.tr("_", " ")
+    - issue_urls = topic.action_items.where.not(github_issue_url: nil).pluck(:github_issue_url).uniq
+    - if linked_delegation || issue_urls.any?
+      .flex.items-center.gap-half.flex-wrap.mbs-2
+        - if linked_delegation
+          = link_to delegation_path(linked_delegation), class: "btn btn--borderless text-sm text-accent" do
+            %i.ph.ph-arrow-bend-up-right
+            = linked_delegation.summary.truncate(50)
+          %span.badge.badge--positive{data: { tooltip: badge_tooltip(:status) }.compact}= linked_delegation.status.tr("_", " ")
+        - issue_urls.each do |url|
+          = link_to url, target: "_blank", class: "btn btn--borderless text-sm text-accent" do
+            %i.ph.ph-github-logo
+            = url.split("/").last(2).join("/")
     - else
       %span.badge.badge--positive.mis-2{data: { tooltip: badge_tooltip(:status) }.compact}
         %i.ph.ph-check-circle

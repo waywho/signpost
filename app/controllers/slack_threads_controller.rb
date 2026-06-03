@@ -22,7 +22,7 @@ class SlackThreadsController < ApplicationController
 
   def show
     @slack_thread = SlackThread.find(params[:id])
-    @topics = @slack_thread.slack_topics.by_urgency.includes(:delegation)
+    @topics = @slack_thread.slack_topics.by_urgency.includes(:delegation, :action_items)
     @messages = @slack_thread.slack_messages.chronological
     @analyses = @slack_thread.codebase_analyses.order(created_at: :desc)
     @repo_paths = Setting.get("global", "repo_paths", default: {}) || {}
