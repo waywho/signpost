@@ -1,4 +1,4 @@
-# Tech Lead OS
+# SIGNPOST: Your Tech Lead OS
 
 A local-first tech lead operating system built with Rails 8. Manages developer profiles, 1:1 sessions, delegations, commitments, PR reviews, and Slack thread triage — with vector search, Claude AI analysis, and GitHub integration.
 
