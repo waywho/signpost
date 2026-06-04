@@ -5,26 +5,28 @@
         %h2.font-bold.flex.items-center.gap-half
           %i.ph.ph-lightbulb.text-accent
           Insights
-        = render "dashboard/section_refresh", url: dashboard_insights_path, frame: "dashboard_insights"
-      - if @alerts.any?
-        .flex.flex-col.gap-half.mbe-4
-          - @alerts.each do |alert|
-            - bg = { "danger" => "light-dark(var(--red-100), var(--red-950))", "info" => "light-dark(var(--blue-100), var(--blue-950))" }[alert[:type]] || "light-dark(var(--amber-100), var(--amber-950))"
-            - color = { "danger" => "var(--color-negative)", "info" => "var(--color-primary)" }[alert[:type]] || "#f97316"
-            .flex.items-center.gap.pb-2.pi-3.rounded-lg{:style => "background: #{bg}"}
-              %i{:class => "ph #{alert[:icon]} flex-item-no-shrink", :style => "color: #{color}"}
-              %span.text-sm{:style => "color: #{color}"}= alert[:message]
-      - if @patterns.any?
-        .card
-          %h3.font-bold.text-xs.mbe-2.text-subtle
-            %i.ph.ph-chart-line-up
-            Patterns This Week
-          .flex.flex-col.gap-half
-            - @patterns.each do |pattern|
-              - p = pattern.is_a?(Hash) ? pattern : {}
-              - sev = p["severity"] || "info"
-              - color = { "danger" => "var(--color-negative)", "warning" => "#f97316" }[sev] || "var(--color-text-subtle)"
-              - icon = { "cluster" => "ph-circles-three-plus", "recurring" => "ph-arrow-counter-clockwise", "velocity" => "ph-trend-up" }[p["type"]] || "ph-info"
-              .flex.items-center.gap.text-sm
-                %i{:class => "ph #{icon} flex-item-no-shrink", :style => "color: #{color}"}
-                %span= p["message"]
+        = render partial: "dashboard/section_refresh", locals: {url: dashboard_insights_path, frame: "dashboard_insights", target: "insights", action: "click->reload#showLoader"}
+      #insights
+        = loader_card(label: "Commitments", hide: true)
+        .card.content
+          - if @alerts.any?
+            .flex.flex-col.gap-half.mbe-4
+              - @alerts.each do |alert|
+                - bg = { "danger" => "light-dark(var(--red-100), var(--red-950))", "info" => "light-dark(var(--blue-100), var(--blue-950))" }[alert[:type]] || "light-dark(var(--amber-100), var(--amber-950))"
+                - color = { "danger" => "var(--color-negative)", "info" => "var(--color-primary)" }[alert[:type]] || "#f97316"
+                .flex.items-center.gap.pb-2.pi-3.rounded-lg{:style => "background: #{bg}"}
+                  %i{:class => "ph #{alert[:icon]} flex-item-no-shrink", :style => "color: #{color}"}
+                  %span.text-sm{:style => "color: #{color}"}= alert[:message]
+          - if @patterns.any?
+            %h3.font-bold.text-xs.mbe-2.text-subtle
+              %i.ph.ph-chart-line-up
+              Patterns This Week
+            .flex.flex-col.gap-half
+              - @patterns.each do |pattern|
+                - p = pattern.is_a?(Hash) ? pattern : {}
+                - sev = p["severity"] || "info"
+                - color = { "danger" => "var(--color-negative)", "warning" => "#f97316" }[sev] || "var(--color-text-subtle)"
+                - icon = { "cluster" => "ph-circles-three-plus", "recurring" => "ph-arrow-counter-clockwise", "velocity" => "ph-trend-up" }[p["type"]] || "ph-info"
+                .flex.items-center.gap.text-sm
+                  %i{:class => "ph #{icon} flex-item-no-shrink", :style => "color: #{color}"}
+                  %span= p["message"]

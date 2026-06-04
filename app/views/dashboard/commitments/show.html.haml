@@ -5,25 +5,28 @@
         %i.ph.ph-handshake.text-accent
         Commitments
       .flex.items-center.gap-half
-        = render "dashboard/section_refresh", url: dashboard_commitments_path, frame: "dashboard_commitments"
+        = render partial: "dashboard/section_refresh", locals: {url: dashboard_commitments_path, frame: "dashboard_commitments",  target: "commitments", action: "click->reload#showLoader"}
         = link_to "View all →", commitments_path, class: "text-xs text-subtle"
-    - if @overdue.any?
-      %p.badge.badge--negative.mbe-2{data: { tooltip: badge_tooltip(:due) }.compact}
-        %i.ph.ph-warning-circle
-        Overdue
-      %ul.flex.flex-col.gap-half.mbe-3
-        - @overdue.each do |c|
-          %li.flex.items-center.justify-between.text-sm.text-negative
-            %span= c.text.truncate(50)
-            %span.text-xs= c.due_date&.strftime("%-m/%-d")
-    - if @due.any?
-      %p.badge.mbe-2{data: { tooltip: badge_tooltip(:due) }.compact} Due soon
-      %ul.flex.flex-col.gap-half
-        - @due.each do |c|
-          %li.flex.items-center.justify-between.text-sm
-            %span= c.text.truncate(50)
-            %span.text-xs.text-subtle
-              = c.due_date&.strftime("%-m/%-d")
-              = " · #{c.stakeholder}" if c.stakeholder.present?
-    - if @overdue.empty? && @due.empty?
-      %p.text-sm.text-center.text-subtle No commitments due soon.
+    #commitments
+      = loader_card(label: "Commitments", hide: true)
+      .content
+        - if @overdue.any?
+          %p.badge.badge--negative.mbe-2{data: { tooltip: badge_tooltip(:due) }.compact}
+            %i.ph.ph-warning-circle
+            Overdue
+          %ul.flex.flex-col.gap-half.mbe-3
+            - @overdue.each do |c|
+              %li.flex.items-center.justify-between.text-sm.text-negative
+                %span= c.text.truncate(50)
+                %span.text-xs= c.due_date&.strftime("%-m/%-d")
+        - if @due.any?
+          %p.badge.mbe-2{data: { tooltip: badge_tooltip(:due) }.compact} Due soon
+          %ul.flex.flex-col.gap-half
+            - @due.each do |c|
+              %li.flex.items-center.justify-between.text-sm
+                %span= c.text.truncate(50)
+                %span.text-xs.text-subtle
+                  = c.due_date&.strftime("%-m/%-d")
+                  = " · #{c.stakeholder}" if c.stakeholder.present?
+        - if @overdue.empty? && @due.empty?
+          %p.text-sm.text-center.text-subtle No commitments due soon.

@@ -7,13 +7,16 @@
         %span.text-sm.font-normal.text-subtle
           (#{@developers.size})
       .flex.items-center.gap-half
-        = render "dashboard/section_refresh", url: dashboard_team_overview_path, frame: "dashboard_team_overview"
+        = render partial: "dashboard/section_refresh", locals: {url: dashboard_team_overview_path, frame: "dashboard_team_overview",  target: "developers", action: "click->reload#showLoader"}
         = link_to "View all →", developers_path, class: "text-xs text-subtle"
-    - if @developers.any?
-      %ul.flex.flex-col.gap-half
-        - @developers.each do |dev|
-          %li.flex.items-center.justify-between.text-sm
-            %span.font-bold= dev.name
-            %span.text-subtle= [dev.level, dev.role].compact.join(" · ")
-    - else
-      %p.text-sm.text-center.text-subtle No developers yet.
+    #developers
+      = loader_card(label: "Commitments", hide: true)
+      .content
+        - if @developers.any?
+          %ul.flex.flex-col.gap-half
+            - @developers.each do |dev|
+              %li.flex.items-center.justify-between.text-sm
+                %span.font-bold= dev.name
+                %span.text-subtle= [dev.level, dev.role].compact.join(" · ")
+        - else
+          %p.text-sm.text-center.text-subtle No developers yet.

@@ -1,21 +1,23 @@
-- content_for(:title, "Dashboard — Vane")
-.flex.items-center.justify-between.mbe-6
-  %h1.font-bold.text-2xl Daily Lead Briefing
-  %span.text-sm.text-subtle= Date.current.strftime("%A, %B %-d")
-= turbo_frame_tag "dashboard_action_queue", src: dashboard_action_queue_path do
-  = render "section_loading", label: "Action Queue"
-= turbo_frame_tag "dashboard_insights", src: dashboard_insights_path do
-  = render "section_loading", label: "Insights"
-.dashboard-grid
-  = turbo_frame_tag "dashboard_calendar", src: dashboard_calendar_path do
-    = render "section_loading", label: "Calendar"
-  = turbo_frame_tag "dashboard_team_overview", src: dashboard_team_overview_path do
-    = render "section_loading", label: "Team"
-  = turbo_frame_tag "dashboard_active_delegations", src: dashboard_active_delegations_path do
-    = render "section_loading", label: "Delegations"
-  = turbo_frame_tag "dashboard_commitments", src: dashboard_commitments_path do
-    = render "section_loading", label: "Commitments"
-  = turbo_frame_tag "dashboard_pr_reviews", src: dashboard_pr_reviews_path do
-    = render "section_loading", label: "PR Reviews"
-  = turbo_frame_tag "dashboard_daily_log", src: dashboard_daily_log_path do
-    = render "section_loading", label: "Daily Log"
+- content_for(:title, "Dashboard — SIGNPOST")
+
+%div{data: {controller: "reload"}}
+  .flex.items-center.justify-between.mbe-6
+    %h1.font-bold.text-2xl Daily Lead Briefing
+    %span.text-sm.text-subtle= Date.current.strftime("%A, %B %-d")
+  = turbo_frame_tag "dashboard_action_queue", src: dashboard_action_queue_path do
+    = loader_card label: "Action Queue"
+  = turbo_frame_tag "dashboard_insights", src: dashboard_insights_path do
+    = loader_card label: "Insights"
+  .dashboard-grid
+    = turbo_frame_tag "dashboard_calendar", src: dashboard_calendar_path do
+      = loader_card label: "Calendar"
+    = turbo_frame_tag "dashboard_team_overview", src: dashboard_team_overview_path do
+      = loader_card label: "Team"
+    = turbo_frame_tag "dashboard_active_delegations", src: dashboard_active_delegations_path do
+      = loader_card label: "Delegations"
+    = turbo_frame_tag "dashboard_commitments", src: dashboard_commitments_path do
+      = loader_card label: "Commitments"
+    = turbo_frame_tag "dashboard_pr_reviews", src: dashboard_pr_reviews_path do
+      = loader_card label: "PR Reviews"
+    = turbo_frame_tag "dashboard_daily_log", src: dashboard_daily_log_path do
+      = loader_card label: "Daily Log"
