@@ -2,8 +2,8 @@ module ApplicationHelper
   def loader_component(label: nil, hide: false)
     loading_label = "Loading #{label}".strip
     content_tag(:div, class: "loader gap-2 #{'hidden' if hide}") do
-      safe_join([content_tag(:i, nil, class: "ph ph-spinner text-xl animate-spin"),
-        content_tag(:p, "#{loading_label}…", class: "text-sm")])
+      safe_join([ content_tag(:i, nil, class: "ph ph-spinner text-xl animate-spin"),
+        content_tag(:p, "#{loading_label}…", class: "text-sm") ])
     end
   end
 
