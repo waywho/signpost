@@ -26,14 +26,18 @@ namespace :setup do
 
     puts "\n== puma-dev =="
     Rake::Task["setup:puma_dev"].invoke
+    puma_dev_ready = File.symlink?(File.expand_path("~/.puma-dev/signpost"))
 
-    puts <<~DONE
-
-      == done ==
-      App ready at https://techos.test
-      Add API keys at https://techos.test/settings (GitHub, Slack, OpenAI, Anthropic)
-      Optional Slack listener: bin/slack
-    DONE
+    puts "\n== done =="
+    if puma_dev_ready
+      puts "App ready at https://signpost.test"
+      puts "Add API keys at https://signpost.test/settings (GitHub, Slack, OpenAI, Anthropic)"
+    else
+      puts "App installed, but puma-dev is not configured."
+      puts "After installing puma-dev (see above), run:  bin/rails setup:puma_dev"
+      puts "Then visit https://signpost.test/settings to add API keys."
+    end
+    puts "Background workers (Solid Queue + Slack listener): bin/workers"
   end
 
   desc "Create the signpost postgres role if missing"
@@ -100,6 +104,15 @@ namespace :setup do
 
   desc "Symlink this app into ~/.puma-dev/signpost"
   task :puma_dev do
+    unless system("command -v puma-dev > /dev/null 2>&1")
+      puts "  puma-dev binary not found. Install with:"
+      puts "    brew install puma/puma/puma-dev"
+      puts "    sudo puma-dev -setup"
+      puts "    puma-dev -install"
+      puts "  Then re-run: bin/rails setup:puma_dev"
+      next
+    end
+
     app_root = Rails.root.to_s
     link = File.expand_path("~/.puma-dev/signpost")
     FileUtils.mkdir_p(File.dirname(link))

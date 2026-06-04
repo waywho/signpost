@@ -61,6 +61,9 @@ group :development, :test do
 
   # Convert .erb templates to .haml [https://github.com/dhl/erb2haml]
   gem "erb2haml"
+
+  # Run multiple processes (jobs + slack listener) via Procfile [https://github.com/ddollar/foreman]
+  gem "foreman"
 end
 
 group :development do

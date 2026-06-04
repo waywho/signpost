@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+# Start background workers: Solid Queue (bin/jobs) and Slack listener (bin/slack).
+exec bundle exec foreman start "$@"
