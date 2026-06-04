@@ -34,6 +34,12 @@
   .card.mbe-4
     %h2.font-bold.text-sm.mbe-2.text-subtle Summary
     %p.text-sm= slack_thread.summary
+    - sections = slack_thread.summary_sections.presence || []
+    - sections.each do |section|
+      - next if section["heading"].blank? || section["body"].blank?
+      .mbs-4
+        %h3.font-semibold.text-sm.mbe-1= section["heading"]
+        %p.text-sm.text-subtle= section["body"]
 - if topics.any?
   .mbe-4
     .flex.items-center.justify-between.mbe-2

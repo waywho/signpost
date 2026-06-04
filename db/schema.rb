@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_03_230757) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_04_125556) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -262,6 +262,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_230757) do
     t.text "slack_url"
     t.integer "status", null: false
     t.text "summary"
+    t.jsonb "summary_sections", default: [], null: false
     t.text "title"
     t.datetime "updated_at", null: false
     t.index ["captured_at"], name: "index_slack_threads_on_captured_at"

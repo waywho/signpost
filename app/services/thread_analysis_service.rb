@@ -16,6 +16,7 @@ class ThreadAnalysisService
     thread.update!(
       title: analysis[:title],
       summary: analysis[:summary],
+      summary_sections: analysis[:summary_sections] || [],
       category: analysis[:category],
       keywords: analysis[:keywords],
       participants: messages.filter_map(&:user_name).uniq,
@@ -31,7 +32,32 @@ class ThreadAnalysisService
 
   def analyze_with_claude(content)
     prompt = <<~PROMPT
-      Analyze this Slack thread for a tech lead. Identify distinct, actionable topics.
+      You are the Tech Lead responsible for this repository. You understand the
+      business logic, day-to-day engineering workflow, the people involved, and
+      what "done" looks like for changes in this codebase. Read the Slack
+      thread below the way that Tech Lead would — figure out what is actually
+      happening, who is blocked, what was decided, and what still needs a
+      decision or a hand-off.
+
+      Produce a triage briefing for your future self. Keep it short and high
+      signal — succinct over comprehensive. Skip pleasantries, confirmations,
+      and chitchat. Quote specifics (file names, ticket IDs, decisions) only
+      when they materially help.
+
+      The briefing has two parts:
+
+      1. "summary": a 2-3 sentence lede that captures the situation at a
+         glance. This must stand alone.
+
+      2. "summary_sections": 0-3 short follow-up sections that expand the lede
+         only where the thread genuinely contains more. Each section has a
+         "heading" (1-4 words, derived from the thread content — NOT a fixed
+         set, NOT generic labels like "Context" or "Notes") and a "body" of
+         1-2 sentences. Omit a section entirely rather than padding with
+         filler. If the lede already says everything important, return an
+         empty array.
+
+      Also identify the distinct, actionable topics in the thread.
 
       CRITICAL RULES for topic extraction:
       - Only create SEPARATE topics when they have genuinely different root causes, different owners, or need different actions.
@@ -47,7 +73,10 @@ class ThreadAnalysisService
       Reply in this exact JSON format (no markdown fences, just raw JSON):
       {
         "title": "short thread title",
-        "summary": "2-3 sentence summary of the whole thread",
+        "summary": "2-3 sentence lede",
+        "summary_sections": [
+          { "heading": "thread-specific heading", "body": "1-2 sentences" }
+        ],
         "category": "architecture|stakeholder|team_decision|incident|other",
         "keywords": ["keyword1", "keyword2"],
         "topics": [
@@ -66,11 +95,11 @@ class ThreadAnalysisService
       Always extract at least one topic. If the thread has one clear topic, return one.
     PROMPT
 
-    raw = @claude.analyze(prompt, max_tokens: 1000)
+    raw = @claude.analyze(prompt, max_tokens: 1200)
     json_str = raw.gsub(/\A```json\s*/, "").gsub(/```\s*\z/, "").strip
     JSON.parse(json_str).deep_symbolize_keys
   rescue JSON::ParserError
-    { title: "Thread", summary: content.truncate(200), category: "other", keywords: [], topics: [] }
+    { title: "Thread", summary: content.truncate(200), summary_sections: [], category: "other", keywords: [], topics: [] }
   end
 
   def upsert_topics(thread, topic_data, messages)
