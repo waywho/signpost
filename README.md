@@ -5,7 +5,9 @@ A local-first tech lead operating system built with Rails 8. Manages developer p
 ## Requirements
 
 - Ruby 3.4+
-- PostgreSQL 18 (via Postgres.app) with pgvector extension
+- PostgreSQL 18 with the `pgvector` extension. The easiest path is
+  [Postgres.app 18](https://postgresapp.com/) which bundles pgvector.
+  Homebrew users need `brew install pgvector` separately.
 - puma-dev (for `https://signpost.test`) — install once via:
 
   ```bash
@@ -63,6 +65,10 @@ psql postgres -c "CREATE ROLE signpost WITH LOGIN PASSWORD 'signpost_dev' CREATE
 Superuser is needed for the pgvector extension. Password is stored in Rails credentials.
 
 #### 3. Set up Rails credentials
+
+> The quick install (`setup:install`) auto-generates these keys with
+> `SecureRandom`. This manual path uses Rails' own generator instead
+> so you can review and control the values.
 
 Generate Active Record encryption keys first:
 
