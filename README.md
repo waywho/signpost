@@ -6,27 +6,65 @@ A local-first tech lead operating system built with Rails 8. Manages developer p
 
 - Ruby 3.4+
 - PostgreSQL 18 (via Postgres.app) with pgvector extension
-- puma-dev (for `https://techos.test`)
+- puma-dev (for `https://signpost.test`)
 
 ## Setup
 
-### 1. Clone and install dependencies
+### Quick install (one command)
 
 ```bash
-git clone <repo-url> ~/Documents/src/techos-rails
-cd ~/Documents/src/techos-rails
+git clone <repo-url> ~/Documents/src/signpost
+cd ~/Documents/src/signpost
+bin/rails setup:install
+```
+
+The `setup:install` task is idempotent and handles:
+
+1. `bundle install` (if needed)
+2. Creates the `signpost` Postgres role (SUPERUSER, needed for pgvector)
+3. Generates `config/master.key` if missing, seeds credentials with a database password and Active Record encryption keys
+4. `db:prepare` (create + migrate + seed)
+5. Symlinks the app into `~/.puma-dev/signpost`
+
+After it finishes, the app is available at `https://signpost.test`. Continue to step 6 to add API keys.
+
+Individual tasks are also available:
+
+| Task | Purpose |
+|------|---------|
+| `bin/rails setup:db_role` | Create the `signpost` Postgres role |
+| `bin/rails setup:credentials` | Generate `master.key` + seed credentials |
+| `bin/rails setup:puma_dev` | Symlink the app into `~/.puma-dev/signpost` |
+
+### Manual setup (alternative)
+
+If you prefer to run each step yourself:
+
+#### 1. Clone and install dependencies
+
+```bash
+git clone <repo-url> ~/Documents/src/signpost
+cd ~/Documents/src/signpost
 bundle install
 ```
 
-### 2. Create the PostgreSQL role
+#### 2. Create the PostgreSQL role
 
 ```bash
-psql postgres -c "CREATE ROLE techos_rails WITH LOGIN PASSWORD 'techos_rails_dev' CREATEDB SUPERUSER;"
+psql postgres -c "CREATE ROLE signpost WITH LOGIN PASSWORD 'signpost_dev' CREATEDB SUPERUSER;"
 ```
 
 Superuser is needed for the pgvector extension. Password is stored in Rails credentials.
 
-### 3. Set up Rails credentials
+#### 3. Set up Rails credentials
+
+Generate Active Record encryption keys first:
+
+```bash
+bin/rails db:encryption:init
+```
+
+This prints three keys. Copy them, then open the credentials editor:
 
 ```bash
 bin/rails credentials:edit
@@ -36,15 +74,15 @@ Add:
 
 ```yaml
 database:
-  password: techos_rails_dev
+  password: signpost_dev
 
 active_record_encryption:
-  primary_key: <generate with bin/rails db:encryption:init>
-  deterministic_key: <generate>
-  key_derivation_salt: <generate>
+  primary_key: <paste primary_key from db:encryption:init>
+  deterministic_key: <paste deterministic_key>
+  key_derivation_salt: <paste key_derivation_salt>
 ```
 
-### 4. Create and migrate database
+#### 4. Create and migrate database
 
 ```bash
 bin/rails db:create
@@ -54,17 +92,17 @@ bin/rails db:seed
 
 Seeds create default noise filters and settings.
 
-### 5. Set up puma-dev
+#### 5. Set up puma-dev
 
 ```bash
-ln -sf ~/Documents/src/techos-rails ~/.puma-dev/techos
+ln -sf ~/Documents/src/signpost ~/.puma-dev/signpost
 ```
 
-App is now available at `https://techos.test`.
+App is now available at `https://signpost.test`.
 
 ### 6. Configure API keys (optional)
 
-All API keys are entered via the settings page at `https://techos.test/settings` (API Keys section). Below is how to obtain each token.
+All API keys are entered via the settings page at `https://signpost.test/settings` (API Keys section). Below is how to obtain each token.
 
 **GitHub PAT** — for PR queue, developer activity, and issue creation:
 1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
@@ -100,7 +138,7 @@ All API keys are entered via the settings page at `https://techos.test/settings`
 1. Open [Google Calendar Settings](https://calendar.google.com/calendar/r/settings)
 2. Click your calendar under "Settings for my calendars"
 3. Scroll to "Secret address in iCal format" and copy the URL
-4. Add it via the settings page at `https://techos.test/settings` (Calendar section), or via console:
+4. Add it via the settings page at `https://signpost.test/settings` (Calendar section), or via console:
 
 ```ruby
 EncryptedSetting.set("credentials", "google_ical_url", "https://calendar.google.com/calendar/ical/your-email/private-token/basic.ics")

@@ -15,20 +15,20 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  username: techos_rails
+  username: signpost
   password: <%= Rails.application.credentials.dig(:database, :password) %>
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
-  database: techos_rails_development
+  database: signpost_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: techos_rails_test
+  database: signpost_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -59,18 +59,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: techos_rails_production
-    username: techos_rails
-    password: <%= ENV["TECHOS_RAILS_DATABASE_PASSWORD"] %>
+    database: signpost_production
+    username: signpost
+    password: <%= ENV["SIGNPOST_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: techos_rails_production_cache
+    database: signpost_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: techos_rails_production_queue
+    database: signpost_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: techos_rails_production_cable
+    database: signpost_production_cable
     migrations_paths: db/cable_migrate
