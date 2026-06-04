@@ -30,9 +30,9 @@ namespace :setup do
     puts <<~DONE
 
       == done ==
-      App ready at https://techos.test
-      Add API keys at https://techos.test/settings (GitHub, Slack, OpenAI, Anthropic)
-      Optional Slack listener: bin/slack
+      App ready at https://signpost.test
+      Add API keys at https://signpost.test/settings (GitHub, Slack, OpenAI, Anthropic)
+      Background workers (Solid Queue + Slack listener): bin/workers
     DONE
   end
 
@@ -100,6 +100,15 @@ namespace :setup do
 
   desc "Symlink this app into ~/.puma-dev/signpost"
   task :puma_dev do
+    unless system("command -v puma-dev > /dev/null 2>&1")
+      puts "  puma-dev binary not found. Install with:"
+      puts "    brew install puma/puma/puma-dev"
+      puts "    sudo puma-dev -setup"
+      puts "    puma-dev -install"
+      puts "  Then re-run: bin/rails setup:puma_dev"
+      next
+    end
+
     app_root = Rails.root.to_s
     link = File.expand_path("~/.puma-dev/signpost")
     FileUtils.mkdir_p(File.dirname(link))

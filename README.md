@@ -6,7 +6,13 @@ A local-first tech lead operating system built with Rails 8. Manages developer p
 
 - Ruby 3.4+
 - PostgreSQL 18 (via Postgres.app) with pgvector extension
-- puma-dev (for `https://signpost.test`)
+- puma-dev (for `https://signpost.test`) — install once via:
+
+  ```bash
+  brew install puma/puma/puma-dev
+  sudo puma-dev -setup
+  puma-dev -install
+  ```
 
 ## Setup
 
@@ -146,13 +152,13 @@ EncryptedSetting.set("credentials", "google_ical_url", "https://calendar.google.
 
 The dashboard will show today's schedule, auto-detect 1:1 meetings, match attendees to developer profiles, and alert you before upcoming 1:1s.
 
-### 8. Start Slack Socket Mode listener (optional)
+### 8. Start background workers
 
 ```bash
-bin/slack
+bin/workers
 ```
 
-Requires Slack bot and app tokens. Listens for brain emoji reactions, @mentions, and watched channel activity.
+Runs both Solid Queue (`bin/jobs`) and the Slack Socket Mode listener (`bin/slack`) under foreman. Either process can also be started on its own. The Slack listener needs Slack bot and app tokens; without them it will exit. Solid Queue runs regardless and processes ingestion / analysis jobs.
 
 ## Usage
 
