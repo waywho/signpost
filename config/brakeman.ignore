@@ -1,0 +1,21 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "3fad51f4f91ea6d1b0c48e70c53106038dc69f66e98b1842a98252103344cd9e",
+      "note": "risk_badge_variant returns fixed class strings from a controlled enum"
+    },
+    {
+      "fingerprint": "b0c4409d291a2d155e3d6eeab68d5029841a960bcc3756843b99de6f7e5b845e",
+      "note": "recommendation_badge_variant returns fixed class strings from a controlled enum"
+    },
+    {
+      "fingerprint": "5515460ede5ee305144416e3101d301137dfac01c07dec3c834f3b462ea0e058",
+      "note": "github_issue_url is set from GitHub API response, not user input"
+    },
+    {
+      "fingerprint": "50fc5c8cecb8b46fd27612fb88f08b1a020f7dd5b57b236dd9178f486509955f",
+      "note": ":role is an integer enum on Developer, not free-form user input"
+    }
+  ],
+  "updated": "2026-06-04 11:35:00 +0200"
+}
