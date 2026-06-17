@@ -8,7 +8,7 @@ gem "ruby-openai"
 gem "anthropic"
 gem "slack-ruby-client"
 gem "octokit"
-gem "async-websocket", "~> 0.26"
+gem "async-websocket", "~> 0.30"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 gem "css-zero"
